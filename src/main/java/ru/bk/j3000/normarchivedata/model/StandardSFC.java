@@ -42,12 +42,12 @@ public class StandardSFC {
 
     // калорийность
     @JoinColumn(name = "calories", nullable = false)
-    @Enumerated(EnumType.STRING)
     @ManyToOne(fetch = FetchType.LAZY)
     private Calories calories;
 
     // тип топлива
     @Column(name = "fuel_type", nullable = false)
+    @Enumerated(EnumType.STRING)
     private FUEL_TYPE fuelType;
 
     /*
