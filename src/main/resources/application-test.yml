@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: ${DB_URL}
-    password: ${DB_PASSWORD}
-    username: ${DB_USER}
+    url: ${DB_URL_TEST}
+    password: ${DB_PASSWORD_TEST}
+    username: ${DB_USER_TEST}
     driver-class-name: org.postgresql.Driver
   jpa:
     generate-ddl: true
@@ -11,7 +11,7 @@ spring:
       ddl-auto: none
   sql:
     init:
-      mode: never
+      mode: always
 logging:
   level:
-    ru.bk.j3000.normarchivedata: info
+    ru.bk.j3000.normarchivedata: debug
