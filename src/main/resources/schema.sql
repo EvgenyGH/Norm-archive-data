@@ -1,43 +1,27 @@
-DROP TABLE IF EXISTS calories, source, standardsfc CASCADE;
-
-CREATE TABLE calories (
-    calories_id UUID NOT NULL ,
-    name        VARCHAR(30) NOT NULL,
-    calories    DOUBLE PRECISION NOT NULL,
-    CONSTRAINT calories_pk PRIMARY KEY (calories_id)
-);
+DROP TABLE IF EXISTS source, standardsfc CASCADE;
 
 CREATE TABLE source (
     source_id       UUID NOT NULL DEFAULT gen_random_uuid(),
-    source_capacity real         not null,
-    source_address  varchar(255) not null,
-    source_branch   varchar(255) not null,
-    source_name     varchar(255) not null,
-    tariff_zone     varchar(255) not null,
+    source_capacity REAL NOT NULL,
+    source_address  VARCHAR(255) NOT NULL,
+    source_branch   INTEGER NOT NULL,
+    source_name     VARCHAR(50) NOT NULL,
+    tariff_zone     VARCHAR(255) NOT NULL,
     CONSTRAINT pk_source PRIMARY KEY (source_id)
 );
 
-alter table public.source
-    owner to "Tester";
+CREATE TABLE standardsfc (
+    fuel_consumption     DOUBLE PRECISION NOT NULL,
+    fuel_consumption_std DOUBLE PRECISION NOT NULL,
+    generation           DOUBLE PRECISION NOT NULL,
+    own_needs            DOUBLE PRECISION NOT NULL,
+    production           DOUBLE PRECISION NOT NULL,
+    standard_sfc         DOUBLE PRECISION NOT NULL,
+    standard_sfcg        DOUBLE PRECISION NOT NULL,
+    source_id            UUID NOT NULL,
+    ssfc_id              UUID NOT NULL,
+    fuel_type            VARCHAR(30)     NOT NULL,
 
-create table public.standardsfc
-(
-    fuel_consumption     double precision not null,
-    fuel_consumption_std double precision not null,
-    generation           double precision not null,
-    own_needs            double precision not null,
-    production           double precision not null,
-    standard_sfc         double precision not null,
-    standard_sfcg        double precision not null,
-    calories             uuid             not null
-        constraint fk5ftqpjnxrh05qh1mmbe0ge3u9
-            references public.calories,
-    source_id            uuid             not null
-        constraint fk6ko7co3p5x1ntqm9bgnhab6m0
-            references public.source,
-    ssfc_id              uuid             not null
-        primary key,
-    fuel_type            varchar(255)     not null
-        constraint standardsfc_fuel_type_check
-            check ((fuel_type)::text = ANY ((ARRAY ['GAS'::character varying, 'DIESEL'::character varying])::text[]))
+    CONSTRAINT pk_ssfc PRIMARY KEY (ssfc_id),
+    CONSTRAINT fk_source FOREIGN KEY (source_id) REFERENCES source(source_id)
 );

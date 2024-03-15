@@ -29,7 +29,7 @@ public class Source {
 
     // филиал
     @Column(name = "source_branch", nullable = false)
-    private String branch;
+    private Integer branch;
 
     // тарифная зона
     @Column(name = "tariff_zone", nullable = false)

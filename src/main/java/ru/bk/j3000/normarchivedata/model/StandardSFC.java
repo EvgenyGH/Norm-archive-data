@@ -40,11 +40,6 @@ public class StandardSFC {
     @Column(name = "production", nullable = false)
     private Double production;
 
-    // калорийность
-    @JoinColumn(name = "calories", nullable = false)
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Calories calories;
-
     // тип топлива
     @Column(name = "fuel_type", nullable = false)
     @Enumerated(EnumType.STRING)
