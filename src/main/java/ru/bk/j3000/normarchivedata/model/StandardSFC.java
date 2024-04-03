@@ -12,7 +12,7 @@ import java.util.UUID;
 Результаты расчета удельного расхода условного топлива на отпуск
 тепловой энергии с коллекторов источников
 */
-@Entity(name = "standardSFC")
+@Entity(name = "standard_sfc")
 @Getter
 @Setter
 @NoArgsConstructor

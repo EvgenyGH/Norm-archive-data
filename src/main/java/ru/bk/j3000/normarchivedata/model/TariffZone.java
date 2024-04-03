@@ -6,8 +6,8 @@ import jakarta.persistence.Id;
 import lombok.*;
 
 @Entity (name = "tariff_zone")
-@RequiredArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 @ToString

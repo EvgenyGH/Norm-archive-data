@@ -6,13 +6,13 @@ import lombok.*;
 @Entity(name = "source_properties")
 @Getter
 @Setter
-@RequiredArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @ToString
 public class SourceProperties {
     // источник
     @Id
-    @Column(name = "source_id", nullable = false)
+    @JoinColumn(name = "source_id", nullable = false)
     @ManyToOne(fetch = FetchType.EAGER)
     private Source source;
 
@@ -26,7 +26,7 @@ public class SourceProperties {
     private Integer branch;
 
     // тарифная зона
-    @Column(name = "zone_id", nullable = false)
+    @JoinColumn(name = "zone_id", nullable = false)
     @ManyToOne(fetch = FetchType.EAGER)
     private TariffZone tariffZone;
 

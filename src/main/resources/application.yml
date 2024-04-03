@@ -11,7 +11,7 @@ spring:
       ddl-auto: none
   sql:
     init:
-      mode: never
+      mode: always
 logging:
   level:
     ru.bk.j3000.normarchivedata: info
