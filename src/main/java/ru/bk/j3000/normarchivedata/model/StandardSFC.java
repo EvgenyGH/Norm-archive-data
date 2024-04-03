@@ -33,39 +33,39 @@ public class StandardSFC {
     private Double generation;
 
     // собственные нужды
-    @Column(name ="own_needs", nullable = false)
+    @Column(name = "own_needs", nullable = false)
     private Double ownNeeds;
 
     // отпуск с коллекторов
     @Column(name = "production", nullable = false)
     private Double production;
 
-    // тип топлива
-    @Column(name = "fuel_type", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private FUEL_TYPE fuelType;
-
     /*
-    нормативный удельный расход условного топлива на отпуск тепловой энергии
-    с коллекторов источника
-    */
+     нормативный удельный расход условного топлива на отпуск тепловой энергии
+     с коллекторов источника
+     */
     @Column(name = "standard_sfc", nullable = false)
     private Double ssfc;
 
     /*
-    нормативный удельный расход условного топлива на выработку тепловой энергии
-    с коллекторов источника
-    */
+        нормативный удельный расход условного топлива на выработку тепловой энергии
+        с коллекторов источника
+        */
     @Column(name = "standard_sfcg", nullable = false)
     private Double ssfcg;
 
-    // потребление топлива
-    @Column(name = "fuel_consumption", nullable = false)
-    private Double fuelConsumption;
+    // год
+    @Column(name = "ssfc_year", nullable = false)
+    private Integer year;
 
-    // потребление условного топлива
-    @Column(name = "fuel_consumption_std", nullable = false)
-    private Double fuelConsumptionStd;
+    // месяц
+    @Column(name = "ssfc_month")
+    private Integer month;
+
+    // тип топлива
+    @Column(name = "fuel_type", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private FUEL_TYPE fuelType;
 
     @Override
     public boolean equals(Object o) {

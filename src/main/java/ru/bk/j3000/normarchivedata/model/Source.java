@@ -5,7 +5,7 @@ import lombok.*;
 
 import java.util.UUID;
 
-@Entity
+@Entity (name = "source")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -23,17 +23,10 @@ public class Source {
     @Column(name = "source_address", nullable = false)
     private String address;
 
-    // тепловая мощность
-    @Column(name = "source_capacity", nullable = false)
-    private Float capacity;
-
-    // филиал
-    @Column(name = "source_branch", nullable = false)
-    private Integer branch;
-
-    // тарифная зона
-    @Column(name = "tariff_zone", nullable = false)
-    private String tariff_zone;
+    // тип источника
+    @Column(name = "source_type", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private SOURCE_TYPE sourceType;
 
     @Override
     public boolean equals(Object o) {
