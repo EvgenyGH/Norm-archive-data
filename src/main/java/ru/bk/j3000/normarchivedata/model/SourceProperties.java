@@ -10,14 +10,17 @@ import lombok.*;
 @AllArgsConstructor
 @ToString
 public class SourceProperties {
+    @EmbeddedId
+    private SrcPropertiesId id;
+
     // источник
-    @Id
+    @MapsId("sourceId")
     @JoinColumn(name = "source_id", nullable = false)
     @ManyToOne(fetch = FetchType.EAGER)
     private Source source;
 
     // год
-    @Id
+    @MapsId("year")
     @Column(name = "ssfc_year", nullable = false)
     private Integer year;
 

@@ -18,32 +18,33 @@ CREATE TABLE IF NOT EXISTS tariff_zone
     CONSTRAINT pk_zone PRIMARY KEY (zone_id)
 );
 
+CREATE TABLE IF NOT EXISTS source_properties
+(
+    source_id     UUID    NOT NULL,
+    ssfc_year     INTEGER NOT NULL,
+    source_branch INTEGER NOT NULL,
+    zone_id       INTEGER NOT NULL,
+
+    CONSTRAINT pk_source_prop PRIMARY KEY (source_id, ssfc_year),
+    CONSTRAINT fk_source_prop FOREIGN KEY (source_id) REFERENCES source (source_id),
+    CONSTRAINT fk_zone_prop FOREIGN KEY (zone_id) REFERENCES tariff_zone (zone_id)
+
+);
 
 CREATE TABLE IF NOT EXISTS standard_sfc
 (
     ssfc_id       UUID             NOT NULL,
     source_id     UUID             NOT NULL,
+    ssfc_year INTEGER NOT NULL,
     generation    DOUBLE PRECISION NOT NULL,
     own_needs     DOUBLE PRECISION NOT NULL,
     production    DOUBLE PRECISION NOT NULL,
     standard_sfc  DOUBLE PRECISION NOT NULL,
     standard_sfcg DOUBLE PRECISION NOT NULL,
-    ssfc_year     INTEGER          NOT NULL,
     ssfc_month    INTEGER          NOT NULL,
     fuel_type     VARCHAR(30)      NOT NULL,
 
     CONSTRAINT pk_ssfc PRIMARY KEY (ssfc_id),
+    CONSTRAINT fk_source_prop FOREIGN KEY (source_id, ssfc_year) REFERENCES source_properties (source_id, ssfc_year),
     CONSTRAINT fk_source FOREIGN KEY (source_id) REFERENCES source (source_id)
 );
-
-CREATE TABLE IF NOT EXISTS source_properties
-(
-    source_id     UUID         NOT NULL,
-    ssfc_year     INTEGER      NOT NULL,
-    source_branch INTEGER      NOT NULL,
-    tariff_zone   VARCHAR(255) NOT NULL,
-
-    CONSTRAINT pk_source_prop PRIMARY KEY (source_id, ssfc_year),
-    CONSTRAINT fk_source_prop FOREIGN KEY (source_id) REFERENCES source (source_id)
-);
-

@@ -8,10 +8,10 @@ spring:
     generate-ddl: true
     show-sql: false
     hibernate:
-      ddl-auto: none
+      ddl-auto: create
   sql:
     init:
-      mode: always
+      mode: never
 logging:
   level:
     ru.bk.j3000.normarchivedata: info

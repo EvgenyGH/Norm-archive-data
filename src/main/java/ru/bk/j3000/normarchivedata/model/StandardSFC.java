@@ -54,9 +54,13 @@ public class StandardSFC {
     @Column(name = "standard_sfcg", nullable = false)
     private Double ssfcg;
 
-    // год
-    @Column(name = "ssfc_year", nullable = false)
-    private Integer year;
+
+    @JoinColumns({
+            @JoinColumn(name = "source_id", referencedColumnName = "source_id", nullable = false),
+            @JoinColumn(name = "ssfc_year", referencedColumnName = "ssfc_year", nullable = false)
+    })
+    @ManyToOne(fetch = FetchType.EAGER)
+    private SourceProperties properties;
 
     // месяц
     @Column(name = "ssfc_month")
