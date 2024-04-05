@@ -13,17 +13,6 @@ public class SourceProperties {
     @EmbeddedId
     private SrcPropertiesId id;
 
-    // источник
-    @MapsId("sourceId")
-    @JoinColumn(name = "source_id", nullable = false)
-    @ManyToOne(fetch = FetchType.EAGER)
-    private Source source;
-
-    // год
-    @MapsId("year")
-    @Column(name = "ssfc_year", nullable = false)
-    private Integer year;
-
     // филиал
     @Column(name = "source_branch", nullable = false)
     private Integer branch;
@@ -34,20 +23,15 @@ public class SourceProperties {
     private TariffZone tariffZone;
 
     @Override
-    public boolean equals(Object o) {
+    public final boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof SourceProperties that)) return false;
 
-        SourceProperties that = (SourceProperties) o;
-
-        if (!source.equals(that.source)) return false;
-        return year.equals(that.year);
+        return id.equals(that.id);
     }
 
     @Override
     public int hashCode() {
-        int result = source.hashCode();
-        result = 31 * result + year.hashCode();
-        return result;
+        return id.hashCode();
     }
 }

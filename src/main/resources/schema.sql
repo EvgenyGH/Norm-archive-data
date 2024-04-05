@@ -45,6 +45,5 @@ CREATE TABLE IF NOT EXISTS standard_sfc
     fuel_type     VARCHAR(30)      NOT NULL,
 
     CONSTRAINT pk_ssfc PRIMARY KEY (ssfc_id),
-    CONSTRAINT fk_source_prop FOREIGN KEY (source_id, ssfc_year) REFERENCES source_properties (source_id, ssfc_year),
-    CONSTRAINT fk_source FOREIGN KEY (source_id) REFERENCES source (source_id)
+    CONSTRAINT fk_source_prop FOREIGN KEY (source_id, ssfc_year) REFERENCES source_properties (source_id, ssfc_year)
 );

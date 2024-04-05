@@ -1,14 +1,13 @@
 package ru.bk.j3000.normarchivedata.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Embeddable;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.util.UUID;
+import java.util.Objects;
 
 @Embeddable
 @NoArgsConstructor
@@ -18,8 +17,9 @@ import java.util.UUID;
 public class SrcPropertiesId implements Serializable {
 
     // источник
-    @Column(name = "source_id", nullable = false)
-    private UUID sourceId;
+    @JoinColumn(name = "source_id", nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Source source;
 
     // год
     @Column(name = "ssfc_year", nullable = false)
@@ -32,14 +32,14 @@ public class SrcPropertiesId implements Serializable {
 
         SrcPropertiesId that = (SrcPropertiesId) o;
 
-        if (!sourceId.equals(that.sourceId)) return false;
-        return year.equals(that.year);
+        if (!Objects.equals(source, that.source)) return false;
+        return Objects.equals(year, that.year);
     }
 
     @Override
     public int hashCode() {
-        int result = sourceId.hashCode();
-        result = 31 * result + year.hashCode();
+        int result = source != null ? source.hashCode() : 0;
+        result = 31 * result + (year != null ? year.hashCode() : 0);
         return result;
     }
 }

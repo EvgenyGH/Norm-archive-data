@@ -23,11 +23,6 @@ public class StandardSFC {
     @Column(name = "ssfc_id", nullable = false)
     private UUID id;
 
-    // источник
-    @JoinColumn(name = "source_id", nullable = false)
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Source sourceId;
-
     // выработка
     @Column(name = "generation", nullable = false)
     private Double generation;
@@ -53,7 +48,6 @@ public class StandardSFC {
         */
     @Column(name = "standard_sfcg", nullable = false)
     private Double ssfcg;
-
 
     @JoinColumns({
             @JoinColumn(name = "source_id", referencedColumnName = "source_id", nullable = false),
