@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
+import ru.bk.j3000.normarchivedata.model.SOURCE_TYPE;
 import ru.bk.j3000.normarchivedata.model.Source;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -17,14 +18,13 @@ import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTest
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @ActiveProfiles("test")
 public class SourceRepositoryTest {
-
+    @Autowired
     private final SourceRepository repository;
 
     @Test
     @DisplayName("1. Save Source test")
     public void whenAddSourceToDBThenItsThere() {
-        Source s1 = new Source(null, "name", "address",
-                1.45F, 8, "Moscow");
+        Source s1 = new Source(null, "name", "address", SOURCE_TYPE.KTS);
         repository.save(s1);
 
         assertThat(repository.findAll().size()).isEqualTo(1);
@@ -33,8 +33,7 @@ public class SourceRepositoryTest {
     @Test
     @DisplayName("2. Delete Source test")
     public void whenAddSourceToDBAndDeleteItThenDBIsEmpty() {
-        Source s1 = new Source(null, "name", "address",
-                1.45F, 8, "Moscow");
+        Source s1 = new Source(null, "name", "address", SOURCE_TYPE.KTS);
         repository.save(s1);
 
         assertThat(repository.findAll().size()).isEqualTo(1);
@@ -47,8 +46,7 @@ public class SourceRepositoryTest {
     @Test
     @DisplayName("3. Find Source test")
     public void whenAddSourceToDbAndFindItThenSourceIsFound() {
-        Source s1 = new Source(null, "name", "address",
-                1.45F, 8, "Moscow");
+        Source s1 = new Source(null, "name", "address", SOURCE_TYPE.KTS);
         repository.save(s1);
 
         assertThat(repository.findById(s1.getId()).get()).isEqualTo(s1);

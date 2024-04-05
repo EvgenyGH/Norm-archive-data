@@ -1,6 +1,8 @@
 package ru.bk.j3000.normarchivedata.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,10 +21,12 @@ public class SrcPropertiesId implements Serializable {
     // источник
     @JoinColumn(name = "source_id", nullable = false)
     @ManyToOne(fetch = FetchType.EAGER)
+    @NotNull
     private Source source;
 
     // год
     @Column(name = "ssfc_year", nullable = false)
+    @Size(min = 2000, max = 2100)
     private Integer year;
 
     @Override

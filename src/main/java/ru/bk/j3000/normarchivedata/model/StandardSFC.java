@@ -1,10 +1,9 @@
 package ru.bk.j3000.normarchivedata.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Size;
+import lombok.*;
 
 import java.util.UUID;
 
@@ -25,14 +24,17 @@ public class StandardSFC {
 
     // выработка
     @Column(name = "generation", nullable = false)
+    @PositiveOrZero
     private Double generation;
 
     // собственные нужды
     @Column(name = "own_needs", nullable = false)
+    @PositiveOrZero
     private Double ownNeeds;
 
     // отпуск с коллекторов
     @Column(name = "production", nullable = false)
+    @PositiveOrZero
     private Double production;
 
     /*
@@ -40,6 +42,7 @@ public class StandardSFC {
      с коллекторов источника
      */
     @Column(name = "standard_sfc", nullable = false)
+    @PositiveOrZero
     private Double ssfc;
 
     /*
@@ -47,6 +50,7 @@ public class StandardSFC {
         с коллекторов источника
         */
     @Column(name = "standard_sfcg", nullable = false)
+    @PositiveOrZero
     private Double ssfcg;
 
     @JoinColumns({
@@ -58,11 +62,13 @@ public class StandardSFC {
 
     // месяц
     @Column(name = "ssfc_month")
+    @Size(min = 1, max = 12)
     private Integer month;
 
     // тип топлива
     @Column(name = "fuel_type", nullable = false)
     @Enumerated(EnumType.STRING)
+    @NonNull
     private FUEL_TYPE fuelType;
 
     @Override

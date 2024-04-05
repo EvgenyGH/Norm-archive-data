@@ -1,6 +1,8 @@
 package ru.bk.j3000.normarchivedata.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.util.UUID;
@@ -18,14 +20,17 @@ public class Source {
     private UUID id;
 
     @Column(name = "source_name", nullable = false)
+    @Size(min = 1, max = 30)
     private String name;
 
     @Column(name = "source_address", nullable = false)
+    @Size(min = 1, max = 255)
     private String address;
 
     // тип источника
     @Column(name = "source_type", nullable = false)
     @Enumerated(EnumType.STRING)
+    @NotNull
     private SOURCE_TYPE sourceType;
 
     @Override
