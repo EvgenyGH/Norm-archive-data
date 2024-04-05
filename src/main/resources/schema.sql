@@ -3,7 +3,7 @@ DROP TABLE IF EXISTS source, tariff_zone, standard_sfc, source_properties CASCAD
 CREATE TABLE IF NOT EXISTS source
 (
     source_id      UUID         NOT NULL DEFAULT gen_random_uuid(),
-    source_name    VARCHAR(50)  NOT NULL,
+    source_name VARCHAR(30) NOT NULL,
     source_address VARCHAR(255) NOT NULL,
     source_type    varchar(7)   NOT NULL,
 
@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS standard_sfc
     standard_sfc  DOUBLE PRECISION NOT NULL,
     standard_sfcg DOUBLE PRECISION NOT NULL,
     ssfc_month    INTEGER          NOT NULL,
-    fuel_type     VARCHAR(30)      NOT NULL,
+    fuel_type VARCHAR(17) NOT NULL,
 
     CONSTRAINT pk_ssfc PRIMARY KEY (ssfc_id),
     CONSTRAINT fk_source_prop FOREIGN KEY (source_id, ssfc_year) REFERENCES source_properties (source_id, ssfc_year)
