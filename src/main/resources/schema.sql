@@ -3,7 +3,7 @@ DROP TABLE IF EXISTS source, tariff_zone, standard_sfc, source_properties CASCAD
 CREATE TABLE IF NOT EXISTS source
 (
     source_id      UUID         NOT NULL DEFAULT gen_random_uuid(),
-    source_name VARCHAR(30) NOT NULL,
+    source_name VARCHAR(50) NOT NULL,
     source_address VARCHAR(255) NOT NULL,
     source_type    varchar(7)   NOT NULL,
 

@@ -14,4 +14,6 @@ public interface SourceService {
     void saveSources(List<Source> sources);
 
     void uploadSources(File file);
+
+    List<Source> getAllSources();
 }

@@ -6,10 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import ru.bk.j3000.normarchivedata.model.Source;
 
 import java.io.File;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -22,11 +20,10 @@ public class SourceServiceImplTest {
     @Test
     @DisplayName("Read sources from file")
     public void whenReadSourcesFromFileThenGetSourcesCollection() {
-        List<Source> sources;
         File file = new File("src/test/resources/testdata/sources.xlsm");
 
-        sources = service.readSrcFromFile(file);
+        service.uploadSources(file);
 
-        assertThat(sources.size()).isEqualTo(141);
+        assertThat(service.getAllSources().size()).isEqualTo(141);
     }
 }

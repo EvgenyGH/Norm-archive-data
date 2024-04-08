@@ -20,7 +20,7 @@ public class Source {
     private UUID id;
 
     @Column(name = "source_name", nullable = false)
-    @Size(min = 1, max = 30)
+    @Size(min = 1, max = 50)
     private String name;
 
     @Column(name = "source_address", nullable = false)
