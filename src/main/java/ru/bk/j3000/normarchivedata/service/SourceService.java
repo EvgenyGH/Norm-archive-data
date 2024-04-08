@@ -1,12 +1,17 @@
 package ru.bk.j3000.normarchivedata.service;
 
+import jakarta.transaction.Transactional;
 import ru.bk.j3000.normarchivedata.model.Source;
 
 import java.io.File;
 import java.util.List;
 
 public interface SourceService {
-    List<Source> readSrcFromFile(File file);
 
-    File saveSrcToFile(List<Source> sources);
+    void saveSource(Source source);
+
+    @Transactional
+    void saveSources(List<Source> sources);
+
+    void uploadSources(File file);
 }
