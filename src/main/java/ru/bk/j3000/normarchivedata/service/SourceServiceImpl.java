@@ -15,7 +15,7 @@ public class SourceServiceImpl implements SourceService {
 
     @Override
     public List<Source> readSrcFromFile(File file) {
-        return null;
+        return List.of();
     }
 
     @Override
