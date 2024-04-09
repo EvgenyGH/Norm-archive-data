@@ -17,6 +17,7 @@ import ru.bk.j3000.normarchivedata.repository.SourceRepository;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.IntStream;
 
 @Service
@@ -43,9 +44,31 @@ public class SourceServiceImpl implements SourceService {
     @Override
     public void uploadSources(File file) {
         List<Source> sources = readSrcFromFile(file);
+        deleteAllSources();
         saveSources(sources);
 
         log.info("Sources uploaded ({} in total).", sources.size());
+    }
+
+    @Override
+    public void deleteAllSources() {
+        sourceRepository.deleteAll();
+
+        log.info("All sources deleted.");
+    }
+
+    @Override
+    public void deleteSourcesById(List<UUID> ids) {
+        sourceRepository.deleteAllById(ids);
+
+        log.info("Deleted {} sources.", ids.size());
+    }
+
+    @Override
+    public void updateSource(Source source) {
+        sourceRepository.save(source);
+
+        log.info("Source updated ({}).", source);
     }
 
     @Override

@@ -5,6 +5,7 @@ import ru.bk.j3000.normarchivedata.model.Source;
 
 import java.io.File;
 import java.util.List;
+import java.util.UUID;
 
 public interface SourceService {
 
@@ -14,6 +15,12 @@ public interface SourceService {
     void saveSources(List<Source> sources);
 
     void uploadSources(File file);
+
+    void deleteAllSources();
+
+    void deleteSourcesById(List<UUID> ids);
+
+    void updateSource(Source source);
 
     List<Source> getAllSources();
 }
