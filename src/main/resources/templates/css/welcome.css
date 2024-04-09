@@ -1,0 +1,29 @@
+.menu {
+    position: fixed;
+    top: 15vh;
+    left: 1vw;
+    width: 18%;
+    font-size: 3em;
+    padding-left: 1%;
+
+    border: 1px solid green;
+}
+
+.sub-menu {
+    padding-left: 5%;
+}
+
+.output-area {
+    font-size: 4em;
+    text-align: center;
+}
+
+.welcome-container {
+    color: black;
+    font-size: 10px;
+    margin-left: 21%;
+    margin-right: 1%;
+    margin-top: 35vh;
+
+    border: dotted red;
+}
