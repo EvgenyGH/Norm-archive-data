@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link rel="stylesheet" type="text/css" media="all"
-          href="css/welcome.css" th:href="@{/css/welcome.css}">
+          href="../static/css/welcome.css" th:href="@{/css/welcome.css}">
 </head>
 <body>
 <div class="welcome-container">
@@ -15,10 +15,9 @@
         <div class="sub-menu">Свойства источников</div>
         <div class="sub-menu">Нормативы (НУР)</div>
         <div class="sub-menu">Отчеты</div>
-        <div class="sub-menu">&gtНазад</div>
+        <div class="sub-menu">&gt Назад</div>
     </div>
     <div class="output-area">Добро пожаловать!</div>
-    <p th:text="|Hello, ${name}!|"/>
 </div>
 </body>
 </html>

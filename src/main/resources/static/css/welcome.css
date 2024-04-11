@@ -1,3 +1,13 @@
+.welcome-container {
+    color: black;
+    font-size: 10px;
+    margin-left: 21%;
+    margin-right: 1%;
+    margin-top: 35vh;
+
+    border: dotted red;
+}
+
 .menu {
     position: fixed;
     top: 15vh;
@@ -11,19 +21,12 @@
 
 .sub-menu {
     padding-left: 5%;
+    font-size: 0.8em;
 }
 
 .output-area {
     font-size: 4em;
     text-align: center;
+    border: dodgerblue dashed medium;
 }
 
-.welcome-container {
-    color: black;
-    font-size: 10px;
-    margin-left: 21%;
-    margin-right: 1%;
-    margin-top: 35vh;
-
-    border: dotted red;
-}
