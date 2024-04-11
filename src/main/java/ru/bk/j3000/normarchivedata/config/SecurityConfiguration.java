@@ -36,16 +36,12 @@ public class SecurityConfiguration {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.httpBasic(Customizer.withDefaults());
-
-        http.formLogin(conf -> conf
-                        .defaultSuccessUrl("/welcome"))
-                .logout(config -> config
-                        .clearAuthentication(true)
-                        .deleteCookies("JSESSIONID"));
-
         http.csrf(Customizer.withDefaults());
         http.cors(Customizer.withDefaults());
+
+        http.httpBasic(Customizer.withDefaults());
+
+        http.formLogin(conf -> conf.defaultSuccessUrl("/welcome"));
 
         http.authorizeHttpRequests(conf ->
                 conf
@@ -70,7 +66,6 @@ public class SecurityConfiguration {
     RoleHierarchy roleHierarchy() {
         var hierarchy = new RoleHierarchyImpl();
         hierarchy.setHierarchy("ROLE_ADMIN > ROLE_USER");
-
         return hierarchy;
     }
 }
