@@ -7,7 +7,8 @@
           href="../static/css/welcome.css" th:href="@{/css/welcome.css}">
 </head>
 <body>
-<div class="welcome-container">
+<div class="welcome-container test-two">
+    <div class="welcome-title test-one">Welcome title</div>
     <div class="menu-area">Меню
         <ul class="sub-menu">
             <li sec:authorize="hasRole('ADMIN')">Пользователи
@@ -17,16 +18,55 @@
                     <li>Удалить пользователя</li>
                 </ul>
             </li>
-            <li>Источники</li>
-            <li>Тарифные зоны</li>
-            <li>Свойства источников</li>
-            <li>Нормативы (НУР)</li>
-            <li>Отчеты</li>
+            <li>Источники
+                <ul class="sub-sub-menu">
+                    <li>Список источников</li>
+                    <li>Добавить источник</li>
+                    <li>Удалить источник</li>
+                    <li sec:authorize="hasRole('ADMIN')">Загрузить из файла</li>
+                    <li>Скачать шаблон</li>
+                </ul>
+            </li>
+            <li>Тарифные зоны
+                <ul class="sub-sub-menu">
+                    <li>Список тарифных зон</li>
+                    <li>Добавить тарифную зону</li>
+                    <li>Удалить тфрифную зону</li>
+                    <li sec:authorize="hasRole('ADMIN')">Загрузить из файла</li>
+                    <li sec:authorize="hasRole('ADMIN')">Скачать шаблон</li>
+                </ul>
+            </li>
+            <li>Свойства источников
+                <ul class="sub-sub-menu">
+                    <li>Список свойств</li>
+                    <li>Добавить свойство</li>
+                    <li>Удалить свойство</li>
+                    <li>Загрузить из файла</li>
+                    <li>Скачать шаблон</li>
+                </ul>
+            </li>
+            <li>Нормативы (НУР)
+                <ul class="sub-sub-menu">
+                    <li>Вывести НУР</li>
+                    <li>Добавить НУР источника</li>
+                    <li>Удалить НУР источника</li>
+                    <li>Загрузить из файла</li>
+                    <li>Скачать шаблон</li>
+                </ul>
+            </li>
+            <li>Отчеты
+                <ul class="sub-sub-menu">
+                    <li>Отчет источники</li>
+                    <li>Отчет тарифные зоны</li>
+                    <li>Отчет свойства источника</li>
+                    <li>Отчет НУР</li>
+                </ul>
+            </li>
             <li>Назад</li>
             <li><a th:href="@{/logout}">Выход</a></li>
         </ul>
     </div>
-    <div class="output-area">Добро пожаловать!</div>
+    <div class="output-area test-two">Добро пожаловать!</div>
 </div>
 </body>
 </html>

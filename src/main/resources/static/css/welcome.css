@@ -3,19 +3,22 @@
     font-size: 10px;
     margin-left: 21%;
     margin-right: 1%;
-    margin-top: 35vh;
+}
 
-    border: dotted red;
+.welcome-title {
+    height: 10vh;
 }
 
 .menu-area {
     position: fixed;
-    top: 15vh;
+    top: 3vh;
     left: 1vw;
-    width: 18%;
+    width: 13%;
     font-size: 3em;
     padding-left: 1%;
-    border: 1px solid green;
+    border-right: double black;
+    font-weight: bold;
+    font-style: italic;
 }
 
 .sub-menu {
@@ -28,18 +31,24 @@
     padding-left: 3%;
     font-size: 0.8em;
     list-style-type: none;
+    font-weight: normal;
+    font-style: italic;
+}
+
+.output-area {
+    font-size: 4em;
+    text-align: center;
+    margin-top: 35vh;
 }
 
 ul {
     margin-top: -1%;
 }
 
-.output-area {
-    font-size: 4em;
-    text-align: center;
-    border: dodgerblue dashed medium;
+.test-one {
+    border: dodgerblue solid medium;
 }
 
-.test {
-    border: dodgerblue dashed medium;
+.test-two {
+    border: #f60428 solid medium;
 }
