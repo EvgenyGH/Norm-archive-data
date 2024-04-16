@@ -46,8 +46,8 @@ public class SecurityConfiguration {
         http.authorizeHttpRequests(conf ->
                 conf
                         .requestMatchers("/source/**",
-                                "/property/**",
-                                "/zone/**",
+                                "/sourceproperty/**",
+                                "/tariffzone/**",
                                 "/ssfc/**",
                                 "/report/**",
                                 "/css/*")

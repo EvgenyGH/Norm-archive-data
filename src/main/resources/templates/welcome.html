@@ -7,27 +7,27 @@
           href="../static/css/welcome.css" th:href="@{/css/welcome.css}">
 </head>
 <body>
-<div class="welcome-container test-two">
-    <div class="welcome-title test-one" th:utext="${title}">Welcome!</div>
+<div class="welcome-container">
+    <div class="welcome-title" th:utext="${title}">Welcome!</div>
     <div class="menu-area">Меню
         <ul class="sub-menu">
-            <li sec:authorize="hasRole('ADMIN')">Пользователи
+            <li sec:authorize="hasRole('ADMIN')"><a href="/user">Пользователи</a>
                 <ul class="sub-sub-menu" th:classappend="${activeMenu.user}">
                     <li>Список пользователей</li>
                     <li>Добавить пользователя</li>
                     <li>Удалить пользователя</li>
                 </ul>
             </li>
-            <li>Источники
+            <li><a href="/source">Источники</a>
                 <ul class="sub-sub-menu" th:classappend="${activeMenu.source}">
                     <li>Список источников</li>
                     <li>Добавить источник</li>
                     <li>Удалить источник</li>
                     <li sec:authorize="hasRole('ADMIN')">Загрузить из файла</li>
-                    <li>Скачать шаблон</li>
+                    <li sec:authorize="hasRole('ADMIN')">Скачать шаблон</li>
                 </ul>
             </li>
-            <li>Тарифные зоны
+            <li><a href="/tariffzone">Тарифные зоны</a>
                 <ul class="sub-sub-menu" th:classappend="${activeMenu.tariffZone}">
                     <li>Список тарифных зон</li>
                     <li>Добавить тарифную зону</li>
@@ -36,7 +36,7 @@
                     <li sec:authorize="hasRole('ADMIN')">Скачать шаблон</li>
                 </ul>
             </li>
-            <li>Свойства источников
+            <li><a href="/sourceproperty">Свойства источников</a>
                 <ul class="sub-sub-menu" th:classappend="${activeMenu.sourceProperty}">
                     <li>Список свойств</li>
                     <li>Добавить свойство</li>
@@ -45,7 +45,7 @@
                     <li>Скачать шаблон</li>
                 </ul>
             </li>
-            <li>Нормативы (НУР)
+            <li><a href="ssfc">Нормативы (НУР)</a>
                 <ul class="sub-sub-menu" th:classappend="${activeMenu.ssfc}">
                     <li>Вывести НУР</li>
                     <li>Добавить НУР источника</li>
@@ -54,7 +54,7 @@
                     <li>Скачать шаблон</li>
                 </ul>
             </li>
-            <li>Отчеты
+            <li><a href="/report">Отчеты</a>
                 <ul class="sub-sub-menu" th:classappend="${activeMenu.report}">
                     <li>Отчет источники</li>
                     <li>Отчет тарифные зоны</li>
@@ -62,7 +62,6 @@
                     <li>Отчет НУР</li>
                 </ul>
             </li>
-            <li>Назад</li>
             <li><a th:href="@{/logout}">Выход</a></li>
         </ul>
     </div>

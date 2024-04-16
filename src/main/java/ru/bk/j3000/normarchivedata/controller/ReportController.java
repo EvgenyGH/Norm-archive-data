@@ -9,13 +9,13 @@ import ru.bk.j3000.normarchivedata.service.ModelService;
 
 @Controller
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class TariffZoneController {
+public class ReportController {
     private final ModelService modelService;
 
-    @GetMapping("/tariffzone")
+    @GetMapping("/report")
     public String welcome(Model model) {
-        model.addAttribute("title", "Тарифные зоны");
-        var attribute = modelService.getActiveMenuAttribute("tariffZone");
+        model.addAttribute("title", "Отчеты");
+        var attribute = modelService.getActiveMenuAttribute("report");
         model.addAttribute("activeMenu", attribute);
 
         return "welcome";
