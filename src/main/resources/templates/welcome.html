@@ -8,15 +8,23 @@
 </head>
 <body>
 <div class="welcome-container">
-    <div class="menu">Меню
-        <div class="sub-menu" sec:authorize="hasRole('ADMIN')">Пользователи</div>
-        <div class="sub-menu">Источники</div>
-        <div class="sub-menu">Тарифные зоны</div>
-        <div class="sub-menu">Свойства источников</div>
-        <div class="sub-menu">Нормативы (НУР)</div>
-        <div class="sub-menu">Отчеты</div>
-        <div class="sub-menu">&gt Назад</div>
-        <div class="sub-menu"><a th:href="@{/logout}">logout</a></div>
+    <div class="menu-area">Меню
+        <ul class="sub-menu">
+            <li sec:authorize="hasRole('ADMIN')">Пользователи
+                <ul class="sub-sub-menu">
+                    <li>Список пользователей</li>
+                    <li>Добавить пользователя</li>
+                    <li>Удалить пользователя</li>
+                </ul>
+            </li>
+            <li>Источники</li>
+            <li>Тарифные зоны</li>
+            <li>Свойства источников</li>
+            <li>Нормативы (НУР)</li>
+            <li>Отчеты</li>
+            <li>Назад</li>
+            <li><a th:href="@{/logout}">Выход</a></li>
+        </ul>
     </div>
     <div class="output-area">Добро пожаловать!</div>
 </div>

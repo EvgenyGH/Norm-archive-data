@@ -8,20 +8,30 @@
     border: dotted red;
 }
 
-.menu {
+.menu-area {
     position: fixed;
     top: 15vh;
     left: 1vw;
     width: 18%;
     font-size: 3em;
     padding-left: 1%;
-
     border: 1px solid green;
 }
 
 .sub-menu {
-    padding-left: 5%;
+    padding-left: 3%;
+    font-size: 0.65em;
+    list-style-type: none;
+}
+
+.sub-sub-menu {
+    padding-left: 3%;
     font-size: 0.8em;
+    list-style-type: none;
+}
+
+ul {
+    margin-top: -1%;
 }
 
 .output-area {
@@ -30,3 +40,6 @@
     border: dodgerblue dashed medium;
 }
 
+.test {
+    border: dodgerblue dashed medium;
+}
