@@ -8,18 +8,18 @@
 </head>
 <body>
 <div class="welcome-container test-two">
-    <div class="welcome-title test-one">Welcome title</div>
+    <div class="welcome-title test-one" th:utext="${title}">Welcome!</div>
     <div class="menu-area">Меню
         <ul class="sub-menu">
             <li sec:authorize="hasRole('ADMIN')">Пользователи
-                <ul class="sub-sub-menu">
+                <ul class="sub-sub-menu" th:classappend="${activeMenu.user}">
                     <li>Список пользователей</li>
                     <li>Добавить пользователя</li>
                     <li>Удалить пользователя</li>
                 </ul>
             </li>
             <li>Источники
-                <ul class="sub-sub-menu">
+                <ul class="sub-sub-menu" th:classappend="${activeMenu.source}">
                     <li>Список источников</li>
                     <li>Добавить источник</li>
                     <li>Удалить источник</li>
@@ -28,7 +28,7 @@
                 </ul>
             </li>
             <li>Тарифные зоны
-                <ul class="sub-sub-menu">
+                <ul class="sub-sub-menu" th:classappend="${activeMenu.tariffZone}">
                     <li>Список тарифных зон</li>
                     <li>Добавить тарифную зону</li>
                     <li>Удалить тфрифную зону</li>
@@ -37,7 +37,7 @@
                 </ul>
             </li>
             <li>Свойства источников
-                <ul class="sub-sub-menu">
+                <ul class="sub-sub-menu" th:classappend="${activeMenu.sourceProperty}">
                     <li>Список свойств</li>
                     <li>Добавить свойство</li>
                     <li>Удалить свойство</li>
@@ -46,7 +46,7 @@
                 </ul>
             </li>
             <li>Нормативы (НУР)
-                <ul class="sub-sub-menu">
+                <ul class="sub-sub-menu" th:classappend="${activeMenu.ssfc}">
                     <li>Вывести НУР</li>
                     <li>Добавить НУР источника</li>
                     <li>Удалить НУР источника</li>
@@ -55,7 +55,7 @@
                 </ul>
             </li>
             <li>Отчеты
-                <ul class="sub-sub-menu">
+                <ul class="sub-sub-menu" th:classappend="${activeMenu.report}">
                     <li>Отчет источники</li>
                     <li>Отчет тарифные зоны</li>
                     <li>Отчет свойства источника</li>

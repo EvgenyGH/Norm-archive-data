@@ -41,12 +41,11 @@ public class SecurityConfiguration {
 
         http.httpBasic(Customizer.withDefaults());
 
-        http.formLogin(conf -> conf.defaultSuccessUrl("/welcome"));
+        http.formLogin(conf -> conf.defaultSuccessUrl("/source"));
 
         http.authorizeHttpRequests(conf ->
                 conf
-                        .requestMatchers("/welcome/**",
-                                "/source/**",
+                        .requestMatchers("/source/**",
                                 "/property/**",
                                 "/zone/**",
                                 "/ssfc/**",

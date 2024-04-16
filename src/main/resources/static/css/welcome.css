@@ -45,6 +45,10 @@ ul {
     margin-top: -1%;
 }
 
+.inactive {
+    display: none;
+}
+
 .test-one {
     border: dodgerblue solid medium;
 }
