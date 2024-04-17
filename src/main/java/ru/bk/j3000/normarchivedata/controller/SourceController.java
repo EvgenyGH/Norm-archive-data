@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import ru.bk.j3000.normarchivedata.service.ModelService;
 import ru.bk.j3000.normarchivedata.service.SourceService;
 
+import java.util.Set;
+
 @Controller
 @RequiredArgsConstructor
 public class SourceController {
@@ -16,8 +18,7 @@ public class SourceController {
     @GetMapping("/source")
     public String welcome(Model model) {
         model.addAttribute("title", "Источники");
-        var attribute = modelService.getActiveMenuAttribute("source");
-        model.addAttribute("activeMenu", attribute);
+        model.addAttribute("activeMenu", Set.of("source"));
 
         return "welcome";
     }

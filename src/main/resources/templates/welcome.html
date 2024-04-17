@@ -12,14 +12,14 @@
     <div class="menu-area">Меню
         <ul class="sub-menu">
             <li sec:authorize="hasRole('ADMIN')"><a href="/user">Пользователи</a>
-                <ul class="sub-sub-menu" th:classappend="${activeMenu.user}">
+                <ul class="sub-sub-menu" th:if="${activeMenu.contains('user')}">
                     <li>Список пользователей</li>
                     <li>Добавить пользователя</li>
                     <li>Удалить пользователя</li>
                 </ul>
             </li>
             <li><a href="/source">Источники</a>
-                <ul class="sub-sub-menu" th:classappend="${activeMenu.source}">
+                <ul class="sub-sub-menu" th:if="${activeMenu.contains('source')}">
                     <li>Список источников</li>
                     <li>Добавить источник</li>
                     <li>Удалить источник</li>
@@ -28,7 +28,7 @@
                 </ul>
             </li>
             <li><a href="/tariffzone">Тарифные зоны</a>
-                <ul class="sub-sub-menu" th:classappend="${activeMenu.tariffZone}">
+                <ul class="sub-sub-menu" th:if="${activeMenu.contains('tariffZone')}">
                     <li>Список тарифных зон</li>
                     <li>Добавить тарифную зону</li>
                     <li>Удалить тфрифную зону</li>
@@ -37,7 +37,7 @@
                 </ul>
             </li>
             <li><a href="/sourceproperty">Свойства источников</a>
-                <ul class="sub-sub-menu" th:classappend="${activeMenu.sourceProperty}">
+                <ul class="sub-sub-menu" th:if="${activeMenu.contains('sourceProperty')}">
                     <li>Список свойств</li>
                     <li>Добавить свойство</li>
                     <li>Удалить свойство</li>
@@ -46,7 +46,7 @@
                 </ul>
             </li>
             <li><a href="ssfc">Нормативы (НУР)</a>
-                <ul class="sub-sub-menu" th:classappend="${activeMenu.ssfc}">
+                <ul class="sub-sub-menu" th:if="${activeMenu.contains('ssfc')}">
                     <li>Вывести НУР</li>
                     <li>Добавить НУР источника</li>
                     <li>Удалить НУР источника</li>
@@ -55,7 +55,7 @@
                 </ul>
             </li>
             <li><a href="/report">Отчеты</a>
-                <ul class="sub-sub-menu" th:classappend="${activeMenu.report}">
+                <ul class="sub-sub-menu" th:if="${activeMenu.contains('report')}">
                     <li>Отчет источники</li>
                     <li>Отчет тарифные зоны</li>
                     <li>Отчет свойства источника</li>

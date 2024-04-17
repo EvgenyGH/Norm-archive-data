@@ -7,6 +7,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import ru.bk.j3000.normarchivedata.service.ModelService;
 
+import java.util.Set;
+
 @Controller
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class TariffZoneController {
@@ -15,8 +17,7 @@ public class TariffZoneController {
     @GetMapping("/tariffzone")
     public String welcome(Model model) {
         model.addAttribute("title", "Тарифные зоны");
-        var attribute = modelService.getActiveMenuAttribute("tariffZone");
-        model.addAttribute("activeMenu", attribute);
+        model.addAttribute("activeMenu", Set.of("tariffZone"));
 
         return "welcome";
     }

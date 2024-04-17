@@ -7,6 +7,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import ru.bk.j3000.normarchivedata.service.ModelService;
 
+import java.util.Set;
+
 @Controller
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class UserController {
@@ -15,8 +17,7 @@ public class UserController {
     @GetMapping("/user")
     public String welcome(Model model) {
         model.addAttribute("title", "Пользователи");
-        var attribute = modelService.getActiveMenuAttribute("user");
-        model.addAttribute("activeMenu", attribute);
+        model.addAttribute("activeMenu", Set.of("user"));
 
         return "welcome";
     }
