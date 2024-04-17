@@ -9,12 +9,12 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import ru.bk.j3000.normarchivedata.exception.fileParseException;
 import ru.bk.j3000.normarchivedata.model.SOURCE_TYPE;
 import ru.bk.j3000.normarchivedata.model.Source;
 import ru.bk.j3000.normarchivedata.repository.SourceRepository;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
@@ -42,7 +42,7 @@ public class SourceServiceImpl implements SourceService {
     }
 
     @Override
-    public void uploadSources(File file) {
+    public void uploadSources(MultipartFile file) {
         List<Source> sources = readSrcFromFile(file);
         deleteAllSources();
         saveSources(sources);
@@ -80,10 +80,10 @@ public class SourceServiceImpl implements SourceService {
         return sources;
     }
 
-    private List<Source> readSrcFromFile(File file) {
+    private List<Source> readSrcFromFile(MultipartFile file) {
         List<Source> sources;
 
-        try (Workbook wb = new XSSFWorkbook(file)) {
+        try (Workbook wb = new XSSFWorkbook(file.getResource().getFile())) {
             Sheet sheet = wb.getSheet("sources");
             checkHeader(sheet.getRow(0));
 

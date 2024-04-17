@@ -6,14 +6,17 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import ru.bk.j3000.normarchivedata.model.SOURCE_TYPE;
 import ru.bk.j3000.normarchivedata.model.Source;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
+import static java.nio.file.Files.readAllBytes;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
@@ -26,8 +29,9 @@ public class SourceServiceImplTest {
 
     @Test
     @DisplayName("Upload sources from file")
-    public void whenReadSourcesFromFileAndGetSourcesFromDataBaseThenSourcesNumberIsEqual() {
-        service.uploadSources(file);
+    public void whenReadSourcesFromFileAndGetSourcesFromDataBaseThenSourcesNumberIsEqual() throws IOException {
+        service.uploadSources(new MockMultipartFile(file.getName(), file.getName(), "text/plain",
+                readAllBytes(file.toPath())));
 
         assertThat(service.getAllSources().size()).isEqualTo(141);
     }

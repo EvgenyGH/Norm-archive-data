@@ -51,6 +51,21 @@ ul {
     display: none;
 }
 
+
+.upload-form {
+    border-left: dotted thin black;
+}
+
+.upload-form label {
+    display: block;
+}
+
+.upload-form input {
+    display: none;
+}
+
+
+
 .test-one {
     border: dodgerblue solid medium;
 }

@@ -1,9 +1,9 @@
 package ru.bk.j3000.normarchivedata.service;
 
 import jakarta.transaction.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import ru.bk.j3000.normarchivedata.model.Source;
 
-import java.io.File;
 import java.util.List;
 import java.util.UUID;
 
@@ -14,7 +14,7 @@ public interface SourceService {
     @Transactional
     void saveSources(List<Source> sources);
 
-    void uploadSources(File file);
+    void uploadSources(MultipartFile file);
 
     void deleteAllSources();
 

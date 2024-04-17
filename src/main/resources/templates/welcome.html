@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/security">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Нормативные удельные расходы топлива</title>
     <link rel="stylesheet" type="text/css" media="all"
           href="../static/css/welcome.css" th:href="@{/css/welcome.css}">
 </head>
@@ -23,8 +23,16 @@
                     <li>Список источников</li>
                     <li>Добавить источник</li>
                     <li>Удалить источник</li>
-                    <li sec:authorize="hasRole('ADMIN')">Загрузить из файла</li>
-                    <li sec:authorize="hasRole('ADMIN')">Скачать шаблон</li>
+                    <li sec:authorize="hasRole('ADMIN')">
+                        <form class="upload-form" th:action="@{source/template}" method="post"
+                              enctype="multipart/form-data">
+                            <label for="file-upload-source">Выбрать файл</label>
+                            <input type="file" id="file-upload-source" name="file">
+                            <label for="upload-submit-source">Загрузить файл</label>
+                            <input type="submit" id="upload-submit-source">
+                        </form>
+                    </li>
+                    <li sec:authorize="hasRole('ADMIN')"><a href="source/template">Скачать шаблон</a></li>
                 </ul>
             </li>
             <li><a href="/tariffzone">Тарифные зоны</a>
@@ -65,7 +73,9 @@
             <li><a th:href="@{/logout}">Выход</a></li>
         </ul>
     </div>
-    <div class="output-area test-two">Добро пожаловать!</div>
+    <div class="output-area test-two">Добро пожаловать!
+        <div th:if="true" th:replace="~{source::all-sources (${sources})}">Все источники</div>
+    </div>
 </div>
 </body>
 </html>
