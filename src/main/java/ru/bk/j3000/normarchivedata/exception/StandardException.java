@@ -3,10 +3,10 @@ package ru.bk.j3000.normarchivedata.exception;
 import lombok.Getter;
 
 @Getter
-public class standardException extends RuntimeException {
+public class StandardException extends RuntimeException {
     private final String objectName;
 
-    public standardException(String message, String objectName) {
+    public StandardException(String message, String objectName) {
         super(message);
         this.objectName = objectName;
     }

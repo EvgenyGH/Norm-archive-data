@@ -2,11 +2,11 @@ package ru.bk.j3000.normarchivedata.exception;
 
 import lombok.Getter;
 
-public class fileParseException extends standardException {
+public class FileParseException extends StandardException {
     @Getter
     private final int lineNumber;
 
-    public fileParseException(String message, String objectName, int lineNumber) {
+    public FileParseException(String message, String objectName, int lineNumber) {
         super(message, objectName);
         this.lineNumber = lineNumber;
     }

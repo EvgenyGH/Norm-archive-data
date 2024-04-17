@@ -3,14 +3,14 @@ package ru.bk.j3000.normarchivedata.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import ru.bk.j3000.normarchivedata.exception.fileParseException;
+import ru.bk.j3000.normarchivedata.exception.FileParseException;
+import ru.bk.j3000.normarchivedata.exception.FileReadException;
 import ru.bk.j3000.normarchivedata.model.SOURCE_TYPE;
 import ru.bk.j3000.normarchivedata.model.Source;
 import ru.bk.j3000.normarchivedata.repository.SourceRepository;
@@ -83,22 +83,22 @@ public class SourceServiceImpl implements SourceService {
     private List<Source> readSrcFromFile(MultipartFile file) {
         List<Source> sources;
 
-        try (Workbook wb = new XSSFWorkbook(file.getResource().getFile())) {
+        try (Workbook wb = new XSSFWorkbook(file.getInputStream())) {
             Sheet sheet = wb.getSheet("sources");
             checkHeader(sheet.getRow(0));
 
             sources = IntStream.rangeClosed(1, sheet.getLastRowNum())
                     .mapToObj(sheet::getRow)
                     .map(row -> new Source(null,
-                            row.getCell(1).getStringCellValue().trim(),
-                            row.getCell(2).getStringCellValue().trim(),
+                            row.getCell(1).getStringCellValue()
+                                    .trim().replaceAll("«|»", "\""),
+                            row.getCell(2).getStringCellValue()
+                                    .trim().replaceAll("«|»", "\""),
                             getSrcType(row)))
                     .toList();
 
         } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (InvalidFormatException e) {
-            throw new RuntimeException(e);
+            throw new FileReadException(e.getMessage(), "Uploaded file sources");
         }
 
         log.info("Sources read from file ({} in total).", sources.size());
@@ -115,7 +115,7 @@ public class SourceServiceImpl implements SourceService {
             case "МК" -> SOURCE_TYPE.MK;
             case "ПК" -> SOURCE_TYPE.PK;
             case "АИТ" -> SOURCE_TYPE.AIT;
-            default -> throw new fileParseException(
+            default -> throw new FileParseException(
                     String.format("Неверный тип источника (%s).", srcTypeStr),
                     row.getCell(1).getStringCellValue().trim(),
                     row.getRowNum());
@@ -130,7 +130,7 @@ public class SourceServiceImpl implements SourceService {
     private void checkHeader(Row row) {
         if (IntStream.rangeClosed(0, row.getLastCellNum() - 1)
                 .anyMatch(num -> !row.getCell(num).getStringCellValue().equals(srcTemplateColumns[num]))) {
-            throw new fileParseException("Измененный шаблон.", "-", row.getRowNum());
+            throw new FileParseException("Измененный шаблон.", "-", row.getRowNum());
         }
 
         log.debug("Headers OK!");

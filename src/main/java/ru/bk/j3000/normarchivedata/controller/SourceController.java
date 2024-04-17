@@ -49,8 +49,9 @@ public class SourceController {
     }
 
     @PostMapping("/source/template")
-    public String uploadSources(@RequestParam("file") MultipartFile file) {
+    public String uploadSources(@RequestParam("file") MultipartFile file, Model model) {
         sourceService.uploadSources(file);
-        return "welcome";
+
+        return "redirect:/source";
     }
 }
