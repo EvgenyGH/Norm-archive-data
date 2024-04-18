@@ -20,7 +20,7 @@
             </li>
             <li><a href="/source">Источники</a>
                 <ul class="sub-sub-menu" th:if="${activeMenu.contains('source')}">
-                    <li>Список источников</li>
+                    <li><a href="/source">Список источников</a></li>
                     <li>Добавить источник</li>
                     <li>Удалить источник</li>
                     <li sec:authorize="hasRole('ADMIN')">

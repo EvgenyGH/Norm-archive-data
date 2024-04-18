@@ -13,12 +13,6 @@ public enum SOURCE_TYPE {
             return "КТС";
         }
     },
-    AIT {
-        @Override
-        public String getName(){
-            return "АИТ";
-        }
-    },
     MK {
         @Override
         public String getName(){
@@ -29,6 +23,12 @@ public enum SOURCE_TYPE {
         @Override
         public String getName(){
             return "ПК";
+        }
+    },
+    AIT {
+        @Override
+        public String getName() {
+            return "АИТ";
         }
     };
 

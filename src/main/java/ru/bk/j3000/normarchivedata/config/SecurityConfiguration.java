@@ -41,7 +41,8 @@ public class SecurityConfiguration {
 
         http.httpBasic(Customizer.withDefaults());
 
-        http.formLogin(conf -> conf.defaultSuccessUrl("/source"));
+        http.formLogin(conf -> conf
+                .defaultSuccessUrl("/source", true));
 
         http.authorizeHttpRequests(conf ->
                 conf

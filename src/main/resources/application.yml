@@ -12,6 +12,10 @@ spring:
   sql:
     init:
       mode: never
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
 logging:
   level:
     ru.bk.j3000.normarchivedata: info

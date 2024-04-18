@@ -9,16 +9,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.MimeType;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.bk.j3000.normarchivedata.service.ModelService;
 import ru.bk.j3000.normarchivedata.service.SourceService;
 
 import java.net.MalformedURLException;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 @Controller
 @RequiredArgsConstructor
@@ -54,4 +54,12 @@ public class SourceController {
 
         return "redirect:/source";
     }
+
+    @DeleteMapping("/source/delete/{sourceId}")
+    public String deleteSources(Model model, @PathVariable("sourceId") UUID sourceId) {
+        sourceService.deleteSourcesById(List.of(sourceId));
+
+        return "redirect:/source";
+    }
 }
+

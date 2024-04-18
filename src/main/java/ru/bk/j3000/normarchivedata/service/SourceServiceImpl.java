@@ -73,7 +73,10 @@ public class SourceServiceImpl implements SourceService {
 
     @Override
     public List<Source> getAllSources() {
-        List<Source> sources = sourceRepository.findAll();
+        List<Source> sources = sourceRepository.findAll()
+                .stream()
+                .sorted((s1, s2) -> s1.getSourceType().ordinal() - s2.getSourceType().ordinal())
+                .toList();
 
         log.info("Sources read from database ({} in total)", sources.size());
 
