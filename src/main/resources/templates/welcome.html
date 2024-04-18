@@ -8,6 +8,7 @@
 </head>
 <body>
 <div class="welcome-container">
+    <div th:class="${shadow} ?: _"></div>
     <div class="welcome-title" th:utext="${title}">Welcome!</div>
     <div class="menu-area">Меню
         <ul class="sub-menu">
@@ -22,7 +23,6 @@
                 <ul class="sub-sub-menu" th:if="${activeMenu.contains('source')}">
                     <li><a href="/source">Список источников</a></li>
                     <li>Добавить источник</li>
-                    <li>Удалить источник</li>
                     <li sec:authorize="hasRole('ADMIN')">
                         <form class="upload-form" th:action="@{source/template}" method="post"
                               enctype="multipart/form-data">

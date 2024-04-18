@@ -86,9 +86,18 @@ th, td {
 
 th {
     white-space: nowrap;
-
 }
 
+.shadow {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 20;
+    opacity: 50%;
+    background-color: black;
+    width: 100vw;
+    height: 100vh;
+}
 
 .test-one {
     border: dodgerblue solid medium;

@@ -17,7 +17,11 @@
                 <td th:text="*{name}">Example</td>
                 <td th:text="*{address}">Example</td>
                 <td th:text="*{sourceType.getName()}">Example</td>
-                <td>Изменить</td>
+                <td>
+                    <form th:action="@{'source//' + *{id}}" th:method="delete">
+                        <input type="submit" value="Измпенить">
+                    </form>
+                </td>
                 <td>
                     <form th:action="@{'source/delete/' + *{id}}" th:method="delete">
                         <input type="submit" value="Удалить">
@@ -26,6 +30,10 @@
             </tr>
         </table>
     </div>
+</div>
+
+<div th:fragment="alter-source">
+
 </div>
 
 </body>

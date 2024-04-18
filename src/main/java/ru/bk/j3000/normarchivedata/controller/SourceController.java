@@ -61,5 +61,12 @@ public class SourceController {
 
         return "redirect:/source";
     }
+
+    @GetMapping("/source/alter")
+    public String alterSources(Model model) {
+
+
+        return "welcome";
+    }
 }
 
