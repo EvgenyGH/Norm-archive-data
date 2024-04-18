@@ -73,8 +73,27 @@
             <li><a th:href="@{/logout}">Выход</a></li>
         </ul>
     </div>
-    <div class="output-area test-two">Добро пожаловать!
+    <div class="output-area">
         <div th:if="true" th:replace="~{source::all-sources (${sources})}">Все источники</div>
+        <div th:remove="all">
+            <table>
+                <th>UUID</th>
+                <th>Источник</th>
+                <th>Адрес источника</th>
+                <th>Тип источника</th>
+                <th>Изменить</th>
+                <th>Удалить</th>
+
+                <tr th:remove="all">
+                    <td>Example</td>
+                    <td>Example</td>
+                    <td>Example</td>
+                    <td>Example</td>
+                    <td>Изменить</td>
+                    <td>Удалить</td>
+                </tr>
+            </table>
+        </div>
     </div>
 </div>
 </body>

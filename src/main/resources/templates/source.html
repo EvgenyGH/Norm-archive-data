@@ -6,14 +6,12 @@
 <div th:fragment="all-sources (sources)">
     <div>
         <table>
-            <thead>UUID</thead>
-            <thead>Источник</thead>
-            <thead>Адрес источника</thead>
-            <thead>Тип источника</thead>
-            <thead>Изменить</thead>
-            <thead>Удалить</thead>
-            <thead></thead>
-            <thead></thead>
+            <th>UUID</th>
+            <th>Источник</th>
+            <th>Адрес источника</th>
+            <th>Тип источника</th>
+            <th>Изменить</th>
+            <th>Удалить</th>
             <tr th:each="source : ${sources}" th:object="${source}">
                 <td th:text="*{id}">Example</td>
                 <td th:text="*{name}">Example</td>
@@ -21,7 +19,7 @@
                 <td th:text="*{sourceType.getName()}">Example</td>
                 <td>Изменить</td>
                 <td>Удалить</td>
-            <tr>
+            </tr>
         </table>
     </div>
 </div>
