@@ -48,14 +48,14 @@ public class SourceController {
     }
 
     @PostMapping("/source/template")
-    public String uploadSources(@RequestParam("file") MultipartFile file, Model model) {
+    public String uploadSources(@RequestParam("file") MultipartFile file) {
         sourceService.uploadSources(file);
 
         return "redirect:/source";
     }
 
     @DeleteMapping("/source/delete/{sourceId}")
-    public String deleteSources(Model model, @PathVariable("sourceId") UUID sourceId) {
+    public String deleteSources(@PathVariable("sourceId") UUID sourceId) {
         sourceService.deleteSourcesById(List.of(sourceId));
 
         return "redirect:/source";
@@ -69,7 +69,7 @@ public class SourceController {
     }
 
     @PutMapping("/source")
-    public String putSource(Model model, @ModelAttribute("source") Source source) {
+    public String putSource(@ModelAttribute("source") Source source) {
         sourceService.saveSource(source);
 
         return "redirect:/source";

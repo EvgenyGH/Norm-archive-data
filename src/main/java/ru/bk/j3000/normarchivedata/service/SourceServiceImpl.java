@@ -16,6 +16,7 @@ import ru.bk.j3000.normarchivedata.model.Source;
 import ru.bk.j3000.normarchivedata.repository.SourceRepository;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -76,7 +77,7 @@ public class SourceServiceImpl implements SourceService {
     public List<Source> getAllSources() {
         List<Source> sources = sourceRepository.findAll()
                 .stream()
-                .sorted((s1, s2) -> s1.getSourceType().ordinal() - s2.getSourceType().ordinal())
+                .sorted(Comparator.comparingInt(s -> s.getSourceType().ordinal()))
                 .toList();
 
         log.info("Sources read from database ({} in total)", sources.size());
@@ -95,9 +96,9 @@ public class SourceServiceImpl implements SourceService {
                     .mapToObj(sheet::getRow)
                     .map(row -> new Source(null,
                             row.getCell(1).getStringCellValue()
-                                    .trim().replaceAll("«|»", "\""),
+                                    .trim().replaceAll("[«»]", "\""),
                             row.getCell(2).getStringCellValue()
-                                    .trim().replaceAll("«|»", "\""),
+                                    .trim().replaceAll("[«»]", "\""),
                             getSrcType(row)))
                     .toList();
 
