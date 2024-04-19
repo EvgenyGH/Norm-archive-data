@@ -8,7 +8,7 @@
 </head>
 <body>
 <div class="welcome-container">
-    <div th:class="${shadow} ?: _"></div>
+    <div th:if="${shadow}" class="shadow"></div>
     <div class="welcome-title" th:utext="${title}">Welcome!</div>
     <div class="menu-area">Меню
         <ul class="sub-menu">
@@ -22,7 +22,7 @@
             <li><a href="/source">Источники</a>
                 <ul class="sub-sub-menu" th:if="${activeMenu.contains('source')}">
                     <li><a href="/source">Список источников</a></li>
-                    <li>Добавить источник</li>
+                    <li><a th:href="@{/source/alter}">Добавить источник</a></li>
                     <li sec:authorize="hasRole('ADMIN')">
                         <form class="upload-form" th:action="@{source/template}" method="post"
                               enctype="multipart/form-data">
@@ -53,7 +53,7 @@
                     <li>Скачать шаблон</li>
                 </ul>
             </li>
-            <li><a href="ssfc">Нормативы (НУР)</a>
+            <li><a href="/ssfc">Нормативы (НУР)</a>
                 <ul class="sub-sub-menu" th:if="${activeMenu.contains('ssfc')}">
                     <li>Вывести НУР</li>
                     <li>Добавить НУР источника</li>
@@ -74,7 +74,7 @@
         </ul>
     </div>
     <div class="output-area">
-        <div th:if="true" th:replace="~{source::all-sources (${sources})}">Все источники</div>
+        <div th:if="${activeMenu.contains('source')}" th:insert="~{source::all-sources (${sources})}">sources</div>
         <div th:remove="all">
             <table>
                 <th>UUID</th>
@@ -83,8 +83,7 @@
                 <th>Тип источника</th>
                 <th>Изменить</th>
                 <th>Удалить</th>
-
-                <tr th:remove="all">
+                <tr>
                     <td>Example</td>
                     <td>Example</td>
                     <td>Example</td>
@@ -94,6 +93,7 @@
                 </tr>
             </table>
         </div>
+        <div th:if="${alterSource}" th:insert="~{source::alter-source (${source})}">alter source</div>
     </div>
 </div>
 </body>

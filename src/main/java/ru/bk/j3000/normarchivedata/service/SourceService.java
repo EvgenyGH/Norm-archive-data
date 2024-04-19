@@ -5,6 +5,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.bk.j3000.normarchivedata.model.Source;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface SourceService {
@@ -23,4 +24,6 @@ public interface SourceService {
     void updateSource(Source source);
 
     List<Source> getAllSources();
+
+    Optional<Source> getSourceById(UUID id);
 }

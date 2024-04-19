@@ -53,7 +53,7 @@ public class SecurityConfiguration {
                                 "/report/**",
                                 "/css/*")
                         .hasRole("USER")
-                        .requestMatchers("/user")
+                        .requestMatchers("/user/**")
                         .hasRole("ADMIN")
                         .anyRequest()
                         .denyAll()

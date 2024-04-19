@@ -71,10 +71,6 @@ ul {
     display: none;
 }
 
-table, td, th {
-
-}
-
 table {
     border-collapse: collapse;
 }
@@ -97,6 +93,25 @@ th {
     background-color: black;
     width: 100vw;
     height: 100vh;
+}
+
+.alter-source {
+    position: absolute;
+    top: 15vh;
+    text-align: left;
+    left: 25vw;
+    right: 25vw;
+    color: red;
+    z-index: 30;
+    font-size: 2em;
+}
+
+.alter-source input[type=text] {
+    width: 100%;
+}
+
+.alter-source #id {
+    background: darkgrey;
 }
 
 .test-one {

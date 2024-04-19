@@ -17,6 +17,7 @@ import ru.bk.j3000.normarchivedata.repository.SourceRepository;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.IntStream;
 
@@ -137,5 +138,14 @@ public class SourceServiceImpl implements SourceService {
         }
 
         log.debug("Headers OK!");
+    }
+
+    @Override
+    public Optional<Source> getSourceById(UUID id) {
+        Optional<Source> source = sourceRepository.findById(id);
+
+        log.info("Source id {} requested from database. Result {}. ", id, source.isPresent());
+
+        return source;
     }
 }

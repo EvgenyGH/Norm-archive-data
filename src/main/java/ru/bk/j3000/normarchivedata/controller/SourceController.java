@@ -11,13 +11,14 @@ import org.springframework.ui.Model;
 import org.springframework.util.MimeType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import ru.bk.j3000.normarchivedata.model.Source;
 import ru.bk.j3000.normarchivedata.service.ModelService;
 import ru.bk.j3000.normarchivedata.service.SourceService;
 
 import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Set;
+import java.util.Optional;
 import java.util.UUID;
 
 @Controller
@@ -28,9 +29,7 @@ public class SourceController {
 
     @GetMapping("/source")
     public String welcome(Model model) {
-        model.addAttribute("title", "Источники");
-        model.addAttribute("activeMenu", Set.of("source"));
-        model.addAttribute("sources", sourceService.getAllSources());
+        model.addAllAttributes(modelService.getAllSourcesViewAttributes());
 
         return "welcome";
     }
@@ -63,10 +62,17 @@ public class SourceController {
     }
 
     @GetMapping("/source/alter")
-    public String alterSources(Model model) {
-
+    public String alterSources(Model model, @RequestParam(name = "id", required = false) Optional<UUID> sourceId) {
+        model.addAllAttributes(modelService.getAlterSourceAttributes(sourceId));
 
         return "welcome";
+    }
+
+    @PutMapping("/source")
+    public String putSource(Model model, @ModelAttribute("source") Source source) {
+        sourceService.saveSource(source);
+
+        return "redirect:/source";
     }
 }
 
