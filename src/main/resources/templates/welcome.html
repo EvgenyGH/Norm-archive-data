@@ -32,7 +32,9 @@
                             <input type="submit" id="upload-submit-source">
                         </form>
                     </li>
-                    <li sec:authorize="hasRole('ADMIN')"><a href="source/template">Скачать шаблон</a></li>
+                    <li sec:authorize="hasRole('ADMIN')">
+                        <a class="source-template" href="source/template">Скачать шаблон</a>
+                    </li>
                 </ul>
             </li>
             <li><a href="/tariffzone">Тарифные зоны</a>

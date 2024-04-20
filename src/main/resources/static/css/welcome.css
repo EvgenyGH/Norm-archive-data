@@ -30,6 +30,17 @@
     background-color: white;
 }
 
+.menu-area a, .menu-area a:visited,
+.alter-source a, .alter-source a:visited {
+    text-decoration: none;
+    color: black;
+}
+
+.menu-area a:hover, .menu-area label:hover,
+.alter-source a:hover {
+    color: royalblue;
+}
+
 .sub-menu {
     padding-left: 3%;
     font-size: 0.65em;
@@ -59,7 +70,7 @@ ul {
 }
 
 
-.upload-form {
+.upload-form, .source-template {
     border-left: dotted thin black;
 }
 
@@ -101,7 +112,7 @@ th {
     text-align: left;
     left: 25vw;
     right: 25vw;
-    color: red;
+    color: black;
     z-index: 30;
     font-size: 2em;
 }
@@ -113,6 +124,13 @@ th {
 .alter-source #id {
     background: darkgrey;
 }
+
+.sources-list tr:hover {
+    background: lavender;
+}
+
+
+
 
 .test-one {
     border: dodgerblue solid medium;
