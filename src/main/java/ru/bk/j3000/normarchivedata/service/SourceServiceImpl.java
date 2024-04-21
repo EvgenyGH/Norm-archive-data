@@ -7,6 +7,8 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.bk.j3000.normarchivedata.exception.FileParseException;
@@ -16,6 +18,8 @@ import ru.bk.j3000.normarchivedata.model.Source;
 import ru.bk.j3000.normarchivedata.repository.SourceRepository;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -148,5 +152,19 @@ public class SourceServiceImpl implements SourceService {
         log.info("Source id {} requested from database. Result {}. ", id, source.isPresent());
 
         return source;
+    }
+
+    @Override
+    public Resource getTemplate() {
+        Path path = Path.of("src/main/resources/exceltemplates/sources.xlsm");
+        try {
+            Resource resource = new UrlResource(path.toUri());
+
+            log.info("Source template resource created.");
+
+            return resource;
+        } catch (MalformedURLException e) {
+            throw new FileReadException("Error reading template file.", "Source template.");
+        }
     }
 }

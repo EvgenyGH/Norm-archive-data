@@ -2,7 +2,6 @@ package ru.bk.j3000.normarchivedata.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -15,8 +14,6 @@ import ru.bk.j3000.normarchivedata.model.Source;
 import ru.bk.j3000.normarchivedata.service.ModelService;
 import ru.bk.j3000.normarchivedata.service.SourceService;
 
-import java.net.MalformedURLException;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -35,16 +32,14 @@ public class SourceController {
     }
 
     @GetMapping("/source/template")
-    public ResponseEntity<Resource> getTemplate() throws MalformedURLException {
-        Path path = Path.of("src/main/resources/exceltemplates/sources.xlsm");
-        Resource resource = new UrlResource(path.toUri());
+    public ResponseEntity<Resource> getTemplate() {
 
         return ResponseEntity
                 .ok()
                 .contentType(MediaType.asMediaType(MimeType.valueOf("application/vnd.ms-excel")))
                 .header(HttpHeaders.CONTENT_DISPOSITION,
                         "attachment; filename=sourceTemplate.xlsm")
-                .body(resource);
+                .body(sourceService.getTemplate());
     }
 
     @PostMapping("/source/template")

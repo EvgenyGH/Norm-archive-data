@@ -8,6 +8,21 @@
 </head>
 <body>
 <div class="welcome-container">
+    <div class="output-area">
+        <!--/* Пользователи */-->
+
+        <!--/* Источники */-->
+        <div th:if="${activeMenu.contains('source')}"
+             th:insert="~{source::all-sources (${sources})}">sources
+        </div>
+        <div th:if="${alterSource}" th:insert="~{source::alter-source (${source})}">alter source</div>
+
+        <!--/* Тарифные зоны */-->
+        <!--/* Свойства источников */-->
+        <!--/* НУР */-->
+        <!--/* Отчеты */-->
+        <!--/* Ошибки */-->
+    </div>
     <div th:if="${shadow}" class="shadow"></div>
     <div class="welcome-title" th:utext="${title}">Welcome!</div>
     <div class="menu-area">Меню
@@ -74,28 +89,6 @@
             </li>
             <li><a th:href="@{/logout}">Выход</a></li>
         </ul>
-    </div>
-    <div class="output-area">
-        <div th:if="${activeMenu.contains('source')}" th:insert="~{source::all-sources (${sources})}">sources</div>
-        <div th:remove="all">
-            <table>
-                <th>UUID</th>
-                <th>Источник</th>
-                <th>Адрес источника</th>
-                <th>Тип источника</th>
-                <th>Изменить</th>
-                <th>Удалить</th>
-                <tr>
-                    <td>Example</td>
-                    <td>Example</td>
-                    <td>Example</td>
-                    <td>Example</td>
-                    <td>Изменить</td>
-                    <td>Удалить</td>
-                </tr>
-            </table>
-        </div>
-        <div th:if="${alterSource}" th:insert="~{source::alter-source (${source})}">alter source</div>
     </div>
 </div>
 </body>

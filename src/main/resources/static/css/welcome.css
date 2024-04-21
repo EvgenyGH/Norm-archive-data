@@ -128,14 +128,3 @@ th {
 .sources-list tr:hover {
     background: lavender;
 }
-
-
-
-
-.test-one {
-    border: dodgerblue solid medium;
-}
-
-.test-two {
-    border: #f60428 solid medium;
-}

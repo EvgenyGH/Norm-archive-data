@@ -1,6 +1,7 @@
 package ru.bk.j3000.normarchivedata.service;
 
 import jakarta.transaction.Transactional;
+import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 import ru.bk.j3000.normarchivedata.model.Source;
 
@@ -26,4 +27,6 @@ public interface SourceService {
     List<Source> getAllSources();
 
     Optional<Source> getSourceById(UUID id);
+
+    Resource getTemplate();
 }

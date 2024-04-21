@@ -13,13 +13,12 @@ import java.util.*;
 @Slf4j
 @RequiredArgsConstructor
 public class ModelServiceImpl implements ModelService {
-    private final static Map<String, String> ACTIVE_MENU = Map.of("source", "inactive",
-            "sourceProperty", "inactive",
-            "tariffZone", "inactive",
-            "user", "inactive",
-            "ssfc", "inactive",
-            "report", "inactive");
-
+    //    private final static Map<String, String> ACTIVE_MENU = Map.of("source", "inactive",
+//            "sourceProperty", "inactive",
+//            "tariffZone", "inactive",
+//            "user", "inactive",
+//            "ssfc", "inactive",
+//            "report", "inactive");
     private final SourceService sourceService;
 
     @Override
@@ -37,7 +36,8 @@ public class ModelServiceImpl implements ModelService {
                     new EntityNotFoundException("Source id {} not found " + sourceId.get())));
         }
 
-        log.info("Alter source attributes created. Source id {}.", sourceId.isEmpty() ? "new" : sourceId.get());
+        log.info("Alter source attributes created. Source id {}.",
+                sourceId.isEmpty() ? "new" : sourceId.get());
 
         return attributes;
     }
@@ -54,4 +54,6 @@ public class ModelServiceImpl implements ModelService {
 
         return attributes;
     }
+
+
 }
