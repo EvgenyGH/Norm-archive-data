@@ -1,7 +1,6 @@
 package ru.bk.j3000.normarchivedata.service.admin;
 
-
-import org.apache.catalina.User;
+import org.springframework.security.core.userdetails.User;
 import ru.bk.j3000.normarchivedata.model.UserDTO;
 
 import java.util.List;
