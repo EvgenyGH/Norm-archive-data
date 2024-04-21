@@ -8,4 +8,6 @@ public interface ModelService {
     Map<String, Object> getAlterSourceAttributes(Optional<UUID> sourceId);
 
     Map<String, Object> getAllSourcesViewAttributes();
+
+    Map<String, Object> getAllUsersViewAttributes();
 }

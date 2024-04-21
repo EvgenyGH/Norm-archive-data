@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.bk.j3000.normarchivedata.model.SOURCE_TYPE;
 import ru.bk.j3000.normarchivedata.model.Source;
+import ru.bk.j3000.normarchivedata.service.admin.UserService;
 
 import java.util.*;
 
@@ -13,13 +14,15 @@ import java.util.*;
 @Slf4j
 @RequiredArgsConstructor
 public class ModelServiceImpl implements ModelService {
-    //    private final static Map<String, String> ACTIVE_MENU = Map.of("source", "inactive",
-//            "sourceProperty", "inactive",
-//            "tariffZone", "inactive",
-//            "user", "inactive",
-//            "ssfc", "inactive",
-//            "report", "inactive");
+    private final static String[] ACTIVE_MENU = {
+            "user",
+            "source",
+            "tariffZone",
+            "sourceProperty",
+            "ssfc",
+            "report"};
     private final SourceService sourceService;
+    private final UserService userService;
 
     @Override
     public Map<String, Object> getAlterSourceAttributes(Optional<UUID> sourceId) {
@@ -51,6 +54,19 @@ public class ModelServiceImpl implements ModelService {
         attributes.put("sources", sourceService.getAllSources());
 
         log.info("All sources view attributes created.");
+
+        return attributes;
+    }
+
+    @Override
+    public Map<String, Object> getAllUsersViewAttributes() {
+        Map<String, Object> attributes = new HashMap<>();
+
+        attributes.put("title", "Пользователи");
+        attributes.put("activeMenu", Set.of("user"));
+        attributes.put("users", userService.getAllUsers());
+
+        log.info("All users view attributes created.");
 
         return attributes;
     }
