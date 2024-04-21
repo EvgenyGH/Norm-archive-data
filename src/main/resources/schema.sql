@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS source, tariff_zone, standard_sfc, source_properties CASCADE;
+DROP TABLE IF EXISTS source, tariff_zone, standard_sfc, source_properties, users, authorities CASCADE;
 
 CREATE TABLE IF NOT EXISTS source
 (
@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS standard_sfc
 (
     ssfc_id       UUID             NOT NULL,
     source_id     UUID             NOT NULL,
-    ssfc_year INTEGER NOT NULL,
+    ssfc_year INTEGER     NOT NULL,
     generation    DOUBLE PRECISION NOT NULL,
     own_needs     DOUBLE PRECISION NOT NULL,
     production    DOUBLE PRECISION NOT NULL,
@@ -47,3 +47,19 @@ CREATE TABLE IF NOT EXISTS standard_sfc
     CONSTRAINT pk_ssfc PRIMARY KEY (ssfc_id),
     CONSTRAINT fk_source_prop FOREIGN KEY (source_id, ssfc_year) REFERENCES source_properties (source_id, ssfc_year)
 );
+
+CREATE TABLE IF NOT EXISTS users
+(
+    username VARCHAR(50)  NOT NULL PRIMARY KEY,
+    password VARCHAR(500) NOT NULL,
+    enabled  BOOLEAN      NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS authorities
+(
+    username  VARCHAR(50) NOT NULL,
+    authority VARCHAR(50) NOT NULL,
+    CONSTRAINT fk_authorities_users FOREIGN KEY (username) REFERENCES users (username)
+);
+
+CREATE UNIQUE INDEX ix_auth_username ON authorities (username, authority);

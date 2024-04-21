@@ -7,11 +7,13 @@ import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
+import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+
+import javax.sql.DataSource;
 
 @Configuration
 public class SecurityConfiguration {
@@ -21,16 +23,23 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    UserDetailsService userDetails(PasswordEncoder encoder) {
-        var manager = new InMemoryUserDetailsManager();
-        manager.createUser(User.withUsername("admin")
-                .password(encoder.encode("12345"))
-                .roles("ADMIN")
-                .build());
-        manager.createUser(User.withUsername("user")
-                .password(encoder.encode("54321"))
-                .roles("USER")
-                .build());
+    UserDetailsManager userDetails(PasswordEncoder encoder, DataSource dataSource) {
+        var manager = new JdbcUserDetailsManager(dataSource);
+
+        if (!manager.userExists("admin")) {
+            manager.createUser(User.withUsername("admin")
+                    .password(encoder.encode("12345"))
+                    .roles("ADMIN")
+                    .build());
+        }
+
+        if (!manager.userExists("user")) {
+            manager.createUser(User.withUsername("user")
+                    .password(encoder.encode("54321"))
+                    .roles("USER")
+                    .build());
+        }
+
         return manager;
     }
 
