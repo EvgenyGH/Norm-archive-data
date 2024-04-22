@@ -1,11 +1,11 @@
-package ru.bk.j3000.normarchivedata.controller;
+package ru.bk.j3000.normarchivedata.controller.admin;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import ru.bk.j3000.normarchivedata.model.UserDTO;
 import ru.bk.j3000.normarchivedata.service.ModelService;
 import ru.bk.j3000.normarchivedata.service.admin.UserService;
 
@@ -23,8 +23,8 @@ public class UserController {
     }
 
     @PostMapping("/user")
-    public String createUser(@ModelAttribute User user) {
-        userService.createUser(user);
+    public String createUser(@ModelAttribute UserDTO userDTO) {
+        userService.createUser(userDTO);
 
         return "redirect:/user";
     }
@@ -36,9 +36,9 @@ public class UserController {
         return "redirect:/user";
     }
 
-    @PatchMapping("/user")
-    public String updateUser(@ModelAttribute User user) {
-        userService.updateUser(user);
+    @PatchMapping("/user/authority")
+    public String changeUserAuthority(@ModelAttribute UserDTO userDTO) {
+        userService.changeUserAuthorityAndPassword(userDTO);
 
         return "redirect:/user";
     }

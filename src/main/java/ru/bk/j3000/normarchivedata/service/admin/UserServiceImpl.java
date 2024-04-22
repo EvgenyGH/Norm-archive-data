@@ -3,7 +3,9 @@ package ru.bk.j3000.normarchivedata.service.admin;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
 import ru.bk.j3000.normarchivedata.model.UserDTO;
@@ -17,29 +19,36 @@ import java.util.List;
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserDetailsManager userDetailsManager;
+    private final PasswordEncoder passwordEncoder;
     private final JdbcTemplate jdbcTemplate;
-    private final String selectAllAuthorities = "SELECT * FROM authorities ORDER by authority";
+    private final String selectAllAuthorities = "SELECT u.username as name, a.authority " +
+            "FROM users u " +
+            "LEFT JOIN authorities a ON u.username=a.username " +
+            "ORDER by name, authority";
 
     @Override
     public List<UserDTO> getAllUsers() {
         List<UserDTO> usersDTO = jdbcTemplate.query(selectAllAuthorities, this::userDTOrowMap);
 
-        log.info("User authorities received from database ({} in total).", usersDTO.size());
+        log.info("All usernames and authorities received from database ({} in total).", usersDTO.size());
 
         return usersDTO;
     }
 
     private UserDTO userDTOrowMap(ResultSet resultSet, int i) throws SQLException {
-        return new UserDTO(resultSet.getString("username"),
+        return new UserDTO(resultSet.getString("name"),
                 resultSet.getString("authority"));
     }
 
 
     @Override
-    public void createUser(User user) {
-        userDetailsManager.createUser(user);
+    public void createUser(UserDTO userDTO) {
+        userDetailsManager.createUser(User.withUsername(userDTO.getName())
+                .authorities(userDTO.getAuthority())
+                .password(passwordEncoder.encode(userDTO.getPassword()))
+                .build());
 
-        log.info("User created: name: {}, authority: {}.", user.getUsername(), user.getAuthorities());
+        log.info("User created: name: {}, authority: {}.", userDTO.getName(), userDTO.getAuthority());
     }
 
     @Override
@@ -50,9 +59,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateUser(User user) {
-        userDetailsManager.updateUser(user);
+    public void changeUserAuthorityAndPassword(UserDTO userDTO) {
+        var userDetails = userDetailsManager.loadUserByUsername(userDTO.getName());
+        var newUserDetails = User.withUsername(userDTO.getName())
+                .password(userDTO.getPassword().isBlank() ?
+                        userDetails.getPassword() : passwordEncoder.encode(userDTO.getPassword()))
+                .authorities(userDTO.getAuthority().isBlank() ?
+                        userDetails.getAuthorities() :
+                        List.of(new SimpleGrantedAuthority(userDTO.getAuthority())))
+                .build();
 
-        log.info("User updated. Name: {}, authority: {}.", user.getUsername(), user.getAuthorities());
+        userDetailsManager.updateUser(userDetails);
+
+        log.info("User authority {}. Name: {}, authority: {}.",
+                userDTO.getPassword().isBlank() ? "" : "and password",
+                newUserDetails.getUsername(), newUserDetails.getAuthorities());
     }
+
+    //todo add admin filter
 }

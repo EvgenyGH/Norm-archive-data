@@ -40,6 +40,8 @@ public class SecurityConfiguration {
                     .build());
         }
 
+        System.out.println("--->>>>>>>>>>>>>>>>" + "Original");
+
         return manager;
     }
 
