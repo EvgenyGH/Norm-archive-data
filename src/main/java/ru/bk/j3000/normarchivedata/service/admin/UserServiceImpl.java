@@ -69,10 +69,11 @@ public class UserServiceImpl implements UserService {
                         List.of(new SimpleGrantedAuthority(userDTO.getAuthority())))
                 .build();
 
-        userDetailsManager.updateUser(userDetails);
+        newUserDetails = User.withUsername("name").password("pwd1").authorities("auth  changed").build();
+        userDetailsManager.updateUser(newUserDetails);
 
-        log.info("User authority {}. Name: {}, authority: {}.",
-                userDTO.getPassword().isBlank() ? "" : "and password",
+        log.info("User authority {}changed. Name: {}, authority: {}.",
+                userDTO.getPassword().isBlank() ? "" : "and password ",
                 newUserDetails.getUsername(), newUserDetails.getAuthorities());
     }
 
