@@ -33,7 +33,7 @@ public class UserController {
     }
 
     @PostMapping("/user")
-    public String createUser(@ModelAttribute UserDTO userDTO) {
+    public String createUser(@ModelAttribute(name = "user") UserDTO userDTO) {
         userService.createUser(userDTO);
 
         return "redirect:/user";
@@ -46,8 +46,8 @@ public class UserController {
         return "redirect:/user";
     }
 
-    @PatchMapping("/user/authority")
-    public String changeUserAuthority(@ModelAttribute UserDTO userDTO) {
+    @PatchMapping("/user")
+    public String changeUserAuthority(@ModelAttribute(name = "user") UserDTO userDTO) {
         userService.changeUserAuthorityAndPassword(userDTO);
 
         return "redirect:/user";

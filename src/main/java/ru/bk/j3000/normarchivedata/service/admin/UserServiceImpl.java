@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void createUser(UserDTO userDTO) {
         userDetailsManager.createUser(User.withUsername(userDTO.getName())
-                .authorities(userDTO.getAuthority())
+                .roles(userDTO.getAuthority())
                 .password(passwordEncoder.encode(userDTO.getPassword()))
                 .build());
 

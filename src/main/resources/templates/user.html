@@ -32,16 +32,16 @@
 </div>
 
 <div class="alter-user" th:fragment="alter-user (user)">
-    <form th:action="@{/user}" th:method="PUT" th:object="${user}">
+    <form th:action="@{/user}" th:method="POST" th:object="${user}" th:with="newUser=${user.name} == ''">
         <fieldset>
-            <legend th:text="${user.name == '' ?
-                'Создать новго пользователя:' : 'Изменить данные пользователя:' + user.authority}">
+            <legend th:text="${newUser ?
+                'Создать новго пользователя:' : 'Изменить данные пользователя:'}">
             </legend>
             <label th:for="@{#ids.next('name')}">Имя пользователя:</label>
             <br>
-            <input th:if="${user.name} != ''" type="text" th:field="*{name}" th:placeholder="Новый"
+            <input th:if="${!newUser}" type="text" th:field="*{name}" th:placeholder="Новый"
                    th:value="${user.name}" readonly>
-            <input th:if="${user.name} == ''" type="text" th:field="*{name}" th:placeholder="Новый"
+            <input th:if="${newUser}" type="text" th:field="*{name}" th:placeholder="Новый"
                    th:value="${user.name}">
             <label th:for="@{#ids.next('password')}">Пароль:</label>
             <br>
@@ -50,13 +50,14 @@
             <br>
             <div>Роль:</div>
             <label for="admin">Администратор</label>
-            <input type="radio" id="admin" name="authority" th:value="admin"
+            <input type="radio" id="admin" name="authority" th:value="ADMIN"
                    th:checked="${user.authority == 'ROLE_ADMIN' ? 'checked' : _}">
             <label for="user">Пользователь</label>
-            <input type="radio" id="user" name="authority" th:value="user"
+            <input type="radio" id="user" name="authority" th:value="USER"
                    th:checked="${user.authority == 'ROLE_USER' ? 'checked' : _}">
             <br>
-            <input type="submit" th:value="Сохранить">
+            <input th:if="${newUser}" type="submit" th:value="Сохранить">
+            <input th:if="${!newUser}" type="submit" th:value="Сохранить" th:formmethod="PATCH">
             <a th:href="@{/user}">Отмена</a>
         </fieldset>
     </form>

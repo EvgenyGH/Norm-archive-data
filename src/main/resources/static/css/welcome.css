@@ -125,8 +125,8 @@ th {
     width: 100%;
 }
 
-.alter-source #id,
-.alter-user #name {
+.alter-source input[readonly],
+.alter-user input[readonly] {
     background: darkgrey;
 }
 
