@@ -31,13 +31,14 @@
 }
 
 .menu-area a, .menu-area a:visited,
-.alter-source a, .alter-source a:visited {
+.alter-source a, .alter-source a:visited,
+.alter-user a, .alter-user a:visited {
     text-decoration: none;
     color: black;
 }
 
 .menu-area a:hover, .menu-area label:hover,
-.alter-source a:hover {
+.alter-source a:hover, .alter-user a:hover {
     color: royalblue;
 }
 
@@ -106,7 +107,8 @@ th {
     height: 100vh;
 }
 
-.alter-source {
+.alter-source,
+.alter-user {
     position: absolute;
     top: 15vh;
     text-align: left;
@@ -117,14 +119,18 @@ th {
     font-size: 2em;
 }
 
-.alter-source input[type=text] {
+.alter-source input[type=text],
+.alter-user input[type=password],
+.alter-user input[type=text] {
     width: 100%;
 }
 
-.alter-source #id {
+.alter-source #id,
+.alter-user #name {
     background: darkgrey;
 }
 
-.sources-list tr:hover {
+.sources-list tr:hover,
+.users-list tr:hover {
     background: lavender;
 }

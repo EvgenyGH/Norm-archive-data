@@ -14,6 +14,7 @@ import ru.bk.j3000.normarchivedata.model.UserDTO;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -75,5 +76,20 @@ public class UserServiceImpl implements UserService {
         log.info("User authority {}changed. Name: {}, authority: {}.",
                 userDTO.getPassword().isBlank() ? "" : "and password ",
                 newUserDetails.getUsername(), newUserDetails.getAuthorities());
+    }
+
+    @Override
+    public Optional<UserDTO> getUserByName(String name) {
+        UserDTO user = null;
+
+        if (userDetailsManager.userExists(name)) {
+            var userDetails = userDetailsManager.loadUserByUsername(name);
+            user = new UserDTO(userDetails.getUsername(),
+                    userDetails.getAuthorities().iterator().next().getAuthority());
+        }
+
+        log.info("User {} found. UserDTO created.", name);
+
+        return Optional.ofNullable(user);
     }
 }

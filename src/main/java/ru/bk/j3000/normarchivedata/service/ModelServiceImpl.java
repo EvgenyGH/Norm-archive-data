@@ -6,6 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.bk.j3000.normarchivedata.model.SOURCE_TYPE;
 import ru.bk.j3000.normarchivedata.model.Source;
+import ru.bk.j3000.normarchivedata.model.UserDTO;
+import ru.bk.j3000.normarchivedata.model.admin.SECURITY_ROLES;
 import ru.bk.j3000.normarchivedata.service.admin.UserService;
 
 import java.util.*;
@@ -36,7 +38,7 @@ public class ModelServiceImpl implements ModelService {
             attributes.put("source", new Source(null, "", "", SOURCE_TYPE.RTS));
         } else {
             attributes.put("source", sourceService.getSourceById(sourceId.get()).orElseThrow(() ->
-                    new EntityNotFoundException("Source id {} not found " + sourceId.get())));
+                    new EntityNotFoundException("Source not found. Id " + sourceId.get())));
         }
 
         log.info("Alter source attributes created. Source id {}.",
@@ -71,5 +73,24 @@ public class ModelServiceImpl implements ModelService {
         return attributes;
     }
 
+    @Override
+    public Map<String, Object> getAlterUsersAttributes(Optional<String> name) {
+        HashMap<String, Object> attributes = new HashMap<>();
 
+        attributes.put("shadow", true);
+        attributes.put("alterUser", true);
+        attributes.put("activeMenu", Collections.emptySet());
+
+        if (name.isEmpty()) {
+            attributes.put("user", new UserDTO("", "", SECURITY_ROLES.ROLE_USER.name()));
+        } else {
+            attributes.put("user", userService.getUserByName(name.get()).orElseThrow(() ->
+                    new EntityNotFoundException("User not found. Name " + name.get())));
+        }
+
+        log.info("Alter user attributes created. User name is {}.",
+                name.orElse("new"));
+
+        return attributes;
+    }
 }

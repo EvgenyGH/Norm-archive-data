@@ -10,4 +10,6 @@ public interface ModelService {
     Map<String, Object> getAllSourcesViewAttributes();
 
     Map<String, Object> getAllUsersViewAttributes();
+
+    Map<String, Object> getAlterUsersAttributes(Optional<String> name);
 }

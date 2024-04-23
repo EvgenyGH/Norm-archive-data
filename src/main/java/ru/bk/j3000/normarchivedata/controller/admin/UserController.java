@@ -9,6 +9,8 @@ import ru.bk.j3000.normarchivedata.model.UserDTO;
 import ru.bk.j3000.normarchivedata.service.ModelService;
 import ru.bk.j3000.normarchivedata.service.admin.UserService;
 
+import java.util.Optional;
+
 @Controller
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class UserController {
@@ -18,6 +20,14 @@ public class UserController {
     @GetMapping("/user")
     public String welcome(Model model) {
         model.addAllAttributes(modelService.getAllUsersViewAttributes());
+
+        return "welcome";
+    }
+
+    @GetMapping("/user/alter")
+    public String alterUser(@RequestParam(name = "name", required = false) Optional<String> name,
+                            Model model) {
+        model.addAllAttributes(modelService.getAlterUsersAttributes(name));
 
         return "welcome";
     }

@@ -33,9 +33,8 @@
         <ul class="sub-menu">
             <li sec:authorize="hasRole('ADMIN')"><a href="/user">Пользователи</a>
                 <ul class="sub-sub-menu" th:if="${activeMenu.contains('user')}">
-                    <li>Список пользователей</li>
-                    <li>Добавить пользователя</li>
-                    <li>Удалить пользователя</li>
+                    <li><a th:href="@{/user}">Список пользователей</a></li>
+                    <li><a th:href="@{/user/alter}">Добавить пользователя</a></li>
                 </ul>
             </li>
             <li><a href="/source">Источники</a>
