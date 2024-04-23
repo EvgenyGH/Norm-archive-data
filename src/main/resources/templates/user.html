@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+<div class="users-list" th:fragment="all-users (users)">
+    <div>
+        <table>
+            <th>Номер</th>
+            <th>Имя</th>
+            <th>Роль</th>
+            <th>Изменить</th>
+            <th>Удалить</th>
+            <tr th:each="user : ${users}" th:object="${user}" th:with="number=${userStat.count}">
+                <td th:text>"${userStat.count}"</td>
+                <td th:text="*{name}">Example</td>
+                <td th:text="*{authority}">Example</td>
+                <td>
+                    <form th:action="@{user/alter}" th:method="get">
+                        <input type="hidden" name="id" th:value="*{name}">
+                        <input type="submit" value="Изменить">
+                    </form>
+                </td>
+                <td>
+                    <form th:action="@{'user/delete/' + *{name}}" th:method="delete">
+                        <input type="submit" value="Удалить">
+                    </form>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div class="alter-user" th:fragment="alter-user (user)">
+    <!--    <form th:action="@{/user}" th:method="PUT" th:object="${user}">-->
+    <!--        <fieldset>-->
+    <!--            <legend th:text="${source.id == null ? 'Создать новый истчник:' : 'Изменить данные источника:'}"></legend>-->
+    <!--            <label th:for="@{#ids.next('id')}">UUID</label>-->
+    <!--            <br>-->
+    <!--            <input type="text" th:field="*{id}" th:placeholder="Новый"-->
+    <!--                   th:value="${source.id}" readonly>-->
+    <!--            <br>-->
+    <!--            <label th:for="@{#ids.next('name')}">Источник</label>-->
+    <!--            <br>-->
+    <!--            <input type="text" th:field="*{name}" placeholder="Имя"-->
+    <!--                   th:value="*{name}">-->
+    <!--            <br>-->
+    <!--            <label th:for="@{#ids.next('address')}">Адрес источника</label>-->
+    <!--            <br>-->
+    <!--            <input type="text" th:field="*{address}" placeholder="Адрес"-->
+    <!--                   th:value="*{address}">-->
+    <!--            <br>-->
+    <!--            <label for="RTS">РТС</label>-->
+    <!--            <input type="radio" id="RTS" name="sourceType" th:value="RTS"-->
+    <!--                   th:checked="${source.sourceType.toString() == 'RTS' ? 'checked' : _}">-->
+    <!--            <label for="KTS">КТС</label>-->
+    <!--            <input type="radio" id="KTS" name="sourceType" th:value="KTS"-->
+    <!--                   th:checked="${source.sourceType.toString() == 'KTS' ? 'checked' : _}">-->
+    <!--            <label for="MK">МК</label>-->
+    <!--            <input type="radio" id="MK" name="sourceType" th:value="MK"-->
+    <!--                   th:checked="${source.sourceType.toString() == 'MK' ? 'checked' : _}">-->
+    <!--            <label for="PK">ПК</label>-->
+    <!--            <input type="radio" id="PK" name="sourceType" th:value="PK"-->
+    <!--                   th:checked="${source.sourceType.toString() == 'PK' ? 'checked' : _}">-->
+    <!--            <label for="AIT">АИТ</label>-->
+    <!--            <input type="radio" id="AIT" name="sourceType" th:value="AIT"-->
+    <!--                   th:checked="${source.sourceType.toString() == 'AIT' ? 'checked' : _}">-->
+    <!--            <br>-->
+    <!--            <input type="submit" th:value="Сохранить">-->
+    <!--            <a th:href="@{/source}">Отмена</a>-->
+    <!--        </fieldset>-->
+    <!--    </form>-->
+</div>
+
+</body>
+</html>

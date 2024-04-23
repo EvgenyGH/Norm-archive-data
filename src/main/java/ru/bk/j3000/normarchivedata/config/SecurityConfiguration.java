@@ -23,7 +23,7 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    UserDetailsManager userDetails(PasswordEncoder encoder, DataSource dataSource) {
+    UserDetailsManager userDetailsManager(PasswordEncoder encoder, DataSource dataSource) {
         var manager = new JdbcUserDetailsManager(dataSource);
 
         if (!manager.userExists("admin")) {
@@ -39,8 +39,6 @@ public class SecurityConfiguration {
                     .roles("USER")
                     .build());
         }
-
-        System.out.println("--->>>>>>>>>>>>>>>>" + "Original");
 
         return manager;
     }
