@@ -11,18 +11,18 @@
             <th>Роль</th>
             <th>Изменить</th>
             <th>Удалить</th>
-            <tr th:each="user : ${users}" th:object="${user}" th:with="number=${userStat.count}">
-                <td th:text>"${userStat.count}"</td>
+            <tr th:each="user : ${users}" th:object="${user}">
+                <td th:text="${userStat.count}"></td>
                 <td th:text="*{name}">Example</td>
                 <td th:text="*{authority}">Example</td>
                 <td>
                     <form th:action="@{user/alter}" th:method="get">
-                        <input type="hidden" name="id" th:value="*{name}">
+                        <input type="hidden" name="name" th:value="*{name}">
                         <input type="submit" value="Изменить">
                     </form>
                 </td>
                 <td>
-                    <form th:action="@{'user/delete/' + *{name}}" th:method="delete">
+                    <form th:action="@{'user/' + *{name}}" th:method="delete">
                         <input type="submit" value="Удалить">
                     </form>
                 </td>
