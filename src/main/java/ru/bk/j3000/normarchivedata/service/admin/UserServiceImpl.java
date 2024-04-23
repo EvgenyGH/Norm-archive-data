@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
@@ -61,7 +62,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void changeUserAuthorityAndPassword(UserDTO userDTO) {
         var userDetails = userDetailsManager.loadUserByUsername(userDTO.getName());
-        var newUserDetails = User.withUsername(userDTO.getName())
+        UserDetails newUserDetails = User.withUsername(userDTO.getName())
                 .password(userDTO.getPassword().isBlank() ?
                         userDetails.getPassword() : passwordEncoder.encode(userDTO.getPassword()))
                 .authorities(userDTO.getAuthority().isBlank() ?
@@ -69,13 +70,10 @@ public class UserServiceImpl implements UserService {
                         List.of(new SimpleGrantedAuthority(userDTO.getAuthority())))
                 .build();
 
-        newUserDetails = User.withUsername("name").password("pwd1").authorities("auth  changed").build();
         userDetailsManager.updateUser(newUserDetails);
 
         log.info("User authority {}changed. Name: {}, authority: {}.",
                 userDTO.getPassword().isBlank() ? "" : "and password ",
                 newUserDetails.getUsername(), newUserDetails.getAuthorities());
     }
-
-    //todo add admin filter
 }

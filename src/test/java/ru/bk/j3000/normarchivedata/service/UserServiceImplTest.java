@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 import ru.bk.j3000.normarchivedata.model.UserDTO;
 import ru.bk.j3000.normarchivedata.service.admin.UserServiceImpl;
 
@@ -23,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
         properties = "spring.main.allow-bean-definition-overriding=true")
 @ActiveProfiles("test")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-//@Transactional
+@Transactional
 public class UserServiceImplTest {
     private final UserServiceImpl userService;
 
