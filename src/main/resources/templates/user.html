@@ -32,7 +32,8 @@
 </div>
 
 <div class="alter-user" th:fragment="alter-user (user, secRoles)">
-    <form th:action="@{/user}" th:method="POST" th:object="${user}" th:with="newUser=${user.name} == ''">
+    <form th:action="@{/user}" th:method="${newUser ? 'post' : 'put'}" th:object="${user}"
+          th:with="newUser=${user.name} == ''">
         <fieldset>
             <legend th:text="${newUser ?
                 'Создать новго пользователя:' : 'Изменить данные пользователя:'}">
@@ -45,13 +46,12 @@
             <input type="password" th:field="*{password}" placeholder="Новый пароль">
             <br>
             <div>Роль:</div>
-            <div th:each="oneRole : ${secRoles}">
+            <th:block th:each="oneRole : ${secRoles}">
                 <label th:for="${#ids.next('role')}" th:text="${oneRole.getRoleName()}"></label>
                 <input type="radio" th:field="*{role}" th:value="${oneRole}">
-            </div>
+            </th:block>
             <br>
-            <input th:if="${newUser}" type="submit" th:value="Сохранить">
-            <input th:if="${!newUser}" type="submit" th:value="Сохранить" th:formmethod="PUT">
+            <input type="submit" th:value="Сохранить">
             <a th:href="@{/user}">Отмена</a>
         </fieldset>
     </form>

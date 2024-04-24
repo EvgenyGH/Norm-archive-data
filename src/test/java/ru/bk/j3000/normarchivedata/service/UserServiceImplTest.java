@@ -27,6 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Transactional
 public class UserServiceImplTest {
     private final UserServiceImpl userService;
+    private final UserDetailsManager manager;
 
     @TestConfiguration
     public static class TestSecurityConfig {
