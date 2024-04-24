@@ -7,12 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import ru.bk.j3000.normarchivedata.model.UserDTO;
+import ru.bk.j3000.normarchivedata.model.admin.SECURITY_ROLES;
 import ru.bk.j3000.normarchivedata.service.admin.UserServiceImpl;
 
 import javax.sql.DataSource;
@@ -31,7 +31,7 @@ public class UserServiceImplTest {
     @TestConfiguration
     public static class TestSecurityConfig {
         @Bean
-        UserDetailsManager userDetails(PasswordEncoder encoder, DataSource dataSource) {
+        UserDetailsManager userDetailsManager(DataSource dataSource) {
             return new JdbcUserDetailsManager(dataSource);
         }
     }
@@ -40,7 +40,7 @@ public class UserServiceImplTest {
     @DisplayName("Get all users test.")
     public void whenSaveThreeUsersThenGetThreeUsersFromDatabase() {
         IntStream.rangeClosed(1, 3).forEach(i -> userService
-                .createUser(new UserDTO("user" + i, "psw" + i, "auth" + i)));
+                .createUser(new UserDTO("user" + i, "psw" + i, SECURITY_ROLES.ROLE_USER)));
 
         assertThat(userService.getAllUsers()).hasSize(3);
     }
@@ -48,7 +48,7 @@ public class UserServiceImplTest {
     @Test
     @DisplayName("Create User test.")
     public void whenCreateUserThenGetUserFromDatabase() {
-        userService.createUser(new UserDTO("user", "psw", "auth"));
+        userService.createUser(new UserDTO("user", "psw", SECURITY_ROLES.ROLE_USER));
 
         assertThat(userService.getAllUsers())
                 .hasSize(1)
@@ -60,25 +60,25 @@ public class UserServiceImplTest {
     @Test
     @DisplayName("Change User authority test.")
     public void whenChangeUserAuthorityThenGetUpdatedUserAuthorityFromDatabase() {
-        var user = new UserDTO("user", "psw", "auth");
+        var user = new UserDTO("user", "psw", SECURITY_ROLES.ROLE_USER);
 
         userService.createUser(user);
 
-        user = new UserDTO("user", "psw", "auth changed");
+        user = new UserDTO("user", "psw", SECURITY_ROLES.ROLE_ADMIN);
 
         userService.changeUserAuthorityAndPassword(user);
 
         assertThat(userService.getAllUsers())
                 .hasSize(1)
                 .element(0)
-                .extracting("authority")
-                .isEqualTo("auth changed");
+                .extracting("role")
+                .isEqualTo(SECURITY_ROLES.ROLE_ADMIN);
     }
 
     @Test
     @DisplayName("Delete User By Name test.")
     public void whenDeleteUserByNameThenUserIsDeletedFromDatabase() {
-        userService.createUser(new UserDTO("user", "psw", "auth"));
+        userService.createUser(new UserDTO("user", "psw", SECURITY_ROLES.ROLE_USER));
         userService.deleteUserByName("user");
 
         assertThat(userService.getAllUsers()).hasSize(0);

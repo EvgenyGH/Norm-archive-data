@@ -46,7 +46,7 @@ public class UserController {
         return "redirect:/user";
     }
 
-    @PatchMapping("/user")
+    @PutMapping("/user")
     public String changeUserAuthority(@ModelAttribute(name = "user") UserDTO userDTO) {
         userService.changeUserAuthorityAndPassword(userDTO);
 

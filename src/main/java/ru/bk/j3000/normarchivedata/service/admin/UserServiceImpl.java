@@ -1,20 +1,20 @@
 package ru.bk.j3000.normarchivedata.service.admin;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
 import ru.bk.j3000.normarchivedata.model.UserDTO;
+import ru.bk.j3000.normarchivedata.model.admin.SECURITY_ROLES;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -39,18 +39,18 @@ public class UserServiceImpl implements UserService {
 
     private UserDTO userDTOrowMap(ResultSet resultSet, int i) throws SQLException {
         return new UserDTO(resultSet.getString("name"),
-                resultSet.getString("authority"));
+                SECURITY_ROLES.valueOf(resultSet.getString("authority")));
     }
 
 
     @Override
     public void createUser(UserDTO userDTO) {
         userDetailsManager.createUser(User.withUsername(userDTO.getName())
-                .roles(userDTO.getAuthority())
+                .roles(userDTO.getRole().getRole())
                 .password(passwordEncoder.encode(userDTO.getPassword()))
                 .build());
 
-        log.info("User created: name: {}, authority: {}.", userDTO.getName(), userDTO.getAuthority());
+        log.info("User created: name: {}, authority: {}.", userDTO.getName(), userDTO.getRole().getRole());
     }
 
     @Override
@@ -64,32 +64,33 @@ public class UserServiceImpl implements UserService {
     public void changeUserAuthorityAndPassword(UserDTO userDTO) {
         var userDetails = userDetailsManager.loadUserByUsername(userDTO.getName());
         UserDetails newUserDetails = User.withUsername(userDTO.getName())
-                .password(userDTO.getPassword().isBlank() ?
-                        userDetails.getPassword() : passwordEncoder.encode(userDTO.getPassword()))
-                .authorities(userDTO.getAuthority().isBlank() ?
-                        userDetails.getAuthorities() :
-                        List.of(new SimpleGrantedAuthority(userDTO.getAuthority())))
+                .password(userDTO.getPassword().isBlank() ? userDetails.getPassword()
+                        : passwordEncoder.encode(userDTO.getPassword()))
+                .roles(userDTO.getRole().getRole())
                 .build();
 
         userDetailsManager.updateUser(newUserDetails);
 
-        log.info("User authority {}changed. Name: {}, authority: {}.",
+        log.info("User role {}assigned. Name: {}, role: {}.",
                 userDTO.getPassword().isBlank() ? "" : "and password ",
-                newUserDetails.getUsername(), newUserDetails.getAuthorities());
+                userDTO.getName(), userDTO.getRole().getRole());
     }
 
     @Override
-    public Optional<UserDTO> getUserByName(String name) {
-        UserDTO user = null;
+    public UserDTO getUserByName(String name) {
+        UserDTO user;
 
         if (userDetailsManager.userExists(name)) {
             var userDetails = userDetailsManager.loadUserByUsername(name);
             user = new UserDTO(userDetails.getUsername(),
-                    userDetails.getAuthorities().iterator().next().getAuthority());
+                    SECURITY_ROLES.valueOf(userDetails.getAuthorities()
+                            .iterator().next().getAuthority()));
+        } else {
+            throw new EntityNotFoundException("User not found. Name " + name);
         }
 
         log.info("User {} found. UserDTO created.", name);
 
-        return Optional.ofNullable(user);
+        return user;
     }
 }

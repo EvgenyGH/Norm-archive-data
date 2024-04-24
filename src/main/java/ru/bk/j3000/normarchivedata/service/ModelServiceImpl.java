@@ -80,12 +80,12 @@ public class ModelServiceImpl implements ModelService {
         attributes.put("shadow", true);
         attributes.put("alterUser", true);
         attributes.put("activeMenu", Collections.emptySet());
+        attributes.put("secRoles", SECURITY_ROLES.values());
 
         if (name.isEmpty()) {
-            attributes.put("user", new UserDTO("", "", SECURITY_ROLES.ROLE_USER.name()));
+            attributes.put("user", new UserDTO("", "", SECURITY_ROLES.ROLE_USER));
         } else {
-            attributes.put("user", userService.getUserByName(name.get()).orElseThrow(() ->
-                    new EntityNotFoundException("User not found. Name " + name.get())));
+            attributes.put("user", userService.getUserByName(name.get()));
         }
 
         log.info("Alter user attributes created. User name is {}.",

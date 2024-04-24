@@ -14,7 +14,7 @@
             <tr th:each="user : ${users}" th:object="${user}">
                 <td th:text="${userStat.count}"></td>
                 <td th:text="*{name}">Example</td>
-                <td th:text="*{authority}">Example</td>
+                <td th:text="*{role.getRoleName()}">Example</td>
                 <td>
                     <form th:action="@{user/alter}" th:method="get">
                         <input type="hidden" name="name" th:value="*{name}">
@@ -31,33 +31,27 @@
     </div>
 </div>
 
-<div class="alter-user" th:fragment="alter-user (user)">
+<div class="alter-user" th:fragment="alter-user (user, secRoles)">
     <form th:action="@{/user}" th:method="POST" th:object="${user}" th:with="newUser=${user.name} == ''">
         <fieldset>
             <legend th:text="${newUser ?
                 'Создать новго пользователя:' : 'Изменить данные пользователя:'}">
             </legend>
-            <label th:for="@{#ids.next('name')}">Имя пользователя:</label>
+            <label th:for="${#ids.next('name')}">Имя пользователя:</label>
             <br>
-            <input th:if="${!newUser}" type="text" th:field="*{name}" th:placeholder="Новый"
-                   th:value="${user.name}" readonly>
-            <input th:if="${newUser}" type="text" th:field="*{name}" th:placeholder="Новый"
-                   th:value="${user.name}">
-            <label th:for="@{#ids.next('password')}">Пароль:</label>
+            <input type="text" th:field="*{name}" th:placeholder="Новый" th:readonly="${!newUser}">
+            <label th:for="${#ids.next('password')}">Пароль:</label>
             <br>
-            <input type="password" th:field="*{password}" placeholder="Новый пароль"
-                   th:value="*{password}">
+            <input type="password" th:field="*{password}" placeholder="Новый пароль">
             <br>
             <div>Роль:</div>
-            <label for="admin">Администратор</label>
-            <input type="radio" id="admin" name="authority" th:value="ADMIN"
-                   th:checked="${user.authority == 'ROLE_ADMIN' ? 'checked' : _}">
-            <label for="user">Пользователь</label>
-            <input type="radio" id="user" name="authority" th:value="USER"
-                   th:checked="${user.authority == 'ROLE_USER' ? 'checked' : _}">
+            <div th:each="oneRole : ${secRoles}">
+                <label th:for="${#ids.next('role')}" th:text="${oneRole.getRoleName()}"></label>
+                <input type="radio" th:field="*{role}" th:value="${oneRole}">
+            </div>
             <br>
             <input th:if="${newUser}" type="submit" th:value="Сохранить">
-            <input th:if="${!newUser}" type="submit" th:value="Сохранить" th:formmethod="PATCH">
+            <input th:if="${!newUser}" type="submit" th:value="Сохранить" th:formmethod="PUT">
             <a th:href="@{/user}">Отмена</a>
         </fieldset>
     </form>

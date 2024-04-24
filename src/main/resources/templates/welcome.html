@@ -13,7 +13,7 @@
         <div th:if="${activeMenu.contains('user')}"
              th:insert="~{user::all-users (${users})}">Users
         </div>
-        <div th:if="${alterUser}" th:insert="~{user::alter-user (${user})}">Alter user</div>
+        <div th:if="${alterUser}" th:insert="~{user::alter-user (${user}, ${secRoles})}">Alter user</div>
 
         <!--/* Источники */-->
         <div th:if="${activeMenu.contains('source')}"

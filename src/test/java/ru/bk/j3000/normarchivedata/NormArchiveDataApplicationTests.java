@@ -1,13 +1,14 @@
 package ru.bk.j3000.normarchivedata;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+import ru.bk.j3000.normarchivedata.model.admin.SECURITY_ROLES;
 
-@SpringBootTest
+
 class NormArchiveDataApplicationTests {
 
     @Test
     void contextLoads() {
+        System.out.println(SECURITY_ROLES.valueOf(SECURITY_ROLES.ROLE_ADMIN.name()));
     }
 
 }
