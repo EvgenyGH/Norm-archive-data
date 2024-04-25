@@ -1,5 +1,6 @@
 package ru.bk.j3000.normarchivedata.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +32,7 @@ import java.util.stream.IntStream;
 @Slf4j
 public class SourceServiceImpl implements SourceService {
     private final String[] srcTemplateColumns = {"UUID", "Источник", "Адрес источника",
-            "Тип источника", "Комментарии" };
+            "Тип источника", "Комментарии"};
     private final SourceRepository sourceRepository;
 
     @Transactional
@@ -72,9 +73,14 @@ public class SourceServiceImpl implements SourceService {
 
     @Override
     public void updateSource(Source source) {
-        sourceRepository.save(source);
+        sourceRepository.findById(source.getId())
+                .ifPresentOrElse(src -> sourceRepository.save(source),
+                        () -> {
+                            throw new EntityNotFoundException(String
+                                    .format("Source id %s not exists.", source.getId()));
+                        });
 
-        log.info("Source updated ({}).", source);
+        log.info("Source id {} updated ({}).", source.getId(), source);
     }
 
     @Override

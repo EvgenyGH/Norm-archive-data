@@ -1,13 +1,19 @@
 package ru.bk.j3000.normarchivedata.service;
 
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.FileUrlResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import ru.bk.j3000.normarchivedata.exception.FileReadException;
 import ru.bk.j3000.normarchivedata.model.TariffZone;
 import ru.bk.j3000.normarchivedata.repository.TariffZoneRepository;
 
+import java.net.MalformedURLException;
 import java.util.List;
 
 @Service
@@ -23,9 +29,12 @@ public class TariffZoneServiceImpl implements TariffZoneService {
 
     @Override
     public void updateTariffZone(TariffZone tariffZone) {
-        tariffZoneRepository. (tariffZone.getId())
-
-        tariffZoneRepository.save(tariffZone);
+        tariffZoneRepository.findById(tariffZone.getId())
+                .ifPresentOrElse(tz -> tariffZoneRepository.save(tariffZone),
+                        () -> {
+                            throw new EntityExistsException(String
+                                    .format("Tariff zone id %s already exists.", tariffZone.getId()));
+                        });
 
         log.info("TariffZone id {} updated ({}).", tariffZone.getId(), tariffZone);
     }
@@ -54,5 +63,23 @@ public class TariffZoneServiceImpl implements TariffZoneService {
         log.info("Tariff zone id {} retrieved from database", id);
 
         return tariffZone;
+    }
+
+    @Override
+    public Resource getTemplate() {
+        try {
+            var resource = new FileUrlResource("/exceltemplates/tariffZone.xlsm");
+
+            log.info("Source template resource created.");
+
+            return resource;
+        } catch (MalformedURLException e) {
+            throw new FileReadException("Error reading template file.", "TariffZone template.");
+        }
+    }
+
+    @Override
+    public void uploadTariffZones(MultipartFile file) {
+
     }
 }
