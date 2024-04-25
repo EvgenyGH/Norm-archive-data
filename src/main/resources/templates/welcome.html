@@ -20,7 +20,6 @@
              th:insert="~{source::all-sources (${sources})}">sources
         </div>
         <div th:if="${alterSource}" th:insert="~{source::alter-source (${source})}">alter source</div>
-
         <!--/* Тарифные зоны */-->
         <!--/* Свойства источников */-->
         <!--/* НУР */-->
@@ -31,15 +30,15 @@
     <div class="welcome-title" th:utext="${title}">Welcome!</div>
     <div class="menu-area">Меню
         <ul class="sub-menu">
-            <li sec:authorize="hasRole('ADMIN')"><a href="/user">Пользователи</a>
+            <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/user}">Пользователи</a>
                 <ul class="sub-sub-menu" th:if="${activeMenu.contains('user')}">
                     <li><a th:href="@{/user}">Список пользователей</a></li>
                     <li><a th:href="@{/user/alter}">Добавить пользователя</a></li>
                 </ul>
             </li>
-            <li><a href="/source">Источники</a>
+            <li><a th:href="@{/source}">Источники</a>
                 <ul class="sub-sub-menu" th:if="${activeMenu.contains('source')}">
-                    <li><a href="/source">Список источников</a></li>
+                    <li><a th:href="@{/source}">Список источников</a></li>
                     <li><a th:href="@{/source/alter}">Добавить источник</a></li>
                     <li sec:authorize="hasRole('ADMIN')">
                         <form class="upload-form" th:action="@{source/template}" method="post"
@@ -55,16 +54,25 @@
                     </li>
                 </ul>
             </li>
-            <li><a href="/tariffzone">Тарифные зоны</a>
+            <li><a th:href="@{/tariffzone}">Тарифные зоны</a>
                 <ul class="sub-sub-menu" th:if="${activeMenu.contains('tariffZone')}">
-                    <li>Список тарифных зон</li>
-                    <li>Добавить тарифную зону</li>
-                    <li>Удалить тфрифную зону</li>
-                    <li sec:authorize="hasRole('ADMIN')">Загрузить из файла</li>
-                    <li sec:authorize="hasRole('ADMIN')">Скачать шаблон</li>
+                    <li><a th:href="@{/tariffzone}">Список тарифных зон</a></li>
+                    <li><a th:href="@{/tariffzone/alter}">Добавить тарифную зону</a></li>
+                    <li sec:authorize="hasRole('ADMIN')">
+                        <form class="upload-form" th:action="@{/tarifzone/template}" method="post"
+                              enctype="multipart/form-data">
+                            <label for="file-upload-tariffzones">Выбрать файл</label>
+                            <input type="file" id="file-upload-tariffzones" name="file">
+                            <label for="upload-submit-tariffzones">Загрузить файл</label>
+                            <input type="submit" id="upload-submit-tariffzones">
+                        </form>
+                    </li>
+                    <li sec:authorize="hasRole('ADMIN')">
+                        <a th:href="@{/tariffzone/template}">Скачать шаблон</a>
+                    </li>
                 </ul>
             </li>
-            <li><a href="/sourceproperty">Свойства источников</a>
+            <li><a th:href="@{/sourceproperty}">Свойства источников</a>
                 <ul class="sub-sub-menu" th:if="${activeMenu.contains('sourceProperty')}">
                     <li>Список свойств</li>
                     <li>Добавить свойство</li>
@@ -73,7 +81,7 @@
                     <li>Скачать шаблон</li>
                 </ul>
             </li>
-            <li><a href="/ssfc">Нормативы (НУР)</a>
+            <li><a th:href="@{/ssfc}">Нормативы (НУР)</a>
                 <ul class="sub-sub-menu" th:if="${activeMenu.contains('ssfc')}">
                     <li>Вывести НУР</li>
                     <li>Добавить НУР источника</li>
@@ -82,7 +90,7 @@
                     <li>Скачать шаблон</li>
                 </ul>
             </li>
-            <li><a href="/report">Отчеты</a>
+            <li><a th:href="@{/report}">Отчеты</a>
                 <ul class="sub-sub-menu" th:if="${activeMenu.contains('report')}">
                     <li>Отчет источники</li>
                     <li>Отчет тарифные зоны</li>

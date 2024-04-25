@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.bk.j3000.normarchivedata.model.SOURCE_TYPE;
 import ru.bk.j3000.normarchivedata.model.Source;
+import ru.bk.j3000.normarchivedata.model.TariffZone;
 import ru.bk.j3000.normarchivedata.model.admin.SECURITY_ROLES;
 import ru.bk.j3000.normarchivedata.model.dto.UserDTO;
 import ru.bk.j3000.normarchivedata.service.admin.UserService;
@@ -25,6 +26,8 @@ public class ModelServiceImpl implements ModelService {
             "report"};
     private final SourceService sourceService;
     private final UserService userService;
+    private final TariffZoneService tariffZoneService;
+    private final StandardSFCService standardSFCService;
 
     @Override
     public Map<String, Object> getAlterSourceAttributes(Optional<UUID> sourceId) {
@@ -100,6 +103,38 @@ public class ModelServiceImpl implements ModelService {
         Map<String, Object> attributes = Map.of("error", errorAttributes);
 
         log.info("Error view attributes created.");
+
+        return attributes;
+    }
+
+    @Override
+    public Map<String, Object> getAllTariffZonesViewAttributes() {
+        Map<String, Object> attributes = new HashMap<>();
+        attributes.put("title", "Тарифные зоны");
+        attributes.put("activeMenu", Set.of("tariffZone"));
+        attributes.put("tariffZones", tariffZoneService.getAllTariffZones());
+
+        log.info("All tariffZones view attributes created.");
+
+        return attributes;
+    }
+
+    @Override
+    public Map<String, Object> getAlterTariffZoneAttributes(Optional<Integer> id) {
+        HashMap<String, Object> attributes = new HashMap<>();
+
+        attributes.put("shadow", true);
+        attributes.put("alterTariffZone", true);
+        attributes.put("activeMenu", Collections.emptySet());
+
+        if (id.isEmpty()) {
+            attributes.put("source", new TariffZone(null, ""));
+        } else {
+            attributes.put("source", tariffZoneService.getTariffZoneById(id.get()));
+        }
+
+        log.info("Alter tariff zone attributes created. Tariff zone id {}.",
+                id.isEmpty() ? "new" : id.get());
 
         return attributes;
     }
