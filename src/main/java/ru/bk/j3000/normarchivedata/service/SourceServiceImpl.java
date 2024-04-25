@@ -162,15 +162,15 @@ public class SourceServiceImpl implements SourceService {
 
     @Override
     public Resource getTemplate() {
-        Path path = Path.of("src/main/resources/exceltemplates/sources.xlsm");
+        Path path = Path.of("src/main/resources/exceltemplates/sourcesTemplate.xlsm");
         try {
             Resource resource = new UrlResource(path.toUri());
 
-            log.info("Source template resource created.");
+            log.info("Sources template resource created.");
 
             return resource;
         } catch (MalformedURLException e) {
-            throw new FileReadException("Error reading template file.", "Source template.");
+            throw new FileReadException("Error reading template file.", "Sources template.");
         }
     }
 }

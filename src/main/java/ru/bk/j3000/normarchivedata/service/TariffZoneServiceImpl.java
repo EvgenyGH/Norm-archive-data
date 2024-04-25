@@ -68,18 +68,18 @@ public class TariffZoneServiceImpl implements TariffZoneService {
     @Override
     public Resource getTemplate() {
         try {
-            var resource = new FileUrlResource("/exceltemplates/tariffZone.xlsm");
+            var resource = new FileUrlResource("/exceltemplates/tariffZoneTemplate.xlsm");
 
-            log.info("Source template resource created.");
+            log.info("TariffZones template resource created.");
 
             return resource;
         } catch (MalformedURLException e) {
-            throw new FileReadException("Error reading template file.", "TariffZone template.");
+            throw new FileReadException("Error reading template file.", "TariffZones template.");
         }
     }
 
     @Override
     public void uploadTariffZones(MultipartFile file) {
-
+        log.warn("----> Got it! In progress");
     }
 }

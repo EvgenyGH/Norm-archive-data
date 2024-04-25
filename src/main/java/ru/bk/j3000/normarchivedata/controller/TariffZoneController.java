@@ -64,7 +64,7 @@ public class TariffZoneController {
                 .ok()
                 .contentType(MediaType.valueOf("application/vnd.ms-excel"))
                 .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=tariffZoneTemplate.xlsm")
+                        "attachment; filename=tariffZonesTemplate.xlsm")
                 .body(tariffZoneService.getTemplate());
     }
 
