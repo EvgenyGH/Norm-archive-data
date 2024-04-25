@@ -4,6 +4,10 @@ import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Sort;
@@ -13,7 +17,9 @@ import ru.bk.j3000.normarchivedata.exception.FileReadException;
 import ru.bk.j3000.normarchivedata.model.TariffZone;
 import ru.bk.j3000.normarchivedata.repository.TariffZoneRepository;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.stream.IntStream;
 
 @Service
 @Slf4j
@@ -79,7 +85,39 @@ public class TariffZoneServiceImpl implements TariffZoneService {
 
     @Override
     public void uploadTariffZones(MultipartFile file) {
+        List<TariffZone> tariffZones = readTariffZonesFromFile(file);
 
-        log.warn("----> Got it! In progress");
+        tariffZoneRepository.deleteAll();
+        tariffZoneRepository.saveAll(tariffZones);
+
+        log.info("Tariff zones loaded to database from file.");
+    }
+
+    private List<TariffZone> readTariffZonesFromFile(MultipartFile file) {
+        List<TariffZone> tariffZones;
+
+        try (Workbook workbook = new XSSFWorkbook(file.getInputStream())) {
+            Sheet sheet = workbook.getSheet("tariffZones");
+
+            checkHeaders(sheet.getRow(0));
+
+            tariffZones = IntStream.rangeClosed(1, sheet.getLastRowNum())
+                    .mapToObj(sheet::getRow)
+                    .map(row -> new TariffZone(
+                            Integer.valueOf(row.getCell(0).getStringCellValue()),
+                            row.getCell(1).getStringCellValue()))
+                    .toList();
+
+        } catch (IOException e) {
+            throw new FileReadException("Error reading excel file.", "TariffZones template.");
+        }
+
+        log.warn("Tariff zones read from file.");
+
+        return tariffZones;
+    }
+
+    private void checkHeaders(Row row) {
+        log.warn("------>>>> Todo");
     }
 }
