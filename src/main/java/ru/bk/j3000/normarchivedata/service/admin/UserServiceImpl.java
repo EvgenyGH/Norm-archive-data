@@ -9,8 +9,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
-import ru.bk.j3000.normarchivedata.model.UserDTO;
 import ru.bk.j3000.normarchivedata.model.admin.SECURITY_ROLES;
+import ru.bk.j3000.normarchivedata.model.dto.UserDTO;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

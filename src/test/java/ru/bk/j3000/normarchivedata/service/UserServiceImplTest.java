@@ -11,8 +11,8 @@ import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
-import ru.bk.j3000.normarchivedata.model.UserDTO;
 import ru.bk.j3000.normarchivedata.model.admin.SECURITY_ROLES;
+import ru.bk.j3000.normarchivedata.model.dto.UserDTO;
 import ru.bk.j3000.normarchivedata.service.admin.UserServiceImpl;
 
 import javax.sql.DataSource;

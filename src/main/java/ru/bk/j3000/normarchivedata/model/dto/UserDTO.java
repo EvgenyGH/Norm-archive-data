@@ -1,4 +1,4 @@
-package ru.bk.j3000.normarchivedata.model;
+package ru.bk.j3000.normarchivedata.model.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

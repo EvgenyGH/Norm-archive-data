@@ -6,8 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.bk.j3000.normarchivedata.model.SOURCE_TYPE;
 import ru.bk.j3000.normarchivedata.model.Source;
-import ru.bk.j3000.normarchivedata.model.UserDTO;
 import ru.bk.j3000.normarchivedata.model.admin.SECURITY_ROLES;
+import ru.bk.j3000.normarchivedata.model.dto.UserDTO;
 import ru.bk.j3000.normarchivedata.service.admin.UserService;
 
 import java.util.*;

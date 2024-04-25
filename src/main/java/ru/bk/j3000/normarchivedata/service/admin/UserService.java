@@ -1,6 +1,6 @@
 package ru.bk.j3000.normarchivedata.service.admin;
 
-import ru.bk.j3000.normarchivedata.model.UserDTO;
+import ru.bk.j3000.normarchivedata.model.dto.UserDTO;
 
 import java.util.List;
 
