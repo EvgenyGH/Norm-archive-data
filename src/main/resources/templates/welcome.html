@@ -20,7 +20,15 @@
              th:insert="~{source::all-sources (${sources})}">sources
         </div>
         <div th:if="${alterSource}" th:insert="~{source::alter-source (${source})}">alter source</div>
+
         <!--/* Тарифные зоны */-->
+        <div th:if="${activeMenu.contains('tariffZone')}"
+             th:insert="~{tariffzone::all-tariff-zones(${tariffZones})}">tariff zones
+        </div>
+        <div th:if="${alterTariffZones}"
+             th:insert="~{tariffzone::alter-tariff-zone(${tariffZone})}">alter tariff zones
+        </div>
+
         <!--/* Свойства источников */-->
         <!--/* НУР */-->
         <!--/* Отчеты */-->
@@ -59,7 +67,7 @@
                     <li><a th:href="@{/tariffzone}">Список тарифных зон</a></li>
                     <li><a th:href="@{/tariffzone/alter}">Добавить тарифную зону</a></li>
                     <li sec:authorize="hasRole('ADMIN')">
-                        <form class="upload-form" th:action="@{/tarifzone/template}" method="post"
+                        <form class="upload-form" th:action="@{/tariffzone/template}" method="post"
                               enctype="multipart/form-data">
                             <label for="file-upload-tariffzones">Выбрать файл</label>
                             <input type="file" id="file-upload-tariffzones" name="file">

@@ -120,7 +120,7 @@ public class TariffZoneServiceImpl implements TariffZoneService {
             throw new FileReadException("Error reading excel file.", "TariffZones template.");
         }
 
-        log.warn("Tariff zones read from file.");
+        log.info("Tariff zones read from file.");
 
         return tariffZones;
     }

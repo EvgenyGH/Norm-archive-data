@@ -29,8 +29,8 @@ public class TariffZoneController {
         return "welcome";
     }
 
-    @GetMapping("/tariffzone/alter/{id}")
-    public String alterTariffZone(@PathVariable(name = "id", required = false) Optional<Integer> id,
+    @GetMapping("/tariffzone/alter")
+    public String alterTariffZone(@RequestParam(name = "id", required = false) Optional<Integer> id,
                                   Model model) {
         model.addAllAttributes(modelService.getAlterTariffZoneAttributes(id));
 
