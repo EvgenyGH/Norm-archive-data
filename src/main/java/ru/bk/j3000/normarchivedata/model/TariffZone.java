@@ -3,6 +3,8 @@ package ru.bk.j3000.normarchivedata.model;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
@@ -15,7 +17,8 @@ import lombok.*;
 public class TariffZone {
     @Id
     @Column(nullable = false, name = "zone_id")
-    @Size(min = 1, max = 30)
+    @Max(30)
+    @Min(1)
     private Integer id;
 
     @Column(name = "zone_name", nullable = false)

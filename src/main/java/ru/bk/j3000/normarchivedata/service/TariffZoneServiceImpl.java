@@ -29,7 +29,15 @@ public class TariffZoneServiceImpl implements TariffZoneService {
 
     @Override
     public void saveTariffZone(TariffZone tariffZone) {
-        tariffZoneRepository.save(tariffZone);
+        tariffZoneRepository.findById(tariffZone.getId())
+                .ifPresentOrElse(
+                        (tz) -> {
+                            throw new EntityExistsException(String
+                                    .format("Tariff zone id %s already exists.", tariffZone.getId()));
+                        },
+                        () -> tariffZoneRepository.save(tariffZone));
+
+        log.info("Tariff zone saved ({}).", tariffZone);
     }
 
     @Override
@@ -37,8 +45,8 @@ public class TariffZoneServiceImpl implements TariffZoneService {
         tariffZoneRepository.findById(tariffZone.getId())
                 .ifPresentOrElse(tz -> tariffZoneRepository.save(tariffZone),
                         () -> {
-                            throw new EntityExistsException(String
-                                    .format("Tariff zone id %s already exists.", tariffZone.getId()));
+                            throw new EntityNotFoundException(String
+                                    .format("Tariff zone id %s not found.", tariffZone.getId()));
                         });
 
         log.info("TariffZone id {} updated ({}).", tariffZone.getId(), tariffZone);
@@ -104,7 +112,7 @@ public class TariffZoneServiceImpl implements TariffZoneService {
             tariffZones = IntStream.rangeClosed(1, sheet.getLastRowNum())
                     .mapToObj(sheet::getRow)
                     .map(row -> new TariffZone(
-                            Integer.valueOf(row.getCell(0).getStringCellValue()),
+                            (int) row.getCell(0).getNumericCellValue(),
                             row.getCell(1).getStringCellValue()))
                     .toList();
 
