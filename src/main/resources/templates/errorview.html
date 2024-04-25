@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/security">
+<head>
+    <meta charset="UTF-8">
+    <title>Ошибка!</title>
+    <link rel="stylesheet" type="text/css" media="all"
+          href="../static/css/error.css" th:href="@{/css/error.css}">
+</head>
+<body>
+<div th:class="server-error">
+    <fieldset>
+        <div th:class="admin-data" sec:authorize="hasRole('ADMIN')">
+            <legend>Ошибка</legend>
+            <fieldset>
+                <legend>Класс ошибки:</legend>
+                <div th:text="${error.className}">Класс ошибки</div>
+            </fieldset>
+            <fieldset>
+                <legend>Сообщение:</legend>
+                <div th:text="${error.message}">Сообщение</div>
+            </fieldset>
+            <br>
+        </div>
+        <form th:action="@{/source}" method="get">
+            <input type="submit" value="Продолжить">
+        </form>
+    </fieldset>
+</div>
+</body>
+</html>

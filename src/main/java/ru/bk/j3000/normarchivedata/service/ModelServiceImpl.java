@@ -93,4 +93,14 @@ public class ModelServiceImpl implements ModelService {
 
         return attributes;
     }
+
+    @Override
+    public Map<String, Object> getErrorAttributes(Exception e) {
+        var errorAttributes = Map.of("message", e.getMessage(), "className", e.getClass().getName());
+        Map<String, Object> attributes = Map.of("error", errorAttributes);
+
+        log.info("Error view attributes created.");
+
+        return attributes;
+    }
 }

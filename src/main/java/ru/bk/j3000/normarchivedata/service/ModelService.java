@@ -12,4 +12,6 @@ public interface ModelService {
     Map<String, Object> getAllUsersViewAttributes();
 
     Map<String, Object> getAlterUsersAttributes(Optional<String> name);
+
+    Map<String, Object> getErrorAttributes(Exception e);
 }
