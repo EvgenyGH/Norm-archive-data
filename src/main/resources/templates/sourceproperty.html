@@ -7,9 +7,19 @@
 
 <body>
 <div class="source-properties-list" th:fragment="all-source-properties(sourceProperties)">
+    <form class="select-year" th:action="@{/sourceproperty}" method="get">
+        <label for="select-year">Год</label>
+        <select id="select-year" name="selectedYear" th:onchange="">
+            <option th:each="n : ${#numbers.sequence(2020, #dates.createNow().getYear() + 1905, 1)}"
+                    th:value="${n}" th:text="${n}"></option>
+        </select>
+        <input type="submit" value="Обновить">
+    </form>
     <table>
         <th>Номер</th>
-        <th>Название</th>
+        <th>Источник</th>
+        <th>Номер филиала</th>
+        <th>Номер тарифной зоны</th>
         <th>Изменить</th>
         <th>Удалить</th>
         <tr th:each="property : ${sourceProperties}" th:object="${property}">
@@ -22,7 +32,8 @@
                 </form>
             </td>
             <td>
-                <form th:action="@{'tariffzone/' + *{id}}" th:method="delete">
+                <form th:action="@{'source/' + *{id}}" th:method="delete">
+                    <input hidden="hidden" name="year" th:object="${year}">
                     <input type="submit" value="Удалить">
                 </form>
             </td>
