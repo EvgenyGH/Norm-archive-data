@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+</head>
+
+<body>
+<div class="source-properties-list" th:fragment="all-source-properties(sourceProperties)">
+    <table>
+        <th>Номер</th>
+        <th>Название</th>
+        <th>Изменить</th>
+        <th>Удалить</th>
+        <tr th:each="property : ${sourceProperties}" th:object="${property}">
+            <td th:text="*{id}">Id</td>
+            <td th:text="*{zoneName}">zoneName</td>
+            <td>
+                <form th:action="@{tariffzone/alter}" th:method="get">
+                    <input type="hidden" name="id" th:value="*{id}">
+                    <input type="submit" value="Изменить">
+                </form>
+            </td>
+            <td>
+                <form th:action="@{'tariffzone/' + *{id}}" th:method="delete">
+                    <input type="submit" value="Удалить">
+                </form>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div class="alter-source-property" th:fragment="alter-source-property(sourceProperty)">
+    <form th:action="@{/sourceproperty}" th:object="${sourceProperty}"
+          th:with="newZone=${tariffZone.id == null}"
+          th:method="${newZone ? 'post' : 'put'}">
+        <fieldset>
+            <legend th:text="${newZone ? 'Создать новую тарифную зону:' + newZone
+                    : 'Изменить данные тарифной зоны:' + newZone}">
+            </legend>
+            <label th:for="${#ids.next('id')}">Номер:</label>
+            <br>
+            <input type="text" th:field="*{id}" placeholder="Номер зоны"
+                   th:readonly="${!newZone}" th:value="tariffZone.id">
+            <br>
+            <label th:for="${#ids.next('zoneName')}">Название тарифной зоны:</label>
+            <br>
+            <input type="text" th:field="*{zoneName}" placeholder="Название тарифной зоны"
+                   th:value="${tariffZone.zoneName}">
+            <br>
+            <input type="submit" value="Сохранить">
+            <a th:href="@{/tariffzone}">Отмена</a>
+        </fieldset>
+    </form>
+</div>
+</body>
+</html>

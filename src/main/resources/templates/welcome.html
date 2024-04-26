@@ -30,6 +30,13 @@
         </div>
 
         <!--/* Свойства источников */-->
+        <div th:if="${activeMenu.contains('sourceProperty')}"
+             th:insert="~{sourceproperty::all-source-properties(${sourceProperties})}">source properties
+        </div>
+        <div th:if="${alterSourceProperty}"
+             th:insert="~{sourceproperty::alter-source-property(${sourceProperty})}">alter source property
+        </div>
+
         <!--/* НУР */-->
         <!--/* Отчеты */-->
         <!--/* Ошибки */-->
@@ -82,11 +89,22 @@
             </li>
             <li><a th:href="@{/sourceproperty}">Свойства источников</a>
                 <ul class="sub-sub-menu" th:if="${activeMenu.contains('sourceProperty')}">
-                    <li>Список свойств</li>
-                    <li>Добавить свойство</li>
-                    <li>Удалить свойство</li>
-                    <li>Загрузить из файла</li>
-                    <li>Скачать шаблон</li>
+                    <li><a th:href="@{/sourceproperty}">Список свойств источников</a></li>
+                    <li><a th:href="@{/sourceproperty/alter}">Добавить свойство источика</a></li>
+                    <li sec:authorize="hasRole('ADMIN')">
+                        <form class="upload-form" th:action="@{/sourceproperty/template}"
+                              method="post" enctype="multipart/form-data">
+                            <label for="file-upload-source-properties">Выбрать файл</label>
+                            <input type="file" id="file-upload-source-properties" name="file">
+                            <label for="upload-submit-source-properties">Загрузить файл</label>
+                            <input type="submit" id="upload-submit-source-properties">
+                        </form>
+                    </li>
+                    <li sec:authorize="hasRole('ADMIN')">
+                        <a class="source-property-template" th:href="@{/sourceproperty/template}">
+                            Скачать шаблон
+                        </a>
+                    </li>
                 </ul>
             </li>
             <li><a th:href="@{/ssfc}">Нормативы (НУР)</a>
