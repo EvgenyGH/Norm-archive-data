@@ -32,13 +32,16 @@
 
 .menu-area a, .menu-area a:visited,
 .alter-source a, .alter-source a:visited,
-.alter-user a, .alter-user a:visited {
+.alter-user a, .alter-user a:visited,
+.alter-tariff-zone a, .alter-tariff-zone a:visited {
     text-decoration: none;
     color: black;
 }
 
 .menu-area a:hover, .menu-area label:hover,
-.alter-source a:hover, .alter-user a:hover {
+.alter-source a:hover,
+.alter-user a:hover,
+.alter-tariff-zone a:hover {
     color: royalblue;
 }
 
@@ -70,8 +73,9 @@ ul {
     display: none;
 }
 
-
-.upload-form, .source-template {
+.upload-form,
+.source-template,
+.tariff-zone-template {
     border-left: dotted thin black;
 }
 
@@ -109,7 +113,8 @@ th {
 }
 
 .alter-source,
-.alter-user {
+.alter-user,
+.alter-tariff-zone {
     position: absolute;
     top: 15vh;
     text-align: left;
@@ -122,16 +127,19 @@ th {
 
 .alter-source input[type=text],
 .alter-user input[type=password],
-.alter-user input[type=text] {
+.alter-user input[type=text],
+.alter-tariff-zone input[type=text] {
     width: 100%;
 }
 
 .alter-source input[readonly],
-.alter-user input[readonly] {
+.alter-user input[readonly],
+.alter-tariff-zone input[readonly] {
     background: darkgrey;
 }
 
 .sources-list tr:hover,
-.users-list tr:hover {
+.users-list tr:hover,
+.tariff-zones-list tr:hover {
     background: lavender;
 }

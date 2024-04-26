@@ -2,6 +2,7 @@ package ru.bk.j3000.normarchivedata.service;
 
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Row;
@@ -95,6 +96,7 @@ public class TariffZoneServiceImpl implements TariffZoneService {
     }
 
     @Override
+    @Transactional
     public void uploadTariffZones(MultipartFile file) {
         List<TariffZone> tariffZones = readTariffZonesFromFile(file);
 

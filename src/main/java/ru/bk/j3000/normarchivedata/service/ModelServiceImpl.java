@@ -128,9 +128,9 @@ public class ModelServiceImpl implements ModelService {
         attributes.put("activeMenu", Collections.emptySet());
 
         if (id.isEmpty()) {
-            attributes.put("source", new TariffZone(null, ""));
+            attributes.put("tariffZone", new TariffZone(null, ""));
         } else {
-            attributes.put("source", tariffZoneService.getTariffZoneById(id.get()));
+            attributes.put("tariffZone", tariffZoneService.getTariffZoneById(id.get()));
         }
 
         log.info("Alter tariff zone attributes created. Tariff zone id {}.",

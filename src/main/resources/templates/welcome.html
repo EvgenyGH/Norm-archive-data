@@ -25,7 +25,7 @@
         <div th:if="${activeMenu.contains('tariffZone')}"
              th:insert="~{tariffzone::all-tariff-zones(${tariffZones})}">tariff zones
         </div>
-        <div th:if="${alterTariffZones}"
+        <div th:if="${alterTariffZone}"
              th:insert="~{tariffzone::alter-tariff-zone(${tariffZone})}">alter tariff zones
         </div>
 
@@ -76,7 +76,7 @@
                         </form>
                     </li>
                     <li sec:authorize="hasRole('ADMIN')">
-                        <a th:href="@{/tariffzone/template}">Скачать шаблон</a>
+                        <a class="tariff-zone-template" th:href="@{/tariffzone/template}">Скачать шаблон</a>
                     </li>
                 </ul>
             </li>

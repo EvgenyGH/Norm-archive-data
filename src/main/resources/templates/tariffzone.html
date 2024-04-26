@@ -31,20 +31,21 @@
 </div>
 
 <div class="alter-tariff-zone" th:fragment="alter-tariff-zone(tariffZone)">
-    <form th:action="@{/tariffzone}" th:object="${tariffZone}" th:with="newZone=${tariffZone.id == null}"
-          th:method="${tariffZone ? 'post' : 'put'}">
+    <form th:action="@{/tariffzone}" th:object="${tariffZone}"
+          th:with="newZone=${tariffZone.id == null}"
+          th:method="${newZone ? 'post' : 'put'}">
         <fieldset>
-            <legend th:text="${newZone ? 'Создать новую тарифную зону:'
-                    : 'Изменить данные тарифной зоны:'}">
+            <legend th:text="${newZone ? 'Создать новую тарифную зону:' + newZone
+                    : 'Изменить данные тарифной зоны:' + newZone}">
             </legend>
             <label th:for="${#ids.next('id')}">Номер:</label>
             <br>
-            <input type="text" th:field="*{id}" th:placeholder="Номер новой зоны"
-                   th:readonly="newZone" th:value="tariffZone.id">
+            <input type="text" th:field="*{id}" placeholder="Номер зоны"
+                   th:readonly="${!newZone}" th:value="tariffZone.id">
             <br>
             <label th:for="${#ids.next('zoneName')}">Название тарифной зоны:</label>
             <br>
-            <input type="text" th:field="*{zoneName}" th:placeholder="Название тарифной зоны"
+            <input type="text" th:field="*{zoneName}" placeholder="Название тарифной зоны"
                    th:value="${tariffZone.zoneName}">
             <br>
             <input type="submit" value="Сохранить">

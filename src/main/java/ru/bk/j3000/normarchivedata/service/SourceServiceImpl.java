@@ -33,7 +33,6 @@ public class SourceServiceImpl implements SourceService {
             "Тип источника", "Комментарии"};
     private final SourceRepository sourceRepository;
 
-    @Transactional
     @Override
     public void saveSources(List<Source> sources) {
         sourceRepository.saveAll(sources);
@@ -57,6 +56,7 @@ public class SourceServiceImpl implements SourceService {
     }
 
     @Override
+    @Transactional
     public void uploadSources(MultipartFile file) {
         List<Source> sources = readSrcFromFile(file);
         deleteAllSources();
