@@ -1,5 +1,6 @@
 package ru.bk.j3000.normarchivedata.service;
 
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -21,10 +22,7 @@ import ru.bk.j3000.normarchivedata.repository.SourceRepository;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.IntStream;
 
 @Service
@@ -44,7 +42,17 @@ public class SourceServiceImpl implements SourceService {
 
     @Override
     public void saveSource(Source source) {
-        sourceRepository.save(source);
+        if (Objects.isNull(source.getId())) {
+            sourceRepository.save(source);
+        } else {
+            sourceRepository.findById(source.getId())
+                    .ifPresentOrElse(s -> {
+                                throw new EntityExistsException(String
+                                        .format("Source id %s already exists", s.getId()));
+                            },
+                            () -> sourceRepository.save(source));
+        }
+
         log.info("Saved source {}.", source.getName());
     }
 

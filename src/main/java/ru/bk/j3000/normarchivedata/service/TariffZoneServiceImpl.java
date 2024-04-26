@@ -13,6 +13,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import ru.bk.j3000.normarchivedata.exception.FileParseException;
 import ru.bk.j3000.normarchivedata.exception.FileReadException;
 import ru.bk.j3000.normarchivedata.model.TariffZone;
 import ru.bk.j3000.normarchivedata.repository.TariffZoneRepository;
@@ -25,6 +26,8 @@ import java.util.stream.IntStream;
 @Slf4j
 @RequiredArgsConstructor
 public class TariffZoneServiceImpl implements TariffZoneService {
+    private final String[] tzTemplateColumns = {"ID", "Название тарифной зоны", "Комментарии"};
+
     private final TariffZoneRepository tariffZoneRepository;
 
     @Override
@@ -126,6 +129,13 @@ public class TariffZoneServiceImpl implements TariffZoneService {
     }
 
     private void checkHeaders(Row row) {
-        log.warn("------>>>> Todo");
+        IntStream.rangeClosed(0, tzTemplateColumns.length - 1)
+                .forEach(i -> {
+                    if (!row.getCell(i).getStringCellValue().equals(tzTemplateColumns[i])) {
+                        throw new FileParseException("Измененный шаблон.", "-", row.getRowNum());
+                    }
+                });
+
+        log.info("Tariff zones template headers are OK.");
     }
 }
