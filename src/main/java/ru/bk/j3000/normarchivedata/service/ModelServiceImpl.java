@@ -150,7 +150,7 @@ public class ModelServiceImpl implements ModelService {
         attributes.put("title", String.format("Свойства источников на %s год", reportYear));
         attributes.put("activeMenu", Set.of("sourceProperty"));
         attributes.put("reportYear", reportYear);
-        attributes.put("sourceProperties", srcPropRepository.findAllPropByYear());
+        attributes.put("sourceProperties", srcPropRepository.findAllPropByYear(reportYear));
 
         log.info("All source properties view attributes for year {} created.", reportYear);
 

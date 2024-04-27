@@ -8,7 +8,7 @@
 <body>
 <div class="source-properties-list" th:fragment="all-source-properties(sourceProperties, reportYear)">
     <form class="select-year" th:action="@{/sourceproperty}" method="get">
-        <label for="select-year">Год</label>
+        <label for="select-year">Выбор отчетного года: </label>
         <select id="select-year" name="selectedYear">
             <option th:each="year : ${#numbers.sequence(2020, #dates.createNow().getYear() + 1905, 1)}"
                     th:value="${year}" th:text="${year}" th:selected="${reportYear == year}"></option>
@@ -19,25 +19,26 @@
         <th>Номер</th>
         <th>Источник</th>
         <th>Номер филиала</th>
-        <th>Номер тарифной зоны</th>
+        <th>Имя тарифной зоны</th>
         <th>Изменить</th>
         <th>Удалить</th>
         <tr th:each="property : ${sourceProperties}" th:object="${property}">
-            <td hidden="hidden" th:text="*{sourceId}">Id источника</td>
+            <td hidden="hidden" th:text="*{id}">Id источника</td>
             <td hidden="hidden" th:text="*{year}">Отчетный год</td>
-            <td th:text="*{sourceName}">Источник (имя)</td>
+            <td th:text="${propertyStat.count}">Номер</td>
+            <td th:text="*{name}">Источник (имя)</td>
             <td th:text="*{branch}">Номер филиала</td>
-            <td th:text="*{tariffZoneName}">Номер тарифной зоны</td>
+            <td th:text="*{zoneName}">Имя тарифной зоны</td>
             <td>
                 <form th:action="@{/sourceproperty/alter}" th:method="get">
-                    <input type="hidden" name="SourceId" th:value="*{sourceId}">
+                    <input type="hidden" name="SourceId" th:value="*{id}">
                     <input type="hidden" name="year" th:value="*{year}">
                     <input type="submit" value="Изменить">
                 </form>
             </td>
             <td>
                 <form th:action="@{'/sourceproperty/' + *{id}}" th:method="delete">
-                    <input hidden="hidden" name="year" th:object="*{year}">
+                    <input hidden="hidden" name="year" th:value="*{year}">
                     <input type="submit" value="Удалить">
                 </form>
             </td>

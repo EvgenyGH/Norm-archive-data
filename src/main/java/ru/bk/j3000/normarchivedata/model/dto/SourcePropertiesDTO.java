@@ -7,12 +7,14 @@ import lombok.NoArgsConstructor;
 import java.util.UUID;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class SourcePropertiesDTO {
-    private UUID sourceId;
-    private String sourceName;
+    // Source id
+    private UUID id;
+    // Source name
+    private String name;
     private Integer year;
     private Integer branch;
-    private String tariffZoneName;
+    private String zoneName;
 }

@@ -72,14 +72,6 @@ public class StandardSFC {
     @NonNull
     private FUEL_TYPE fuelType;
 
-    // филиал
-    @Column(name = "source_branch", nullable = false)
-    private Integer branch;
-
-    // тарифная зона
-    @Column(name = "tariff_zone", nullable = false)
-    private String tariff_zone;
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
