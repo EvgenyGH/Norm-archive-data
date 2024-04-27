@@ -7,12 +7,13 @@ import lombok.*;
 
 import java.util.UUID;
 
-@Entity (name = "source")
+@Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@Table(name = "sources")
 public class Source {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

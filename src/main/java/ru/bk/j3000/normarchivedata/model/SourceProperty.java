@@ -5,13 +5,14 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
-@Entity(name = "source_properties")
+@Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class SourceProperties {
+@Table(name = "source_properties")
+public class SourceProperty {
     @EmbeddedId
     private SrcPropertiesId id;
 
@@ -29,7 +30,7 @@ public class SourceProperties {
     @Override
     public final boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof SourceProperties that)) return false;
+        if (!(o instanceof SourceProperty that)) return false;
 
         return id.equals(that.id);
     }

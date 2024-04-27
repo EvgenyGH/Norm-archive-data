@@ -6,12 +6,12 @@
 </head>
 
 <body>
-<div class="source-properties-list" th:fragment="all-source-properties(sourceProperties)">
+<div class="source-properties-list" th:fragment="all-source-properties(sourceProperties, reportYear)">
     <form class="select-year" th:action="@{/sourceproperty}" method="get">
         <label for="select-year">Год</label>
-        <select id="select-year" name="selectedYear" th:onchange="">
-            <option th:each="n : ${#numbers.sequence(2020, #dates.createNow().getYear() + 1905, 1)}"
-                    th:value="${n}" th:text="${n}"></option>
+        <select id="select-year" name="selectedYear">
+            <option th:each="year : ${#numbers.sequence(2020, #dates.createNow().getYear() + 1905, 1)}"
+                    th:value="${year}" th:text="${year}" th:selected="${reportYear == year}"></option>
         </select>
         <input type="submit" value="Обновить">
     </form>
@@ -23,17 +23,21 @@
         <th>Изменить</th>
         <th>Удалить</th>
         <tr th:each="property : ${sourceProperties}" th:object="${property}">
-            <td th:text="*{id}">Id</td>
-            <td th:text="*{zoneName}">zoneName</td>
+            <td hidden="hidden" th:text="*{sourceId}">Id источника</td>
+            <td hidden="hidden" th:text="*{year}">Отчетный год</td>
+            <td th:text="*{sourceName}">Источник (имя)</td>
+            <td th:text="*{branch}">Номер филиала</td>
+            <td th:text="*{tariffZoneName}">Номер тарифной зоны</td>
             <td>
-                <form th:action="@{tariffzone/alter}" th:method="get">
-                    <input type="hidden" name="id" th:value="*{id}">
+                <form th:action="@{/sourceproperty/alter}" th:method="get">
+                    <input type="hidden" name="SourceId" th:value="*{sourceId}">
+                    <input type="hidden" name="year" th:value="*{year}">
                     <input type="submit" value="Изменить">
                 </form>
             </td>
             <td>
-                <form th:action="@{'source/' + *{id}}" th:method="delete">
-                    <input hidden="hidden" name="year" th:object="${year}">
+                <form th:action="@{'/sourceproperty/' + *{id}}" th:method="delete">
+                    <input hidden="hidden" name="year" th:object="*{year}">
                     <input type="submit" value="Удалить">
                 </form>
             </td>

@@ -31,7 +31,7 @@
 
         <!--/* Свойства источников */-->
         <div th:if="${activeMenu.contains('sourceProperty')}"
-             th:insert="~{sourceproperty::all-source-properties(${sourceProperties})}">source properties
+             th:insert="~{sourceproperty::all-source-properties(${sourceProperties}, ${reportYear})}">source properties
         </div>
         <div th:if="${alterSourceProperty}"
              th:insert="~{sourceproperty::alter-source-property(${sourceProperty})}">alter source property

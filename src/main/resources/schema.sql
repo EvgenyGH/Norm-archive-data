@@ -1,6 +1,6 @@
 DROP TABLE IF EXISTS source, tariff_zone, standard_sfc, source_properties, users, authorities CASCADE;
 
-CREATE TABLE IF NOT EXISTS source
+CREATE TABLE IF NOT EXISTS sources
 (
     source_id      UUID         NOT NULL DEFAULT gen_random_uuid(),
     source_name VARCHAR(50) NOT NULL,
@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS source
     CONSTRAINT pk_source PRIMARY KEY (source_id)
 );
 
-CREATE TABLE IF NOT EXISTS tariff_zone
+CREATE TABLE IF NOT EXISTS tariff_zones
 (
     zone_id   INTEGER NOT NULL,
     zone_name VARCHAR(255),
@@ -26,12 +26,12 @@ CREATE TABLE IF NOT EXISTS source_properties
     zone_id       INTEGER NOT NULL,
 
     CONSTRAINT pk_source_prop PRIMARY KEY (source_id, ssfc_year),
-    CONSTRAINT fk_source_prop FOREIGN KEY (source_id) REFERENCES source (source_id),
-    CONSTRAINT fk_zone_prop FOREIGN KEY (zone_id) REFERENCES tariff_zone (zone_id)
+    CONSTRAINT fk_source_prop FOREIGN KEY (source_id) REFERENCES sources (source_id),
+    CONSTRAINT fk_zone_prop FOREIGN KEY (zone_id) REFERENCES tariff_zones (zone_id)
 
 );
 
-CREATE TABLE IF NOT EXISTS standard_sfc
+CREATE TABLE IF NOT EXISTS standard_sfcs
 (
     ssfc_id       UUID             NOT NULL,
     source_id     UUID             NOT NULL,

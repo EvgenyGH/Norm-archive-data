@@ -11,11 +11,12 @@ import java.util.UUID;
 Результаты расчета удельного расхода условного топлива на отпуск
 тепловой энергии с коллекторов источников
 */
-@Entity(name = "standard_sfc")
+@Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "standard_sfcs")
 public class StandardSFC {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -58,7 +59,7 @@ public class StandardSFC {
             @JoinColumn(name = "ssfc_year", referencedColumnName = "ssfc_year", nullable = false)
     })
     @ManyToOne(fetch = FetchType.EAGER)
-    private SourceProperties properties;
+    private SourceProperty properties;
 
     // месяц
     @Column(name = "ssfc_month")

@@ -18,13 +18,13 @@
                 <td th:text="*{address}">Example</td>
                 <td th:text="*{sourceType.getName()}">Example</td>
                 <td>
-                    <form th:action="@{source/alter}" th:method="get">
+                    <form th:action="@{/source/alter}" th:method="get">
                         <input type="hidden" name="id" th:value="*{id}">
                         <input type="submit" value="Изменить">
                     </form>
                 </td>
                 <td>
-                    <form th:action="@{'source/delete/' + *{id}}" th:method="delete">
+                    <form th:action="@{'/source/delete/' + *{id}}" th:method="delete">
                         <input type="submit" value="Удалить">
                     </form>
                 </td>

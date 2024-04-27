@@ -9,8 +9,10 @@ import ru.bk.j3000.normarchivedata.model.Source;
 import ru.bk.j3000.normarchivedata.model.TariffZone;
 import ru.bk.j3000.normarchivedata.model.admin.SECURITY_ROLES;
 import ru.bk.j3000.normarchivedata.model.dto.UserDTO;
+import ru.bk.j3000.normarchivedata.repository.SourcePropertiesRepository;
 import ru.bk.j3000.normarchivedata.service.admin.UserService;
 
+import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -28,6 +30,7 @@ public class ModelServiceImpl implements ModelService {
     private final UserService userService;
     private final TariffZoneService tariffZoneService;
     private final StandardSFCService standardSFCService;
+    private final SourcePropertiesRepository srcPropRepository;
 
     @Override
     public Map<String, Object> getAlterSourceAttributes(Optional<UUID> sourceId) {
@@ -135,6 +138,21 @@ public class ModelServiceImpl implements ModelService {
 
         log.info("Alter tariff zone attributes created. Tariff zone id {}.",
                 id.isEmpty() ? "new" : id.get());
+
+        return attributes;
+    }
+
+    @Override
+    public Map<String, Object> getAllSrcPropertiesViewAttributes(Optional<Integer> year) {
+        Map<String, Object> attributes = new HashMap<>();
+        Integer reportYear = year.orElse(LocalDate.now().getYear());
+
+        attributes.put("title", String.format("Свойства источников на %s год", reportYear));
+        attributes.put("activeMenu", Set.of("sourceProperty"));
+        attributes.put("reportYear", reportYear);
+        attributes.put("sourceProperties", srcPropRepository.findAllPropByYear());
+
+        log.info("All source properties view attributes for year {} created.", reportYear);
 
         return attributes;
     }

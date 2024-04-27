@@ -16,13 +16,13 @@
             <td th:text="*{id}">Id</td>
             <td th:text="*{zoneName}">zoneName</td>
             <td>
-                <form th:action="@{tariffzone/alter}" th:method="get">
+                <form th:action="@{/tariffzone/alter}" th:method="get">
                     <input type="hidden" name="id" th:value="*{id}">
                     <input type="submit" value="Изменить">
                 </form>
             </td>
             <td>
-                <form th:action="@{'tariffzone/' + *{id}}" th:method="delete">
+                <form th:action="@{'/tariffzone/' + *{id}}" th:method="delete">
                     <input type="submit" value="Удалить">
                 </form>
             </td>

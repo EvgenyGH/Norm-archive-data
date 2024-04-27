@@ -18,4 +18,6 @@ public interface ModelService {
     Map<String, Object> getAllTariffZonesViewAttributes();
 
     Map<String, Object> getAlterTariffZoneAttributes(Optional<Integer> id);
+
+    Map<String, Object> getAllSrcPropertiesViewAttributes(Optional<Integer> year);
 }

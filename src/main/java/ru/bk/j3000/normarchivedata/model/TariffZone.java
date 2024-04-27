@@ -3,17 +3,19 @@ package ru.bk.j3000.normarchivedata.model;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
-@Entity (name = "tariff_zone")
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @ToString
+@Table(name = "tariff_zones")
 public class TariffZone {
     @Id
     @Column(nullable = false, name = "zone_id")
