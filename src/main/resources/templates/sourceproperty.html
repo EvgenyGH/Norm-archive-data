@@ -7,14 +7,6 @@
 
 <body>
 <div class="source-properties-list" th:fragment="all-source-properties(sourceProperties, reportYear)">
-    <form class="select-year" th:action="@{/sourceproperty}" method="get">
-        <label for="select-year">Выбор отчетного года: </label>
-        <select id="select-year" name="selectedYear">
-            <option th:each="year : ${#numbers.sequence(2020, #dates.createNow().getYear() + 1905, 1)}"
-                    th:value="${year}" th:text="${year}" th:selected="${reportYear == year}"></option>
-        </select>
-        <input type="submit" value="Обновить">
-    </form>
     <table>
         <th>Номер</th>
         <th>Источник</th>
@@ -52,7 +44,7 @@
           th:method="${newZone ? 'post' : 'put'}">
         <fieldset>
             <legend th:text="${newZone ? 'Создать новую тарифную зону:' + newZone
-                    : 'Изменить данные тарифной зоны:' + newZone}">
+                        : 'Изменить данные тарифной зоны:' + newZone}">
             </legend>
             <label th:for="${#ids.next('id')}">Номер:</label>
             <br>
