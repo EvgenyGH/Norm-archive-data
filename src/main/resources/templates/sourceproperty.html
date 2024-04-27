@@ -14,6 +14,9 @@
         <th>Имя тарифной зоны</th>
         <th>Изменить</th>
         <th>Удалить</th>
+        <tr th:if="${sourceProperties.size() == 0}">
+            <td colspan="6">Нет данных</td>
+        </tr>
         <tr th:each="property : ${sourceProperties}" th:object="${property}">
             <td hidden="hidden" th:text="*{id}">Id источника</td>
             <td hidden="hidden" th:text="*{year}">Отчетный год</td>

@@ -8,7 +8,7 @@
 
 <body>
 <div class="select-year" th:fragment="select-year(link, reportYear)">
-    <form class="select-year" th:action="@{'/' + link}" method="get">
+    <form class="select-year" th:action="@{'/' + ${link}}" method="get">
         <label for="select-year">Выбор отчетного года: </label>
         <select id="select-year" name="selectedYear">
             <option th:each="year : ${#numbers.sequence(2020, #dates.createNow().getYear() + 1905, 1)}"

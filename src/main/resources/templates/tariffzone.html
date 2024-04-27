@@ -12,6 +12,9 @@
         <th>Название</th>
         <th>Изменить</th>
         <th>Удалить</th>
+        <tr th:if="${tariffZones.size() == 0}">
+            <td colspan="4">Нет данных</td>
+        </tr>
         <tr th:each="zone : ${tariffZones}" th:object="${zone}">
             <td th:text="*{id}">Id</td>
             <td th:text="*{zoneName}">zoneName</td>

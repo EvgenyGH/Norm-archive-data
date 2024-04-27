@@ -9,7 +9,6 @@ import ru.bk.j3000.normarchivedata.model.Source;
 import ru.bk.j3000.normarchivedata.model.TariffZone;
 import ru.bk.j3000.normarchivedata.model.admin.SECURITY_ROLES;
 import ru.bk.j3000.normarchivedata.model.dto.UserDTO;
-import ru.bk.j3000.normarchivedata.repository.SourcePropertiesRepository;
 import ru.bk.j3000.normarchivedata.service.admin.UserService;
 
 import java.time.LocalDate;
@@ -30,7 +29,7 @@ public class ModelServiceImpl implements ModelService {
     private final UserService userService;
     private final TariffZoneService tariffZoneService;
     private final StandardSFCService standardSFCService;
-    private final SourcePropertiesRepository srcPropRepository;
+    private final SourcePropertyService srcPropService;
 
     @Override
     public Map<String, Object> getAlterSourceAttributes(Optional<UUID> sourceId) {
@@ -150,7 +149,7 @@ public class ModelServiceImpl implements ModelService {
         attributes.put("title", String.format("Свойства источников на %s год", reportYear));
         attributes.put("activeMenu", Set.of("sourceProperty"));
         attributes.put("reportYear", reportYear);
-        attributes.put("sourceProperties", srcPropRepository.findAllPropByYear(reportYear));
+        attributes.put("sourceProperties", srcPropService.findAllPropByYear(reportYear));
 
         log.info("All source properties view attributes for year {} created.", reportYear);
 
