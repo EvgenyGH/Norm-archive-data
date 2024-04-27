@@ -26,8 +26,8 @@ CREATE TABLE IF NOT EXISTS source_properties
     zone_id       INTEGER NOT NULL,
 
     CONSTRAINT pk_source_prop PRIMARY KEY (source_id, ssfc_year),
-    CONSTRAINT fk_source_prop FOREIGN KEY (source_id) REFERENCES sources (source_id),
-    CONSTRAINT fk_zone_prop FOREIGN KEY (zone_id) REFERENCES tariff_zones (zone_id)
+    CONSTRAINT fk_source_prop FOREIGN KEY (source_id) REFERENCES sources (source_id) ON DELETE CASCADE,
+    CONSTRAINT fk_zone_prop FOREIGN KEY (zone_id) REFERENCES tariff_zones (zone_id) ON DELETE CASCADE
 
 );
 
@@ -45,7 +45,8 @@ CREATE TABLE IF NOT EXISTS standard_sfcs
     fuel_type VARCHAR(17) NOT NULL,
 
     CONSTRAINT pk_ssfc PRIMARY KEY (ssfc_id),
-    CONSTRAINT fk_source_prop FOREIGN KEY (source_id, ssfc_year) REFERENCES source_properties (source_id, ssfc_year)
+    CONSTRAINT fk_source_prop FOREIGN KEY (source_id, ssfc_year)
+        REFERENCES source_properties (source_id, ssfc_year) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS users

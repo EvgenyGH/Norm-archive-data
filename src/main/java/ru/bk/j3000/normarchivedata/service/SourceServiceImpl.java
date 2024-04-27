@@ -181,4 +181,13 @@ public class SourceServiceImpl implements SourceService {
             throw new FileReadException("Error reading template file.", "Sources template.");
         }
     }
+
+    @Override
+    public void alterSource(Source source) {
+        if (Objects.isNull(source.getId())) {
+            saveSource(source);
+        } else {
+            updateSource(source);
+        }
+    }
 }

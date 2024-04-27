@@ -29,4 +29,6 @@ public interface SourceService {
     Optional<Source> getSourceById(UUID id);
 
     Resource getTemplate();
+
+    void alterSource(Source source);
 }

@@ -65,7 +65,7 @@ public class SourceController {
 
     @PutMapping("/source")
     public String putSource(@ModelAttribute("source") Source source) {
-        sourceService.saveSource(source);
+        sourceService.alterSource(source);
 
         return "redirect:/source";
     }
