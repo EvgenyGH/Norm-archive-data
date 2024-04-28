@@ -38,8 +38,8 @@
           th:with="newZone=${tariffZone.id == null}"
           th:method="${newZone ? 'post' : 'put'}">
         <fieldset>
-            <legend th:text="${newZone ? 'Создать новую тарифную зону:' + newZone
-                    : 'Изменить данные тарифной зоны:' + newZone}">
+            <legend th:text="${newZone ? 'Создать новую тарифную зону:'
+                    : 'Изменить данные тарифной зоны:'}">
             </legend>
             <label th:for="${#ids.next('id')}">Номер:</label>
             <br>

@@ -16,7 +16,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @AllArgsConstructor
-public class SrcPropertiesId implements Serializable {
+public class SrcPropertyId implements Serializable {
 
     // источник
     @JoinColumn(name = "source_id", nullable = false)
@@ -34,7 +34,7 @@ public class SrcPropertiesId implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        SrcPropertiesId that = (SrcPropertiesId) o;
+        SrcPropertyId that = (SrcPropertyId) o;
 
         if (!Objects.equals(source, that.source)) return false;
         return Objects.equals(year, that.year);

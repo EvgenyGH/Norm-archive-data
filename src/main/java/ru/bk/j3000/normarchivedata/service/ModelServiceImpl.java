@@ -8,6 +8,7 @@ import ru.bk.j3000.normarchivedata.model.SOURCE_TYPE;
 import ru.bk.j3000.normarchivedata.model.Source;
 import ru.bk.j3000.normarchivedata.model.TariffZone;
 import ru.bk.j3000.normarchivedata.model.admin.SECURITY_ROLES;
+import ru.bk.j3000.normarchivedata.model.dto.SourcePropertyDTO;
 import ru.bk.j3000.normarchivedata.model.dto.UserDTO;
 import ru.bk.j3000.normarchivedata.service.admin.UserService;
 
@@ -152,6 +153,27 @@ public class ModelServiceImpl implements ModelService {
         attributes.put("sourceProperties", srcPropService.findAllPropByYear(reportYear));
 
         log.info("All source properties view attributes for year {} created.", reportYear);
+
+        return attributes;
+    }
+
+    @Override
+    public Map<String, Object> getAlterSourcePropertyAttributes(Integer year, Optional<UUID> id) {
+        HashMap<String, Object> attributes = new HashMap<>();
+
+        attributes.put("shadow", true);
+        attributes.put("alterSourceProperty", true);
+        attributes.put("activeMenu", Collections.emptySet());
+
+        if (id.isEmpty()) {
+            attributes.put("sourceProperty",
+                    new SourcePropertyDTO(null, null, year, null, null));
+        } else {
+            attributes.put("sourceProperty", srcPropService.getSourcePropertyById(id.get(), year));
+        }
+
+        log.info("Alter source property attributes created. Source id {}, year {}.",
+                id.isEmpty() ? "new" : id.get(), year);
 
         return attributes;
     }

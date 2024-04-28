@@ -9,7 +9,7 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SourcePropertiesDTO {
+public class SourcePropertyDTO {
     // Source id
     private UUID id;
     // Source name

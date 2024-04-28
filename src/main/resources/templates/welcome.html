@@ -95,7 +95,11 @@
             <li><a th:href="@{/sourceproperty}">Свойства источников</a>
                 <ul class="sub-sub-menu" th:if="${activeMenu.contains('sourceProperty')}">
                     <li><a th:href="@{/sourceproperty}">Список свойств источников</a></li>
-                    <li><a th:href="@{/sourceproperty/alter}">Добавить свойство источика</a></li>
+                    <li>
+                        <a th:href="@{'/sourceproperty/alter/' + ${reportYear}}">
+                            Добавить свойство источника
+                        </a>
+                    </li>
                     <li sec:authorize="hasRole('ADMIN')">
                         <form class="upload-form" th:action="@{/sourceproperty/template}"
                               method="post" enctype="multipart/form-data">

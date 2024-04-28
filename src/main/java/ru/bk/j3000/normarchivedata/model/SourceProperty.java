@@ -14,7 +14,7 @@ import lombok.*;
 @Table(name = "source_properties")
 public class SourceProperty {
     @EmbeddedId
-    private SrcPropertiesId id;
+    private SrcPropertyId id;
 
     // филиал
     @Column(name = "source_branch", nullable = false)

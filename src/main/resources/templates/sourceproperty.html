@@ -25,15 +25,17 @@
             <td th:text="*{branch}">Номер филиала</td>
             <td th:text="*{zoneName}">Имя тарифной зоны</td>
             <td>
-                <form th:action="@{/sourceproperty/alter}" th:method="get">
-                    <input type="hidden" name="SourceId" th:value="*{id}">
-                    <input type="hidden" name="year" th:value="*{year}">
+                <form th:action="@{'/sourceproperty/alter/' + *{year}}" th:method="get">
+                    <input type="hidden" name="srcId" th:value="*{id}">
                     <input type="submit" value="Изменить">
                 </form>
             </td>
             <td>
-                <form th:action="@{'/sourceproperty/' + *{id}}" th:method="delete">
-                    <input hidden="hidden" name="year" th:value="*{year}">
+                <form th:action="@{/sourceproperty}" th:method="delete">
+                    <input hidden="hidden" th:id="${'srcId'}" th:name="srcId"
+                           th:value="*{id}">
+                    <input hidden="hidden" th:id="${'propYear'}" th:name="propYear"
+                           th:value="*{year}">
                     <input type="submit" value="Удалить">
                 </form>
             </td>
@@ -43,24 +45,38 @@
 
 <div class="alter-source-property" th:fragment="alter-source-property(sourceProperty)">
     <form th:action="@{/sourceproperty}" th:object="${sourceProperty}"
-          th:with="newZone=${tariffZone.id == null}"
-          th:method="${newZone ? 'post' : 'put'}">
+          th:with="newProperty=${sourceProperty.id == null}"
+          th:method="${newProperty ? 'post' : 'put'}">
         <fieldset>
-            <legend th:text="${newZone ? 'Создать новую тарифную зону:' + newZone
-                        : 'Изменить данные тарифной зоны:' + newZone}">
+            <legend th:text="${newProperty ? 'Новое свойство источника:'
+                        : 'Изменить свойство источника:'}">
             </legend>
-            <label th:for="${#ids.next('id')}">Номер:</label>
+
+            <label th:for="${#ids.next('id')}">Номер источника:</label>
             <br>
-            <input type="text" th:field="*{id}" placeholder="Номер зоны"
-                   th:readonly="${!newZone}" th:value="tariffZone.id">
+            <input type="text" th:field="*{id}" placeholder="Номер источника" readonly>
             <br>
-            <label th:for="${#ids.next('zoneName')}">Название тарифной зоны:</label>
+            <label th:for="${#ids.next('name')}">Источник:</label>
             <br>
-            <input type="text" th:field="*{zoneName}" placeholder="Название тарифной зоны"
-                   th:value="${tariffZone.zoneName}">
+            <input type="text" th:field="*{name}" placeholder="Имя источника"
+                   th:readonly="${newProperty}">
+            <br>
+
+
+            <label th:for="${#ids.next('year')}">Год:</label>
+            <br>
+            <input type="text" th:field="*{year}" placeholder="Год" readonly>
+            <br>
+            <label th:for="${#ids.next('branch')}">Номер филиала:</label>
+            <br>
+            <input type="text" th:field="*{branch}" placeholder="Номер филиала">
+            <br>
+            <label th:for="${#ids.next('zoneName')}">Тарифная зона:</label>
+            <br>
+            <input type="text" th:field="*{zoneName}" placeholder="Тарифная зона">
             <br>
             <input type="submit" value="Сохранить">
-            <a th:href="@{/tariffzone}">Отмена</a>
+            <a th:href="@{/sourceproperty}">Отмена</a>
         </fieldset>
     </form>
 </div>
