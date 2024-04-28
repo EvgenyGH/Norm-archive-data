@@ -168,6 +168,7 @@ public class ModelServiceImpl implements ModelService {
         if (id.isEmpty()) {
             attributes.put("sourceProperty",
                     new SourcePropertyDTO(null, null, year, null, null));
+            attributes.put("sourceIdsNames", sourceService.getSourceIdsAndNamesWithNoProp(year));
         } else {
             attributes.put("sourceProperty", srcPropService.getSourcePropertyById(id.get(), year));
         }

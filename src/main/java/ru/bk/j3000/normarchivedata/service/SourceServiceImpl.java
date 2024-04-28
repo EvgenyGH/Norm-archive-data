@@ -17,12 +17,14 @@ import ru.bk.j3000.normarchivedata.exception.FileParseException;
 import ru.bk.j3000.normarchivedata.exception.FileReadException;
 import ru.bk.j3000.normarchivedata.model.SOURCE_TYPE;
 import ru.bk.j3000.normarchivedata.model.Source;
+import ru.bk.j3000.normarchivedata.model.dto.SourceAlterDTO;
 import ru.bk.j3000.normarchivedata.repository.SourceRepository;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Service
@@ -189,5 +191,18 @@ public class SourceServiceImpl implements SourceService {
         } else {
             updateSource(source);
         }
+    }
+
+    @Override
+    public Map<String, UUID> getSourceIdsAndNamesWithNoProp(Integer year) {
+        Map<String, UUID> sourceDTOs = sourceRepository.getSourceIdsAndNamesWithNoProp(year)
+                .stream().collect(Collectors.toMap(SourceAlterDTO::getName,
+                        SourceAlterDTO::getId,
+                        (id1, id2) -> id1,
+                        TreeMap::new));
+
+        log.info("Source DTO map created ({} elements in total).", sourceDTOs.size());
+
+        return sourceDTOs;
     }
 }

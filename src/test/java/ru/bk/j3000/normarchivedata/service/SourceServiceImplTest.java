@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
 import ru.bk.j3000.normarchivedata.model.SOURCE_TYPE;
 import ru.bk.j3000.normarchivedata.model.Source;
 
@@ -29,6 +30,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @Transactional
 public class SourceServiceImplTest {
     private final SourceServiceImpl service;
+    private final SourcePropertyService srcPropService;
     private final File file = new File("src/test/resources/testdata/sources.xlsm");
 
     @Test
@@ -107,5 +109,14 @@ public class SourceServiceImplTest {
         Source source = new Source(UUID.randomUUID(), "name1", "address1", SOURCE_TYPE.KTS);
 
         assertThatThrownBy(() -> service.updateSource(source)).isInstanceOf(EntityNotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("Get source Ids and Names DTO list with no properties assigned")
+    @Sql(scripts = {"/testData.sql"})
+    public void whenGetSourceIdsAndNamesDTOListThenGetSourceDTOListWithNoPropertiesAssigned() {
+        assertThat(service.getAllSources()).hasSize(141);
+        assertThat(srcPropService.findAllPropByYear(2023)).hasSize(3);
+        assertThat(service.getSourceIdsAndNamesWithNoProp(2023)).hasSize(138);
     }
 }

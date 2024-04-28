@@ -43,7 +43,7 @@
     </table>
 </div>
 
-<div class="alter-source-property" th:fragment="alter-source-property(sourceProperty)">
+<div class="alter-source-property" th:fragment="alter-source-property(sourceProperty, sourceIdsNames)">
     <form th:action="@{/sourceproperty}" th:object="${sourceProperty}"
           th:with="newProperty=${sourceProperty.id == null}"
           th:method="${newProperty ? 'post' : 'put'}">
@@ -54,12 +54,22 @@
 
             <label th:for="${#ids.next('id')}">Номер источника:</label>
             <br>
-            <input type="text" th:field="*{id}" placeholder="Номер источника" readonly>
+            <input th:if="${!newProperty}" type="text"
+                   th:field="*{id}" placeholder="Номер источника" readonly>
+            <input th:if="${newProperty}" type="text"
+                   id="id" name="id" th:value="${sourceProperty.name}"
+                   placeholder="Номер источника" readonly>
             <br>
             <label th:for="${#ids.next('name')}">Источник:</label>
             <br>
-            <input type="text" th:field="*{name}" placeholder="Имя источника"
-                   th:readonly="${newProperty}">
+            <input th:if="${!newProperty}" type="text" th:field="*{name}"
+                   placeholder="Имя источника" readonly>
+            <select th:if="${newProperty}" th:field="*{name}">
+                <option th:each="srcIdName : ${sourceIdsNames}"
+                        th:value="${srcIdName.getKey()}"
+                        th:text="${srcIdName.getKey()}">
+                </option>
+            </select>
             <br>
 
 

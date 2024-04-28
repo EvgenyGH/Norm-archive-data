@@ -38,7 +38,8 @@
              th:insert="~{sourceproperty::all-source-properties(${sourceProperties}, ${reportYear})}">source properties
         </div>
         <div th:if="${alterSourceProperty}"
-             th:insert="~{sourceproperty::alter-source-property(${sourceProperty})}">alter source property
+             th:insert="~{sourceproperty::alter-source-property(${sourceProperty},
+             ${sourceIdsNames})}">alter source property
         </div>
 
 

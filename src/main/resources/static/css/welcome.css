@@ -33,7 +33,8 @@
 .menu-area a, .menu-area a:visited,
 .alter-source a, .alter-source a:visited,
 .alter-user a, .alter-user a:visited,
-.alter-tariff-zone a, .alter-tariff-zone a:visited {
+.alter-tariff-zone a, .alter-tariff-zone a:visited,
+.alter-source-property a, .alter-source-property a:visited {
     text-decoration: none;
     color: black;
 }
@@ -41,7 +42,8 @@
 .menu-area a:hover, .menu-area label:hover,
 .alter-source a:hover,
 .alter-user a:hover,
-.alter-tariff-zone a:hover {
+.alter-tariff-zone a:hover,
+.alter-source-property a:hover {
     color: royalblue;
 }
 
@@ -75,7 +77,8 @@ ul {
 
 .upload-form,
 .source-template,
-.tariff-zone-template {
+.tariff-zone-template,
+.source-property-template {
     border-left: dotted thin black;
 }
 
@@ -114,7 +117,8 @@ th {
 
 .alter-source,
 .alter-user,
-.alter-tariff-zone {
+.alter-tariff-zone,
+.alter-source-property {
     position: absolute;
     top: 15vh;
     text-align: left;
@@ -128,18 +132,21 @@ th {
 .alter-source input[type=text],
 .alter-user input[type=password],
 .alter-user input[type=text],
-.alter-tariff-zone input[type=text] {
+.alter-tariff-zone input[type=text],
+.alter-source-property input[type=text] {
     width: 100%;
 }
 
 .alter-source input[readonly],
 .alter-user input[readonly],
-.alter-tariff-zone input[readonly] {
+.alter-tariff-zone input[readonly],
+.alter-source-property input[readonly] {
     background: darkgrey;
 }
 
 .sources-list tr:hover,
 .users-list tr:hover,
-.tariff-zones-list tr:hover {
+.tariff-zones-list tr:hover
+.source-properties-list tr:hover {
     background: lavender;
 }
