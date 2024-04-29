@@ -1,4 +1,5 @@
-DROP TABLE IF EXISTS source, tariff_zone, standard_sfc, source_properties, users, authorities CASCADE;
+DROP TABLE IF EXISTS source, tariff_zone, standard_sfc,
+    source_properties, users, authorities, branches CASCADE;
 
 CREATE TABLE IF NOT EXISTS sources
 (
@@ -18,17 +19,23 @@ CREATE TABLE IF NOT EXISTS tariff_zones
     CONSTRAINT pk_zone PRIMARY KEY (zone_id)
 );
 
+CREATE TABLE IF NOT EXISTS branches
+(
+    branch_id   INTEGER     NOT NULL PRIMARY KEY,
+    branch_name VARCHAR(30) NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS source_properties
 (
-    source_id     UUID    NOT NULL,
-    ssfc_year     INTEGER NOT NULL,
-    source_branch INTEGER NOT NULL,
-    zone_id       INTEGER NOT NULL,
+    source_id UUID    NOT NULL,
+    ssfc_year INTEGER NOT NULL,
+    branch_id INTEGER NOT NULL,
+    zone_id   INTEGER NOT NULL,
 
     CONSTRAINT pk_source_prop PRIMARY KEY (source_id, ssfc_year),
     CONSTRAINT fk_source_prop FOREIGN KEY (source_id) REFERENCES sources (source_id) ON DELETE CASCADE,
-    CONSTRAINT fk_zone_prop FOREIGN KEY (zone_id) REFERENCES tariff_zones (zone_id) ON DELETE CASCADE
-
+    CONSTRAINT fk_zone_prop FOREIGN KEY (zone_id) REFERENCES tariff_zones (zone_id) ON DELETE CASCADE,
+    CONSTRAINT fk_branch_prop FOREIGN KEY (branch_id) REFERENCES branches (branch_id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS standard_sfcs

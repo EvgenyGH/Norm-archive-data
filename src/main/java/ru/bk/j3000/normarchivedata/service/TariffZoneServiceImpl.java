@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.bk.j3000.normarchivedata.exception.FileParseException;
 import ru.bk.j3000.normarchivedata.exception.FileReadException;
 import ru.bk.j3000.normarchivedata.model.TariffZone;
+import ru.bk.j3000.normarchivedata.model.dto.TariffZoneDTO;
 import ru.bk.j3000.normarchivedata.repository.TariffZoneRepository;
 
 import java.io.IOException;
@@ -139,5 +140,14 @@ public class TariffZoneServiceImpl implements TariffZoneService {
                 });
 
         log.info("Tariff zones template headers are OK.");
+    }
+
+    @Override
+    public List<TariffZoneDTO> getAllTariffZonesDTO() {
+        List<TariffZoneDTO> tariffZones = tariffZoneRepository.findAllDTO();
+
+        log.info("All tariff zones DTO retrieved from database({} in total).", tariffZones.size());
+
+        return tariffZones;
     }
 }

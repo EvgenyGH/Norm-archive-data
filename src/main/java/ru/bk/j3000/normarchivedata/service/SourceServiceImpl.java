@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Service
@@ -194,14 +193,10 @@ public class SourceServiceImpl implements SourceService {
     }
 
     @Override
-    public Map<String, UUID> getSourceIdsAndNamesWithNoProp(Integer year) {
-        Map<String, UUID> sourceDTOs = sourceRepository.getSourceIdsAndNamesWithNoProp(year)
-                .stream().collect(Collectors.toMap(SourceAlterDTO::getName,
-                        SourceAlterDTO::getId,
-                        (id1, id2) -> id1,
-                        TreeMap::new));
+    public List<SourceAlterDTO> getSourceIdsAndNamesWithNoProp(Integer year) {
+        List<SourceAlterDTO> sourceDTOs = sourceRepository.getSourceIdsAndNamesWithNoProp(year);
 
-        log.info("Source DTO map created ({} elements in total).", sourceDTOs.size());
+        log.info("Source DTO list created ({} elements in total).", sourceDTOs.size());
 
         return sourceDTOs;
     }

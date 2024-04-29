@@ -31,6 +31,7 @@ public class ModelServiceImpl implements ModelService {
     private final TariffZoneService tariffZoneService;
     private final StandardSFCService standardSFCService;
     private final SourcePropertyService srcPropService;
+    private final BranchService branchService;
 
     @Override
     public Map<String, Object> getAlterSourceAttributes(Optional<UUID> sourceId) {
@@ -164,11 +165,13 @@ public class ModelServiceImpl implements ModelService {
         attributes.put("shadow", true);
         attributes.put("alterSourceProperty", true);
         attributes.put("activeMenu", Collections.emptySet());
+        attributes.put("tariffZones", tariffZoneService.getAllTariffZonesDTO());
+        attributes.put("branches", branchService.getAllBranchesDTO());
 
         if (id.isEmpty()) {
             attributes.put("sourceProperty",
                     new SourcePropertyDTO(null, null, year, null, null));
-            attributes.put("sourceIdsNames", sourceService.getSourceIdsAndNamesWithNoProp(year));
+            attributes.put("sourcesLeft", sourceService.getSourceIdsAndNamesWithNoProp(year));
         } else {
             attributes.put("sourceProperty", srcPropService.getSourcePropertyById(id.get(), year));
         }

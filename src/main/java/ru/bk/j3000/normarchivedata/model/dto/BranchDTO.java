@@ -4,12 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.UUID;
-
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class SourceAlterDTO {
-    private UUID sourceId;
-    private String sourceName;
+@AllArgsConstructor
+public class BranchDTO {
+    private Integer branchId;
+    private String branchName;
 }

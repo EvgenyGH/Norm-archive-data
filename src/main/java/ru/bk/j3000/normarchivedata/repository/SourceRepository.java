@@ -18,6 +18,7 @@ public interface SourceRepository extends JpaRepository<Source, UUID> {
             "WHERE s.id NOT IN " +
             "(SELECT sp.id.source.id " +
             "FROM SourceProperty sp " +
-            "WHERE sp.id.year = :year)")
+            "WHERE sp.id.year = :year) " +
+            "ORDER BY s.name")
     List<SourceAlterDTO> getSourceIdsAndNamesWithNoProp(@Param("year") Integer year);
 }

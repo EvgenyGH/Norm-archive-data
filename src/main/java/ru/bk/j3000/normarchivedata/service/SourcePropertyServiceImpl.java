@@ -38,8 +38,8 @@ public class SourcePropertyServiceImpl implements SourcePropertyService {
         SourcePropertyDTO property = srcPropRepository.getSourcePropertyDTOByIdAndYear(srcId, year);
 
         log.info("Found source property. Source name {}, source id {}, year {}.",
-                property.getName(),
-                property.getId(),
+                property.getSourceName(),
+                property.getSourceId(),
                 year);
 
         return property;

@@ -124,4 +124,15 @@ public class TariffZoneServiceImplTest {
                 new MockMultipartFile("file", "file",
                         "text/plain", Files.readAllBytes(path)));
     }
+
+    @Test
+    @DisplayName("Get all tariff zones DTO")
+    public void whenGetAllTariffZonesDTOThenGetAllTariffZonesDTOFromDatabase() {
+        var tz1 = new TariffZone(1, "First");
+        var tz2 = new TariffZone(2, "Second");
+        tariffZoneService.saveTariffZone(tz1);
+        tariffZoneService.saveTariffZone(tz2);
+
+        assertThat(tariffZoneService.getAllTariffZonesDTO().size()).isEqualTo(2);
+    }
 }

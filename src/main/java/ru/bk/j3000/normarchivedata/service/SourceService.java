@@ -4,9 +4,9 @@ import jakarta.transaction.Transactional;
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 import ru.bk.j3000.normarchivedata.model.Source;
+import ru.bk.j3000.normarchivedata.model.dto.SourceAlterDTO;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -33,5 +33,5 @@ public interface SourceService {
 
     void alterSource(Source source);
 
-    Map<String, UUID> getSourceIdsAndNamesWithNoProp(Integer year);
+    List<SourceAlterDTO> getSourceIdsAndNamesWithNoProp(Integer year);
 }

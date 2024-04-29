@@ -17,7 +17,7 @@ public interface SourcePropertyRepository extends JpaRepository<SourceProperty, 
     //todo sorting
     @Query("SELECT NEW ru.bk.j3000.normarchivedata.model.dto.SourcePropertyDTO(" +
             "sp.id.source.id, sp.id.source.name, " +
-            "sp.id.year, sp.branch, sp.tariffZone.zoneName) " +
+            "sp.id.year, sp.branch.branchName, sp.tariffZone.zoneName) " +
             "FROM SourceProperty sp " +
             "WHERE sp.id.year = :year")
     List<SourcePropertyDTO> findAllPropDTOByYear(@Param("year") Integer year);
@@ -30,7 +30,7 @@ public interface SourcePropertyRepository extends JpaRepository<SourceProperty, 
 
     @Query("SELECT NEW ru.bk.j3000.normarchivedata.model.dto.SourcePropertyDTO(" +
             "sp.id.source.id, sp.id.source.name, " +
-            "sp.id.year, sp.branch, sp.tariffZone.zoneName) " +
+            "sp.id.year, sp.branch.branchName, sp.tariffZone.zoneName) " +
             "FROM SourceProperty sp " +
             "WHERE sp.id.year = :year " +
             "AND sp.id.source.id = :srcId")

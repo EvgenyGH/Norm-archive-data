@@ -11,10 +11,10 @@ import java.util.UUID;
 @AllArgsConstructor
 public class SourcePropertyDTO {
     // Source id
-    private UUID id;
+    private UUID sourceId;
     // Source name
-    private String name;
+    private String sourceName;
     private Integer year;
-    private Integer branch;
+    private String branchName;
     private String zoneName;
 }

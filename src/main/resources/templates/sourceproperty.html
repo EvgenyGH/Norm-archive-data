@@ -10,7 +10,7 @@
     <table>
         <th>Номер</th>
         <th>Источник</th>
-        <th>Номер филиала</th>
+        <th>Филиал</th>
         <th>Имя тарифной зоны</th>
         <th>Изменить</th>
         <th>Удалить</th>
@@ -18,22 +18,22 @@
             <td colspan="6">Нет данных</td>
         </tr>
         <tr th:each="property : ${sourceProperties}" th:object="${property}">
-            <td hidden="hidden" th:text="*{id}">Id источника</td>
+            <td hidden="hidden" th:text="*{sourceId}">Id источника</td>
             <td hidden="hidden" th:text="*{year}">Отчетный год</td>
             <td th:text="${propertyStat.count}">Номер</td>
-            <td th:text="*{name}">Источник (имя)</td>
-            <td th:text="*{branch}">Номер филиала</td>
+            <td th:text="*{sourceName}">Источник (имя)</td>
+            <td th:text="*{branchName}">Филиал</td>
             <td th:text="*{zoneName}">Имя тарифной зоны</td>
             <td>
                 <form th:action="@{'/sourceproperty/alter/' + *{year}}" th:method="get">
-                    <input type="hidden" name="srcId" th:value="*{id}">
+                    <input type="hidden" name="srcId" th:value="*{sourceId}">
                     <input type="submit" value="Изменить">
                 </form>
             </td>
             <td>
                 <form th:action="@{/sourceproperty}" th:method="delete">
                     <input hidden="hidden" th:id="${'srcId'}" th:name="srcId"
-                           th:value="*{id}">
+                           th:value="*{sourceId}">
                     <input hidden="hidden" th:id="${'propYear'}" th:name="propYear"
                            th:value="*{year}">
                     <input type="submit" value="Удалить">
@@ -43,47 +43,57 @@
     </table>
 </div>
 
-<div class="alter-source-property" th:fragment="alter-source-property(sourceProperty, sourceIdsNames)">
+<div class="alter-source-property" th:fragment="alter-source-property(sourceProperty, sourcesLeft,
+tariffZones, branches)">
     <form th:action="@{/sourceproperty}" th:object="${sourceProperty}"
-          th:with="newProperty=${sourceProperty.id == null}"
+          th:with="newProperty=${sourceProperty.sourceId == null}"
           th:method="${newProperty ? 'post' : 'put'}">
         <fieldset>
             <legend th:text="${newProperty ? 'Новое свойство источника:'
                         : 'Изменить свойство источника:'}">
             </legend>
-
-            <label th:for="${#ids.next('id')}">Номер источника:</label>
+            <label th:for="${#ids.next('sourceId')}" th:text="${newProperty ? 'Источник:' : 'Номер источника:'}">
+                Номер источника:
+            </label>
             <br>
-            <input th:if="${!newProperty}" type="text"
-                   th:field="*{id}" placeholder="Номер источника" readonly>
-            <input th:if="${newProperty}" type="text"
-                   id="id" name="id" th:value="${sourceProperty.name}"
-                   placeholder="Номер источника" readonly>
-            <br>
-            <label th:for="${#ids.next('name')}">Источник:</label>
-            <br>
-            <input th:if="${!newProperty}" type="text" th:field="*{name}"
-                   placeholder="Имя источника" readonly>
-            <select th:if="${newProperty}" th:field="*{name}">
-                <option th:each="srcIdName : ${sourceIdsNames}"
-                        th:value="${srcIdName.getKey()}"
-                        th:text="${srcIdName.getKey()}">
+            <th:block th:if="${!newProperty}">
+                <input type="text" th:field="*{sourceId}" placeholder="Номер источника" readonly>
+                <br>
+                <label th:for="${#ids.next('sourceName')}">Источник:</label>
+                <br>
+                <input type="text" th:field="*{sourceName}" placeholder="Имя источника" readonly>
+            </th:block>
+            <select th:if="${newProperty}" th:field="*{sourceId}">
+                <option th:each="source : ${sourcesLeft}"
+                        th:value="${source.sourceId}"
+                        th:text="${source.sourceName}">
                 </option>
             </select>
             <br>
-
-
             <label th:for="${#ids.next('year')}">Год:</label>
             <br>
             <input type="text" th:field="*{year}" placeholder="Год" readonly>
             <br>
-            <label th:for="${#ids.next('branch')}">Номер филиала:</label>
+            <label th:for="${#ids.next('branchName')}">Номер филиала:</label>
             <br>
-            <input type="text" th:field="*{branch}" placeholder="Номер филиала">
+            <select th:field="*{branchName}" placeholder="Номер филиала">
+                <option th:each="branch : ${branches}"
+                        th:value="${branch.branchName}"
+                        th:text="${branch.branchName}"
+                        th:selected="${#strings.equals(sourceProperty.branchName, branch.branchName)}">
+                </option>
+            </select>
+
             <br>
             <label th:for="${#ids.next('zoneName')}">Тарифная зона:</label>
             <br>
-            <input type="text" th:field="*{zoneName}" placeholder="Тарифная зона">
+            <select th:field="*{zoneName}" placeholder="Тарифная зона">
+                <option th:each="tariffZone : ${tariffZones}"
+                        th:value="${tariffZone.zoneName}"
+                        th:text="${tariffZone.zoneName}"
+                        th:selected="${#strings.equals(sourceProperty.zoneName, tariffZone.zoneName)}">
+                </option>
+            </select>
             <br>
             <input type="submit" value="Сохранить">
             <a th:href="@{/sourceproperty}">Отмена</a>
