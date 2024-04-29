@@ -11,4 +11,8 @@ public interface SourcePropertyService {
     void deleteSrcPropertyById(UUID srcId, Integer year);
 
     SourcePropertyDTO getSourcePropertyById(UUID srcId, Integer year);
+
+    void updateSourceProperty(SourcePropertyDTO sourcePropertyDTO);
+
+    void addSourceProperty(SourcePropertyDTO sourcePropertyDTO);
 }

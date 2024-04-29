@@ -1,8 +1,10 @@
 package ru.bk.j3000.normarchivedata.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.bk.j3000.normarchivedata.model.Branch;
 import ru.bk.j3000.normarchivedata.model.dto.BranchDTO;
 import ru.bk.j3000.normarchivedata.repository.BranchRepository;
 
@@ -21,5 +23,16 @@ public class BranchServiceImpl implements BranchService {
         log.info("All branches DTO retrieved from database ({} in total)", branches.size());
 
         return branches;
+    }
+
+    @Override
+    public Branch getBranchById(Integer branchId) {
+        Branch branch = branchRepository.findById(branchId)
+                .orElseThrow(() -> new EntityNotFoundException(String
+                        .format("Branch with id %s not found", branchId)));
+
+        log.info("Branch with id {} retrieved from database", branchId);
+
+        return branch;
     }
 }

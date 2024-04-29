@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import ru.bk.j3000.normarchivedata.model.dto.SourcePropertyDTO;
 import ru.bk.j3000.normarchivedata.service.ModelService;
 import ru.bk.j3000.normarchivedata.service.SourcePropertyService;
 
@@ -36,20 +37,23 @@ public class SourcePropertyController {
         return "welcome";
     }
 
-    // Update new source property
-    @PutMapping("/sourceproperty/{id}/{year}")
-    public String updateSourceProperty(Model model) {
-        return "welcome";
+    // Update source property
+    @PutMapping("/sourceproperty")
+    public String updateSourceProperty(@ModelAttribute(name = "sourceProperty")
+                                       SourcePropertyDTO sourcePropertyDTO) {
+        srcPropService.updateSourceProperty(sourcePropertyDTO);
+
+        return "redirect:/sourceproperty";
     }
 
-    //new
-    @PostMapping("/sourceproperty/{id}/{year}")
-    public String addSourceProperty(Model model) {
-        return "redirect:welcome";
+    // Add source property
+    @PostMapping("/sourceproperty")
+    public String addSourceProperty(@ModelAttribute(name = "sourceProperty")
+                                    SourcePropertyDTO sourcePropertyDTO) {
+        srcPropService.addSourceProperty(sourcePropertyDTO);
+
+        return "redirect:/sourceproperty";
     }
-
-    ;
-
 
     // Delete source property
     @DeleteMapping("/sourceproperty")
@@ -67,10 +71,9 @@ public class SourcePropertyController {
         return "redirect:/sourceproperty";
     }
 
+    // get template
     @GetMapping("/sourceproperty/template")
     public String getSourcePropertyTemplate(Model model) {
         return "welcome";
     }
-
-
 }
