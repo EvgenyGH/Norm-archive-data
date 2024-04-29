@@ -15,9 +15,7 @@ import java.util.UUID;
 @Repository
 public interface SourcePropertyRepository extends JpaRepository<SourceProperty, SrcPropertyId> {
     //todo sorting
-    @Query("SELECT NEW ru.bk.j3000.normarchivedata.model.dto.SourcePropertyDTO(" +
-            "sp.id.source.id, sp.id.source.name, " +
-            "sp.id.year, sp.branch.branchName, sp.tariffZone.zoneName) " +
+    @Query("SELECT sp " +
             "FROM SourceProperty sp " +
             "WHERE sp.id.year = :year")
     List<SourcePropertyDTO> findAllPropDTOByYear(@Param("year") Integer year);
@@ -28,9 +26,7 @@ public interface SourcePropertyRepository extends JpaRepository<SourceProperty, 
             "AND sp.id.year = :propYear")
     void deleteBySrcIdAndYear(@Param("srcId") UUID id, @Param("propYear") Integer year);
 
-    @Query("SELECT NEW ru.bk.j3000.normarchivedata.model.dto.SourcePropertyDTO(" +
-            "sp.id.source.id, sp.id.source.name, " +
-            "sp.id.year, sp.branch.branchName, sp.tariffZone.zoneName) " +
+    @Query("SELECT sp " +
             "FROM SourceProperty sp " +
             "WHERE sp.id.year = :year " +
             "AND sp.id.source.id = :srcId")
