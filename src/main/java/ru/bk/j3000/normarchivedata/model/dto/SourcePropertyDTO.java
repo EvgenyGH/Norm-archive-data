@@ -3,13 +3,12 @@ package ru.bk.j3000.normarchivedata.model.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.core.convert.converter.Converter;
 import ru.bk.j3000.normarchivedata.model.SourceProperty;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SourcePropertyDTO implements Converter<String, SourceProperty> {
+public class SourcePropertyDTO {
     private SourceAlterDTO source;
     private Integer year;
     private BranchDTO branch;
@@ -20,12 +19,5 @@ public class SourcePropertyDTO implements Converter<String, SourceProperty> {
         this.year = sourceProperty.getId().getYear();
         this.branch = new BranchDTO(sourceProperty.getBranch());
         this.tariffZone = new TariffZoneDTO(sourceProperty.getTariffZone());
-    }
-
-    @Override
-    public SourceProperty convert(String source) {
-        System.out.println(source);
-
-        return null;
     }
 }
