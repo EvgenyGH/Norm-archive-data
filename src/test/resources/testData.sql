@@ -353,10 +353,14 @@ VALUES (9, 'Десеновское');
 INSERT INTO public.tariff_zones (zone_id, zone_name)
 VALUES (10, 'Москва');
 
-INSERT INTO public.source_properties (source_id, ssfc_year, source_branch, zone_id)
-VALUES ('a82b2c59-577d-4560-9176-909a3b21645c', 2023, 1, 1);
-INSERT INTO public.source_properties (source_id, ssfc_year, source_branch, zone_id)
-VALUES ('5e3c60c8-6385-4e09-821c-c1c711fe71fa', 2023, 2, 2);
-INSERT INTO public.source_properties (source_id, ssfc_year, source_branch, zone_id)
-VALUES ('abe15109-dc50-43fb-a8fc-18edfff1f09a', 2023, 3, 3);
+INSERT INTO public.branches (branch_id, branch_name)
+VALUES (1, 'Br1'),
+       (2, 'Br2'),
+       (3, 'Br3');
 
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('a82b2c59-577d-4560-9176-909a3b21645c', 2023, 1, 1);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('5e3c60c8-6385-4e09-821c-c1c711fe71fa', 2023, 2, 2);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('abe15109-dc50-43fb-a8fc-18edfff1f09a', 2023, 3, 3);

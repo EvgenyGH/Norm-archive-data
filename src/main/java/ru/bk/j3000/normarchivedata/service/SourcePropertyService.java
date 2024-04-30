@@ -1,5 +1,7 @@
 package ru.bk.j3000.normarchivedata.service;
 
+import org.springframework.core.io.Resource;
+import org.springframework.web.multipart.MultipartFile;
 import ru.bk.j3000.normarchivedata.model.dto.SourcePropertyDTO;
 
 import java.util.List;
@@ -15,4 +17,8 @@ public interface SourcePropertyService {
     void updateSourceProperty(SourcePropertyDTO sourcePropertyDTO);
 
     void addSourceProperty(SourcePropertyDTO sourcePropertyDTO);
+
+    Resource getSourcePropertyTemplate();
+
+    void uploadSourceProperties(MultipartFile file, Integer year);
 }

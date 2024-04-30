@@ -14,10 +14,11 @@ import java.util.UUID;
 
 @Repository
 public interface SourcePropertyRepository extends JpaRepository<SourceProperty, SrcPropertyId> {
-    //todo sorting
     @Query("SELECT sp " +
             "FROM SourceProperty sp " +
-            "WHERE sp.id.year = :year")
+            "WHERE sp.id.year = :year " +
+            "ORDER BY sp.id.source.name, sp.id.source.sourceType," +
+            " sp.branch.id, sp.tariffZone.id")
     List<SourcePropertyDTO> findAllPropDTOByYear(@Param("year") Integer year);
 
     @Modifying
@@ -32,4 +33,9 @@ public interface SourcePropertyRepository extends JpaRepository<SourceProperty, 
             "AND sp.id.source.id = :srcId")
     SourcePropertyDTO getSourcePropertyDTOByIdAndYear(@Param("srcId") UUID srcId,
                                                       @Param("year") Integer year);
+
+    @Modifying
+    @Query("DELETE SourceProperty sp " +
+            "WHERE sp.id.year = :year")
+    void deleteAllByYear(@Param("year") Integer year);
 }

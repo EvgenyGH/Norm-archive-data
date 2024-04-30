@@ -2,8 +2,13 @@ package ru.bk.j3000.normarchivedata.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.MimeType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.bk.j3000.normarchivedata.model.dto.SourcePropertyDTO;
@@ -64,16 +69,25 @@ public class SourcePropertyController {
         return "redirect:/sourceproperty";
     }
 
-    //post template
-    @PostMapping("/sourceproperty/template")
-    public String uploadSourceProperties(Model model, MultipartFile file) {
+    // Upload source properties from file
+    @PostMapping("/sourceproperty/template/{reportYear}")
+    public String uploadSourceProperties(@PathVariable(name = "reportYear") Integer year,
+                                         MultipartFile file) {
+        srcPropService.uploadSourceProperties(file, year);
 
-        return "redirect:/sourceproperty";
+        return "redirect:/sourceproperty?selectedYear=" + year;
     }
 
-    // get template
+    // Get source property template
     @GetMapping("/sourceproperty/template")
-    public String getSourcePropertyTemplate(Model model) {
-        return "welcome";
+    public ResponseEntity<Resource> getSourcePropertyTemplate() {
+        Resource resource = srcPropService.getSourcePropertyTemplate();
+
+        return ResponseEntity
+                .ok()
+                .contentType(MediaType.asMediaType(MimeType.valueOf("application/vnd.ms-excel")))
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=sourcePropertyTemplate.xlsm")
+                .body(resource);
     }
 }

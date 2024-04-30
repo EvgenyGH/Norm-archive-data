@@ -102,7 +102,7 @@
                         </a>
                     </li>
                     <li sec:authorize="hasRole('ADMIN')">
-                        <form class="upload-form" th:action="@{/sourceproperty/template}"
+                        <form class="upload-form" th:action="@{'/sourceproperty/template/' + ${reportYear}}"
                               method="post" enctype="multipart/form-data">
                             <label for="file-upload-source-properties">Выбрать файл</label>
                             <input type="file" id="file-upload-source-properties" name="file">

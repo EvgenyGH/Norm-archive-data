@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS source, tariff_zone, standard_sfc,
+DROP TABLE IF EXISTS sources, tariff_zones, standard_sfcs,
     source_properties, users, authorities, branches CASCADE;
 
 CREATE TABLE IF NOT EXISTS sources

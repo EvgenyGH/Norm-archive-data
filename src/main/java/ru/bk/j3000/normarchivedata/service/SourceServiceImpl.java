@@ -113,6 +113,12 @@ public class SourceServiceImpl implements SourceService {
 
             sources = IntStream.rangeClosed(1, sheet.getLastRowNum())
                     .mapToObj(sheet::getRow)
+                    .filter(row -> row.getCell(1) != null
+                            && !row.getCell(1).getStringCellValue().isBlank()
+                            && row.getCell(2) != null
+                            && !row.getCell(2).getStringCellValue().isBlank()
+                            && row.getCell(3) != null
+                            && !row.getCell(3).getStringCellValue().isBlank())
                     .map(row -> new Source(null,
                             row.getCell(1).getStringCellValue()
                                     .trim().replaceAll("[«»]", "\""),

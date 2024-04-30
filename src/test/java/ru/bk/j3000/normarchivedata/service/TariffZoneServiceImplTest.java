@@ -8,6 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.Resource;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import ru.bk.j3000.normarchivedata.model.TariffZone;
@@ -110,9 +111,13 @@ public class TariffZoneServiceImplTest {
 
     @Test
     @DisplayName("Get template test.")
-    //Resource getTemplate();
-    public void test5() {
-        //todo
+    public void whenUploadSourcePropertyTemplateThenGrtZeroSourcePropertyFromDatabase() throws IOException {
+        Resource resource = tariffZoneService.getTemplate();
+        MockMultipartFile file = new MockMultipartFile("sp.xlsm",
+                resource.getContentAsByteArray());
+        tariffZoneService.uploadTariffZones(file);
+
+        assertThat(tariffZoneService.getAllTariffZones()).hasSize(0);
     }
 
     @Test

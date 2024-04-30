@@ -104,7 +104,7 @@ public class TariffZoneServiceImpl implements TariffZoneService {
         tariffZoneRepository.deleteAll();
         tariffZoneRepository.saveAll(tariffZones);
 
-        log.info("Tariff zones loaded to database from file.");
+        log.info("Tariff zones loaded to database from file ({} in total).", tariffZones.size());
     }
 
     private List<TariffZone> readTariffZonesFromFile(MultipartFile file) {
@@ -117,6 +117,10 @@ public class TariffZoneServiceImpl implements TariffZoneService {
 
             tariffZones = IntStream.rangeClosed(1, sheet.getLastRowNum())
                     .mapToObj(sheet::getRow)
+                    .filter(row -> row.getCell(0) != null
+                            && row.getCell(0).getNumericCellValue() > 0
+                            && row.getCell(1) != null
+                            && !row.getCell(1).getStringCellValue().isBlank())
                     .map(row -> new TariffZone(
                             (int) row.getCell(0).getNumericCellValue(),
                             row.getCell(1).getStringCellValue()))

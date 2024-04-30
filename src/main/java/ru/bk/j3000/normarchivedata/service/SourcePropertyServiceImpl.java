@@ -5,14 +5,26 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import ru.bk.j3000.normarchivedata.exception.FileParseException;
+import ru.bk.j3000.normarchivedata.exception.FileReadException;
 import ru.bk.j3000.normarchivedata.model.SourceProperty;
+import ru.bk.j3000.normarchivedata.model.SrcPropertyId;
 import ru.bk.j3000.normarchivedata.model.dto.SourcePropertyDTO;
 import ru.bk.j3000.normarchivedata.repository.SourcePropertyRepository;
 import ru.bk.j3000.normarchivedata.util.SourcePropertiesMapper;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +32,13 @@ import java.util.UUID;
 public class SourcePropertyServiceImpl implements SourcePropertyService {
     private final SourcePropertyRepository srcPropRepository;
     private final SourcePropertiesMapper mapper;
+    private final SourceService sourceService;
+    private final TariffZoneService tariffZoneService;
+    private final BranchService branchService;
+    private final String[] srcPropTemplateColumns = {"ID источника",
+            "ID Филиала",
+            "ID тарифной зоны",
+            "Комментарии"};
 
     @Override
     public List<SourcePropertyDTO> findAllPropByYear(Integer reportYear) {
@@ -81,5 +100,79 @@ public class SourcePropertyServiceImpl implements SourcePropertyService {
         log.info("Source property already exists. ({}) Id {}.",
                 property.getId().getSource().getName(),
                 property.getId());
+    }
+
+    @Override
+    public Resource getSourcePropertyTemplate() {
+        Resource resource = new ClassPathResource("exceltemplates/sourcePropertiesTemplate.xlsm");
+
+        log.info("Source properties template resource created.");
+
+        return resource;
+    }
+
+    @Override
+    @Transactional
+    public void uploadSourceProperties(MultipartFile file, Integer year) {
+        List<SourceProperty> properties = readSourcePropertiesFromFile(file, year);
+        srcPropRepository.deleteAllByYear(year);
+        srcPropRepository.saveAll(properties);
+
+        log.info("Source properties loaded to database from file ({} in total).", properties.size());
+    }
+
+    private List<SourceProperty> readSourcePropertiesFromFile(MultipartFile file, Integer year) {
+        List<SourceProperty> properties;
+
+        try (Workbook workbook = new XSSFWorkbook(file.getInputStream())) {
+            Sheet sheet = workbook.getSheet("sourceProperties");
+
+            checkHeaders(sheet.getRow(0));
+
+            properties = IntStream.rangeClosed(1, sheet.getLastRowNum())
+                    .mapToObj(sheet::getRow)
+                    .filter(row -> row.getCell(0) != null
+                            && !row.getCell(0).getStringCellValue().isBlank()
+                            && row.getCell(1) != null
+                            && row.getCell(1).getNumericCellValue() > 0
+                            && row.getCell(2) != null
+                            && row.getCell(2).getNumericCellValue() > 0)
+                    .map(row -> new SourceProperty(new SrcPropertyId(
+                            sourceService.getSourceById(
+                                            UUID.fromString(row
+                                                    .getCell(0)
+                                                    .getStringCellValue()))
+                                    .orElseThrow(),
+                            year),
+                            branchService.getBranchById(
+                                    Double.valueOf(row
+                                                    .getCell(1)
+                                                    .getNumericCellValue())
+                                            .intValue()),
+                            tariffZoneService.getTariffZoneById(
+                                    Double.valueOf(row
+                                                    .getCell(2)
+                                                    .getNumericCellValue())
+                                            .intValue())))
+                    .toList();
+
+        } catch (IOException e) {
+            throw new FileReadException("Error reading excel file.", "SourceProperties template.");
+        }
+
+        log.info("Source properties read from file.");
+
+        return properties;
+    }
+
+    private void checkHeaders(Row row) {
+        IntStream.rangeClosed(0, srcPropTemplateColumns.length - 1)
+                .forEach(i -> {
+                    if (!row.getCell(i).getStringCellValue().equals(srcPropTemplateColumns[i])) {
+                        throw new FileParseException("Измененный шаблон.", "-", row.getRowNum());
+                    }
+                });
+
+        log.info("Source properties template headers are OK.");
     }
 }
