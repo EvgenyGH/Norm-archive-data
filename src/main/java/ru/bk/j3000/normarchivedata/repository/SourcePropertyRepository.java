@@ -17,8 +17,9 @@ public interface SourcePropertyRepository extends JpaRepository<SourceProperty, 
     @Query("SELECT sp " +
             "FROM SourceProperty sp " +
             "WHERE sp.id.year = :year " +
-            "ORDER BY sp.id.source.name, sp.id.source.sourceType," +
-            " sp.branch.id, sp.tariffZone.id")
+            "ORDER BY sp.tariffZone.id, sp.branch.id, sp.id.source.sourceType, sp.id.source.name")
+        //"ORDER BY sp.id.source.name, sp.id.source.sourceType," +
+        //      " sp.branch.id, sp.tariffZone.id")
     List<SourcePropertyDTO> findAllPropDTOByYear(@Param("year") Integer year);
 
     @Modifying
