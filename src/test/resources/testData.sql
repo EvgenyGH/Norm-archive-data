@@ -354,9 +354,18 @@ INSERT INTO public.tariff_zones (zone_id, zone_name)
 VALUES (10, 'Москва');
 
 INSERT INTO public.branches (branch_id, branch_name)
-VALUES (1, 'Br1'),
-       (2, 'Br2'),
-       (3, 'Br3');
+VALUES (1, 'Филиал № 1'),
+       (2, 'Филиал № 2'),
+       (3, 'Филиал № 3'),
+       (4, 'Филиал № 4'),
+       (5, 'Филиал № 5'),
+       (6, 'Филиал № 6'),
+       (7, 'Филиал № 7'),
+       (8, 'Филиал № 8'),
+       (9, 'Филиал № 9'),
+       (10, 'Филиал № 10'),
+       (19, 'Филиал № 19'),
+       (20, 'Филиал № 20');
 
 INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
 VALUES ('a82b2c59-577d-4560-9176-909a3b21645c', 2023, 1, 1);

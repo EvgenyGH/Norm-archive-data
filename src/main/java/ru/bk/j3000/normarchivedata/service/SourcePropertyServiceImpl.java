@@ -35,7 +35,8 @@ public class SourcePropertyServiceImpl implements SourcePropertyService {
     private final SourceService sourceService;
     private final TariffZoneService tariffZoneService;
     private final BranchService branchService;
-    private final String[] srcPropTemplateColumns = {"ID источника",
+    private final String[] srcPropTemplateColumns = {
+            "ID источника",
             "ID Филиала",
             "ID тарифной зоны",
             "Комментарии"};
