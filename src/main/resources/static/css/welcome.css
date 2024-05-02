@@ -126,6 +126,11 @@
     margin: 0.2em;
 }
 
+.alter-data input[type=submit] {
+    font-size: 0.8em;
+    margin-top: 1em;
+}
+
 
 /* Table data */
 .list-data tr:hover {

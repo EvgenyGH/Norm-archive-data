@@ -53,7 +53,7 @@ tariffZones, branches)">
             <label th:for="${#ids.next('source')}" th:text="${'Источник:'}">
                 Источник:
             </label>
-            <br>
+            <!--            <br>-->
             <input th:if="${!newProperty}" type="text" th:field="*{source}"
                    placeholder="Источник" readonly hidden="hidden">
             <div th:if="${!newProperty}" th:text="*{source.sourceName}">Источник</div>
@@ -66,13 +66,14 @@ tariffZones, branches)">
                         th:text="${source.sourceName}">
                 </option>
             </select>
-            <br th:if="${newProperty}">
+            <!--            <br>-->
+            <!--            <br th:if="${newProperty}">-->
             <label th:for="${#ids.next('year')}">Год:</label>
-            <br>
+            <!--            <br>-->
             <input type="text" th:field="*{year}" placeholder="Год" readonly>
-            <br>
+            <!--            <br>-->
             <label th:for="${#ids.next('branch')}">Филиал:</label>
-            <br>
+            <!--            <br>-->
             <select th:field="*{branch}" placeholder="Филиал">
                 <option th:if="newProperty" th:value="null" th:text="'Выбрать филиал'"
                         selected hidden="hidden">
@@ -86,7 +87,7 @@ tariffZones, branches)">
 
             <br>
             <label th:for="${#ids.next('tariffZone')}">Тарифная зона:</label>
-            <br>
+            <!--            <br>-->
             <select th:field="*{tariffZone}" placeholder="Тарифная зона">
                 <option th:if="newProperty" th:value="null" th:text="'Выбрать тарифную зону'"
                         selected hidden="hidden">

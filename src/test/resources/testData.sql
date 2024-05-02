@@ -368,8 +368,274 @@ VALUES (1, 'Филиал № 1'),
        (20, 'Филиал № 20');
 
 INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
-VALUES ('a82b2c59-577d-4560-9176-909a3b21645c', 2023, 1, 1);
+VALUES ('a82b2c59-577d-4560-9176-909a3b21645c', 2024, 9, 10);
 INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
-VALUES ('5e3c60c8-6385-4e09-821c-c1c711fe71fa', 2023, 2, 2);
+VALUES ('46fafaef-cc8d-4cf1-b490-bd475c71a0e3', 2024, 9, 10);
 INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
-VALUES ('abe15109-dc50-43fb-a8fc-18edfff1f09a', 2023, 3, 3);
+VALUES ('0435e67f-6fd2-406c-8d16-f90ad5437707', 2024, 9, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('0395cfd3-f6b1-4cbb-8378-cbc5ebfe1567', 2024, 9, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('9940bad4-84dc-4244-b9d1-e3f6c3983d7c', 2024, 9, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('e53ad9d7-540f-4cbc-931c-161215cd79ba', 2024, 9, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('6822f338-3251-4e1e-bc82-298a3f0dd387', 2024, 10, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('511e67a0-9682-42bb-82ea-cebbc94d0295', 2024, 10, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('877b9f82-2713-4d6a-a4b4-83b4087a1a67', 2024, 10, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('9d13d26b-e5bf-4856-8b6b-bea81ab25c5e', 2024, 10, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('a75622a7-e4e4-4ec9-9c80-c80c09ae7e50', 2024, 3, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('f01c348a-9d0c-4460-bfea-56652b00a80c', 2024, 4, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('abaad372-0846-4aa2-b7ee-2fb78edd2f54', 2024, 4, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('abf7a5ca-1885-4779-a3ef-bb4b1f9f9949', 2024, 4, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('f54c3109-fc7d-4318-9a82-b319882bb31b', 2024, 20, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('76eae734-75d3-4dbd-8a3d-c5c277289d75', 2024, 9, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('f855f722-d09f-489e-b7db-143cfe7e214b', 2024, 9, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('469b0814-1d35-46e5-9c4e-2ff5dc51ee65', 2024, 9, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('077729bf-f650-44c5-a98e-9f2410ce9116', 2024, 19, 6);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('140d6752-4ffe-4936-8336-94392f9ac7fb', 2024, 19, 6);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('d1a8ebf0-ee91-4b50-b8f0-003f3289a9c1', 2024, 19, 6);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('43b7b3e8-e06a-41af-9298-0172014130b5', 2024, 19, 6);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('15b8bec6-387c-48e7-a268-e36c1b5b844f', 2024, 19, 7);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('0eac9afc-8fc6-4bd5-833c-b579388fb4aa', 2024, 19, 7);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('f9aedf86-b54e-40bf-ac87-5855db2bac0c', 2024, 19, 7);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('9086d44f-33aa-4949-85a9-1efeef6d6e46', 2024, 19, 7);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('1e4fa480-6dce-444b-8c8a-ecbf110dfaf7', 2024, 19, 4);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('d15a5155-da74-4d16-8af7-6f3958d9b744', 2024, 19, 4);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('8ac4a3eb-1568-4c13-9eb1-24d823e7050b', 2024, 19, 4);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('3646b8e7-9e85-4e64-9682-3a69ef263351', 2024, 19, 4);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('87526201-5129-444d-a385-1588b373c29b', 2024, 19, 9);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('39a26eab-aafd-465c-8a66-c17196a87885', 2024, 19, 4);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('74df75bc-e63e-4130-ba35-6be6a8e57a8b', 2024, 19, 4);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('870f8fc2-9529-4fc9-b2e8-c352737f64f5', 2024, 19, 4);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('ed73ee33-a7ee-46ff-a3cf-e1af4c93a454', 2024, 19, 4);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('86bd3c1e-cff7-4e61-9221-114972699a0f', 2024, 19, 4);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('ffc28c11-394d-4144-b741-1a2d7c51e404', 2024, 19, 4);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('1626f801-b912-4e1c-a3af-a202281237cb', 2024, 19, 4);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('1b4dd6de-f1ae-4a42-a9fb-bec56f8dd204', 2024, 19, 4);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('d5dc63fa-887f-4986-b7bd-2b3f51b7219d', 2024, 19, 4);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('d63e0c6b-9b0a-449d-a4f5-782574e8f832', 2024, 19, 4);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('164bd57b-80ad-40d3-8f49-70b375647344', 2024, 19, 4);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('89bc6be7-86f9-47c5-8cc8-04bb8dd76698', 2024, 19, 8);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('27f36e4e-31b0-422c-84fd-0d619a348286', 2024, 19, 8);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('328fc99b-4d38-49c1-844b-4305b0fed746', 2024, 19, 8);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('491c928f-30bd-44b1-88d9-4340b0c682ed', 2024, 19, 8);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('82e81eee-be10-4fbd-b0ce-1af50ebf11d2', 2024, 19, 8);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('3e87f349-ab79-4127-ad66-2696a02e2424', 2024, 19, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('8c57215b-9d30-4a65-b1d6-2d32dcb39033', 2024, 19, 8);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('be791764-d2f6-4a98-b13c-9df2d8c67c62', 2024, 19, 8);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('65e8483b-4543-4c1a-9969-4389e8dd620b', 2024, 19, 8);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('58d7926d-d311-4e19-836c-f58229803796', 2024, 19, 8);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('846e7140-0687-4299-a116-04599c679689', 2024, 19, 8);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('a88d8aa7-91a6-486f-98b1-5cf4a50d4489', 2024, 19, 8);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('fde67d8d-753b-4faa-866e-950ac47b540e', 2024, 19, 8);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('f9168bc1-c0fe-4d6d-841d-7b4874c0fbd6', 2024, 19, 8);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('808e87db-77b9-4f86-913c-6d0e705aa23e', 2024, 19, 1);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('caf9c77e-50fe-4129-82f8-29911513a360', 2024, 19, 1);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('98904565-3153-4acd-a7a4-2a366c55f62a', 2024, 19, 1);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('d822eb3b-c808-4db7-80a7-e7ac5fb200a6', 2024, 19, 1);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('86db2517-2523-4030-8d0a-af01f4d00b8f', 2024, 19, 1);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('4d63a732-874d-44ed-a9d1-68cd39e4ecab', 2024, 19, 1);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('5ff4ae59-aa2c-4ccb-b8ec-72e17536af93', 2024, 19, 1);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('43abd9d1-a0e0-4ac4-ab6b-da2ba84c5575', 2024, 19, 1);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('987ec794-b8b9-4d3b-b64a-496ef8e28299', 2024, 19, 1);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('9323024e-8a10-446e-867f-a0ac4396e006', 2024, 19, 1);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('1f902c86-ebe7-40b0-8050-011f131a9631', 2024, 19, 5);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('89ede33d-d14a-41f3-9acb-8c23c1a34706', 2024, 19, 3);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('80294af3-49cd-4094-ac2a-d64430f226c7', 2024, 19, 3);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('af983936-faa6-484a-b6b5-81360b163b69', 2024, 19, 3);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('c2053e29-ba05-4e09-85c7-d79b9b839c30', 2024, 19, 3);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('d3567cac-8756-4fc0-b6f1-49e0bc64a7a8', 2024, 19, 2);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('183cee70-886b-4e10-bbc5-ae33e11f9619', 2024, 19, 3);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('f397c7da-f457-4e6e-928d-5cf244f4f8a7', 2024, 19, 3);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('8a23fe9f-44c0-4848-b4cd-d16244461b7d', 2024, 1, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('ab79de14-df1b-45c3-a424-1a42a99fb510', 2024, 1, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('1f14a533-3ea0-41b4-b306-a548e914a82e', 2024, 1, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('5235e8fb-0bcb-4637-b157-5ade544c8210', 2024, 1, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('84159525-644b-433e-ba58-cb39b42f0b49', 2024, 1, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('5d5a1ab7-4ff5-4273-a5ba-b04c66b752a0', 2024, 1, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('64371df8-d780-4768-ba80-675d70323001', 2024, 1, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('b7352727-540e-48eb-82d9-9d1af8197ed5', 2024, 1, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('b1ea340e-b888-4a0f-9ad3-7e6518f69866', 2024, 9, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('52a2efc7-170b-4a0d-a748-8772087af9b1', 2024, 4, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('b874eb3a-86a7-4165-957a-b81be08e8658', 2024, 4, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('f2665a02-6945-4e45-8c93-b0eac9a44484', 2024, 4, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('a60389ea-5900-4086-81c4-9620bee244d6', 2024, 4, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('06db063e-20db-43ec-afa2-43c5b9f6e105', 2024, 4, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('9dc0fb6b-af3c-4dec-a72a-b3e0a1990262', 2024, 5, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('909842c9-fda6-48e2-b542-67995980a0ba', 2024, 5, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('2703470c-a7b0-423e-996e-7e082f605434', 2024, 5, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('ec20f3cc-fc6d-42d0-a27b-9c4157ab6719', 2024, 19, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('fbbffa6f-b148-43af-9402-a4eb8756e5b6', 2024, 9, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('55670c70-e040-4970-98ab-3b6eec21c6db', 2024, 9, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('28a53aae-9884-4a3e-9033-35c7fc789ad6', 2024, 9, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('8af1bbb6-0995-49b0-b36f-2b3d08d5e899', 2024, 9, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('d8aacbc5-64a1-45dc-a963-a708dc93f047', 2024, 20, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('6bda83ca-f836-4b0f-af37-e2a80b465ad7', 2024, 20, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('233c1c28-b220-4cb0-a55e-330c1731e8f2', 2024, 20, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('f635a586-b343-4cdd-a194-c7f75cdf6102', 2024, 9, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('212f130d-0cba-4da4-a43c-b4bfc1fa98f9', 2024, 9, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('2a248bc6-5afa-4cf8-9d63-d6d8ff9a20ba', 2024, 9, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('92f0fca5-c95a-4d05-b9ce-44bcbed6d67d', 2024, 9, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('5d447124-8586-4951-8250-ed6c8c9f63ee', 2024, 9, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('267ff15d-6a07-4689-9f5e-a80aeca2e6b8', 2024, 9, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('1e98b809-6e74-43f9-a332-7e6923a10355', 2024, 9, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('892f9aca-c055-4128-a4de-03f5438da489', 2024, 9, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('7d16cc11-f916-461b-b274-21813f9bac40', 2024, 9, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('fa2e0243-c08e-4ab8-9ea8-d01402f1d0b8', 2024, 9, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('6e414093-7632-4209-9bbf-f891457c2bbb', 2024, 9, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('07fac330-6d30-4b07-941e-7e5f168c0957', 2024, 9, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('be03071c-81c0-46c8-bb99-6ae7a185542a', 2024, 9, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('e072d25b-96d1-413b-92c8-8869a8edb986', 2024, 9, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('d7e04511-62f5-4f7e-bc64-0873c4c4de4e', 2024, 9, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('762495ac-92bb-46ed-9166-c77481fac5ce', 2024, 9, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('c8c36e95-7c61-4ad8-9005-60bf4aa45e80', 2024, 9, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('adcd0c6a-6b81-42a9-93dc-dcd06ad5a4d1', 2024, 9, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('d3df1b3e-081e-48a6-b3ae-8579c1c76d5f', 2024, 9, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('eafea863-90e3-406a-a3af-cde881cd3808', 2024, 9, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('952dfd63-53f8-4066-9450-53ad870c57f0', 2024, 9, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('bea1bf3d-4bbf-4818-b5a5-99a1a57f57a4', 2024, 9, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('5e6fec2e-141e-47c2-81eb-1c1d7f9e4f92', 2024, 9, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('d10ac506-83de-47be-a621-24050c7ec16e', 2024, 9, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('db432b3b-c008-4ec9-b7e1-0d98d3cb4c5e', 2024, 9, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('14e8c36b-604e-4076-8349-177bc19eff62', 2024, 9, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('54431f02-de11-4e14-940b-9f5f7f2e4802', 2024, 9, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('2fde8a77-52ed-4e7c-bde2-97c713f1a376', 2024, 9, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('7cb85368-0c2d-41cf-8675-93ce45466234', 2024, 9, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('40888b8e-6602-46c9-8477-0ee84eabe759', 2024, 9, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('bb03754f-879d-45bd-9314-57e62a4861af', 2024, 9, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('fe0d2da1-715f-42d9-a326-0aeb700517ae', 2024, 9, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('8bbc8e13-7b70-48fd-9b76-8b601e7c884a', 2024, 9, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('ab676b6a-aa71-44f2-8277-ff13c066e3e4', 2024, 9, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('f45116a6-cfe3-4b6b-bf5d-7c16abfaea67', 2024, 9, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('9bdd95a9-7f29-4a83-9040-5273adc1421a', 2024, 9, 10);
+INSERT INTO public.source_properties (source_id, ssfc_year, branch_id, zone_id)
+VALUES ('128acda6-3732-4698-80d3-b2d708fa0a67', 2024, 19, 6);

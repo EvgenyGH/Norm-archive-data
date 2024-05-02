@@ -128,7 +128,7 @@ public class SourcePropertiesImpTest {
             throws IOException {
         Resource resource = new ClassPathResource("/testdata/sourceProperties.xlsm");
         MockMultipartFile file = new MockMultipartFile("file.xlsm", resource.getContentAsByteArray());
-        srcPropService.uploadSourceProperties(file, 2024);
-        assertThat(srcPropService.findAllPropByYear(2024)).hasSize(141);
+        srcPropService.uploadSourceProperties(file, 2022);
+        assertThat(srcPropService.findAllPropByYear(2022)).hasSize(136);
     }
 }
