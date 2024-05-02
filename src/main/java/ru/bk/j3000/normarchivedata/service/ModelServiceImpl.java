@@ -166,7 +166,21 @@ public class ModelServiceImpl implements ModelService {
         attributes.put("title", String.format("Свойства источников на %s год", reportYear));
         attributes.put("activeMenu", Set.of("sourceProperty"));
         attributes.put("reportYear", reportYear);
-        attributes.put("sourceProperties", srcPropService.findAllPropByYear(reportYear));
+        attributes.put("sourceProperties", srcPropService.findAllPropByYear(reportYear)
+                .stream()
+                .sorted((o1, o2) -> {
+                    if (o1.getTariffZone().getZoneId() > (o2.getTariffZone().getZoneId())) {
+                        return 1;
+                    } else if (o1.getTariffZone().getZoneId().equals(o2.getTariffZone().getZoneId())) {
+                        if (o1.getBranch().getBranchId() > (o2.getBranch().getBranchId())) {
+                            return 1;
+                        } else if (o1.getBranch().getBranchId().equals(o2.getBranch().getBranchId())) {
+                            return 0;
+                        }
+                    }
+                    return -1;
+                })
+                .toList());
 
         log.info("All source properties view attributes for year {} created.", reportYear);
 
