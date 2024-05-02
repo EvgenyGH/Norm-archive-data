@@ -53,7 +53,6 @@ tariffZones, branches)">
             <label th:for="${#ids.next('source')}" th:text="${'Источник:'}">
                 Источник:
             </label>
-            <!--            <br>-->
             <input th:if="${!newProperty}" type="text" th:field="*{source}"
                    placeholder="Источник" readonly hidden="hidden">
             <div th:if="${!newProperty}" th:text="*{source.sourceName}">Источник</div>
@@ -66,14 +65,9 @@ tariffZones, branches)">
                         th:text="${source.sourceName}">
                 </option>
             </select>
-            <!--            <br>-->
-            <!--            <br th:if="${newProperty}">-->
             <label th:for="${#ids.next('year')}">Год:</label>
-            <!--            <br>-->
             <input type="text" th:field="*{year}" placeholder="Год" readonly>
-            <!--            <br>-->
             <label th:for="${#ids.next('branch')}">Филиал:</label>
-            <!--            <br>-->
             <select th:field="*{branch}" placeholder="Филиал">
                 <option th:if="newProperty" th:value="null" th:text="'Выбрать филиал'"
                         selected hidden="hidden">
@@ -84,10 +78,7 @@ tariffZones, branches)">
                         th:selected="${newProperty ? false : sourceProperty.branch.equals(b)}">
                 </option>
             </select>
-
-            <br>
             <label th:for="${#ids.next('tariffZone')}">Тарифная зона:</label>
-            <!--            <br>-->
             <select th:field="*{tariffZone}" placeholder="Тарифная зона">
                 <option th:if="newProperty" th:value="null" th:text="'Выбрать тарифную зону'"
                         selected hidden="hidden">
@@ -98,7 +89,6 @@ tariffZones, branches)">
                         th:selected="${newProperty ? false : sourceProperty.tariffZone.equals(tz)}">
                 </option>
             </select>
-            <br>
             <input type="submit" value="Сохранить">
             <a th:href="@{/sourceproperty}">Отмена</a>
         </fieldset>

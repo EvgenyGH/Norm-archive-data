@@ -116,6 +116,43 @@
 }
 
 
+/* Alter source property style */
+.alter-source-property {
+    width: 70vh;
+}
+
+.alter-source-property fieldset {
+    display: grid;
+    grid-template-columns: 27% 74%;
+    row-gap: 0.2em;
+}
+
+.alter-source-property a {
+    margin-top: 1em;
+    margin-left: 0.2em;
+}
+
+.alter-source-property label {
+    padding-top: 0.3em;
+}
+
+.alter-source-property input[type=text] {
+    width: 96.5%;
+    margin-left: 0.5%;
+    font-size: 0.7em;
+}
+
+.alter-source-property div {
+    border: 0.13em inset lightgray;
+    background: darkgrey;
+    width: 97.6%;
+    margin-left: 0.1em;
+    font-size: 0.8em;
+    padding-top: 0.3em;
+}
+
+
+
 /* Form submit button */
 .output-area input[type=submit] {
     font-size: 0.8em;
