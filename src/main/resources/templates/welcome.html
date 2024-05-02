@@ -26,7 +26,15 @@
              th:insert="~{tariffzone::all-tariff-zones(${tariffZones})}">tariff zones
         </div>
         <div th:if="${alterTariffZone}"
-             th:insert="~{tariffzone::alter-tariff-zone(${tariffZone})}">alter tariff zones
+             th:insert="~{tariffzone::alter-tariff-zone(${tariffZone})}">alter tariff zone
+        </div>
+
+        <!--/* Филиалы */-->
+        <div th:if="${activeMenu.contains('branch')}"
+             th:insert="~{branch::all-branches(${branches})}">branches
+        </div>
+        <div th:if="${alterBranch}"
+             th:insert="~{branch::alter-branch(${branch})}">alter branch
         </div>
 
         <!--/* Свойства источников */-->
@@ -41,7 +49,6 @@
              th:insert="~{sourceproperty::alter-source-property(${sourceProperty},
              ${sourcesLeft}, ${tariffZones}, ${branches})}">alter source property
         </div>
-
 
         <!--/* НУР */-->
         <!--/* Отчеты */-->
@@ -90,6 +97,24 @@
                     </li>
                     <li sec:authorize="hasRole('ADMIN')">
                         <a class="tariff-zone-template" th:href="@{/tariffzone/template}">Скачать шаблон</a>
+                    </li>
+                </ul>
+            </li>
+            <li><a th:href="@{/branch}">Филиалы</a>
+                <ul class="sub-sub-menu" th:if="${activeMenu.contains('branch')}">
+                    <li><a th:href="@{/branch}">Список филиалов</a></li>
+                    <li><a th:href="@{/branch/alter}">Добавить филиал</a></li>
+                    <li sec:authorize="hasRole('ADMIN')">
+                        <form class="upload-form" th:action="@{/branch/template}" method="post"
+                              enctype="multipart/form-data">
+                            <label for="file-upload-branches">Выбрать файл</label>
+                            <input type="file" id="file-upload-branches" name="file">
+                            <label for="upload-submit-branches">Загрузить файл</label>
+                            <input type="submit" id="upload-submit-branches">
+                        </form>
+                    </li>
+                    <li sec:authorize="hasRole('ADMIN')">
+                        <a class="branch-template" th:href="@{/branch/template}">Скачать шаблон</a>
                     </li>
                 </ul>
             </li>
