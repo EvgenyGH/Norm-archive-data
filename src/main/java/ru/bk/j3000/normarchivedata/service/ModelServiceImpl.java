@@ -8,6 +8,7 @@ import ru.bk.j3000.normarchivedata.model.SOURCE_TYPE;
 import ru.bk.j3000.normarchivedata.model.Source;
 import ru.bk.j3000.normarchivedata.model.TariffZone;
 import ru.bk.j3000.normarchivedata.model.admin.SECURITY_ROLES;
+import ru.bk.j3000.normarchivedata.model.dto.BranchDTO;
 import ru.bk.j3000.normarchivedata.model.dto.SourcePropertyDTO;
 import ru.bk.j3000.normarchivedata.model.dto.UserDTO;
 import ru.bk.j3000.normarchivedata.service.admin.UserService;
@@ -23,6 +24,7 @@ public class ModelServiceImpl implements ModelService {
             "user",
             "source",
             "tariffZone",
+            "branch",
             "sourceProperty",
             "ssfc",
             "report"};
@@ -178,6 +180,38 @@ public class ModelServiceImpl implements ModelService {
 
         log.info("Alter source property attributes created. Source id {}, year {}.",
                 id.isEmpty() ? "new" : id.get(), year);
+
+        return attributes;
+    }
+
+    @Override
+    public Map<String, Object> getAllBranchesViewAttributes() {
+        Map<String, Object> attributes = new HashMap<>();
+        attributes.put("title", "Филиалы");
+        attributes.put("activeMenu", Set.of("branch"));
+        attributes.put("branches", branchService.getAllBranchesDTO());
+
+        log.info("All branches view attributes created.");
+
+        return attributes;
+    }
+
+    @Override
+    public Map<String, Object> getAlterBranchAttributes(Optional<Integer> id) {
+        HashMap<String, Object> attributes = new HashMap<>();
+
+        attributes.put("shadow", true);
+        attributes.put("alterBranch", true);
+        attributes.put("activeMenu", Collections.emptySet());
+
+        if (id.isEmpty()) {
+            attributes.put("branch", new BranchDTO(null, ""));
+        } else {
+            attributes.put("branch", new BranchDTO(branchService.getBranchById(id.get())));
+        }
+
+        log.info("Alter branch attributes created. Branch id {}.",
+                id.isEmpty() ? "new" : id.get());
 
         return attributes;
     }

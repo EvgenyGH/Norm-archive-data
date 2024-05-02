@@ -22,4 +22,8 @@ public interface ModelService {
     Map<String, Object> getAllSrcPropertiesViewAttributes(Optional<Integer> year);
 
     Map<String, Object> getAlterSourcePropertyAttributes(Integer year, Optional<UUID> id);
+
+    Map<String, Object> getAllBranchesViewAttributes();
+
+    Map<String, Object> getAlterBranchAttributes(Optional<Integer> id);
 }
