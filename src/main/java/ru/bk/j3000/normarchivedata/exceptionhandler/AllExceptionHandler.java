@@ -1,5 +1,6 @@
 package ru.bk.j3000.normarchivedata.exceptionhandler;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ui.Model;
@@ -15,8 +16,8 @@ public class AllExceptionHandler {
     private final ModelService modelService;
 
     @ExceptionHandler
-    public String exceptionHandler(Exception e, Model model) {
-        model.addAllAttributes(modelService.getErrorAttributes(e));
+    public String exceptionHandler(Exception e, Model model, HttpServletRequest request) {
+        model.addAllAttributes(modelService.getErrorAttributes(e, request.getRequestURI()));
 
         log.warn(e.getMessage());
 

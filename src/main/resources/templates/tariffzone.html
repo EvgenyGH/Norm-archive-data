@@ -6,7 +6,7 @@
 </head>
 
 <body>
-<div class="tariff-zones-list" th:fragment="all-tariff-zones(tariffZones)">
+<div class="tariff-zones-list list-data" th:fragment="all-tariff-zones(tariffZones)">
     <table>
         <th>Номер</th>
         <th>Название</th>
@@ -33,7 +33,7 @@
     </table>
 </div>
 
-<div class="alter-tariff-zone" th:fragment="alter-tariff-zone(tariffZone)">
+<div class="alter-tariff-zone alter-data" th:fragment="alter-tariff-zone(tariffZone)">
     <form th:action="@{/tariffzone}" th:object="${tariffZone}"
           th:with="newZone=${tariffZone.id == null}"
           th:method="${newZone ? 'post' : 'put'}">

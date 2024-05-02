@@ -8,6 +8,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -17,17 +18,19 @@ import ru.bk.j3000.normarchivedata.exception.FileReadException;
 import ru.bk.j3000.normarchivedata.model.Branch;
 import ru.bk.j3000.normarchivedata.model.dto.BranchDTO;
 import ru.bk.j3000.normarchivedata.repository.BranchRepository;
+import ru.bk.j3000.normarchivedata.util.BranchMapper;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.IntStream;
 
 @Service
-@RequiredArgsConstructor
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @Slf4j
 public class BranchServiceImpl implements BranchService {
     private final BranchRepository branchRepository;
     private final String[] brTemplateColumns = {"ID", "Название филиала", "Комментарии"};
+    private final BranchMapper branchMapper;
 
     @Override
     public List<BranchDTO> getAllBranchesDTO() {
@@ -150,5 +153,15 @@ public class BranchServiceImpl implements BranchService {
                 });
 
         log.info("Branches template headers are OK.");
+    }
+
+    @Override
+    public void saveBranch(BranchDTO branch) {
+        this.saveBranch(branchMapper.toBranch(branch));
+    }
+
+    @Override
+    public void updateBranch(BranchDTO branch) {
+        this.updateBranch(branchMapper.toBranch(branch));
     }
 }

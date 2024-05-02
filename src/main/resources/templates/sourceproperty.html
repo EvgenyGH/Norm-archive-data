@@ -6,7 +6,7 @@
 </head>
 
 <body>
-<div class="source-properties-list" th:fragment="all-source-properties(sourceProperties, reportYear)">
+<div class="source-properties-list list-data" th:fragment="all-source-properties(sourceProperties, reportYear)">
     <table>
         <th>Номер</th>
         <th>Источник</th>
@@ -41,7 +41,7 @@
     </table>
 </div>
 
-<div class="alter-source-property" th:fragment="alter-source-property(sourceProperty, sourcesLeft,
+<div class="alter-source-property alter-data" th:fragment="alter-source-property(sourceProperty, sourcesLeft,
 tariffZones, branches)">
     <form th:action="@{/sourceproperty}" th:object="${sourceProperty}"
           th:with="newProperty=${sourceProperty.source == null}"

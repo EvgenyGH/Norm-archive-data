@@ -3,7 +3,7 @@
 
 <body>
 
-<div class="sources-list" th:fragment="all-sources (sources)">
+<div class="sources-list list-data" th:fragment="all-sources (sources)">
     <div>
         <table>
             <th>Номер</th>
@@ -36,7 +36,7 @@
     </div>
 </div>
 
-<div class="alter-source" th:fragment="alter-source (source)">
+<div class="alter-source alter-data" th:fragment="alter-source (source)">
     <form th:action="@{/source}" th:method="PUT" th:object="${source}">
         <fieldset>
             <legend th:text="${source.id == null ? 'Создать новый истчник:' : 'Изменить данные источника:'}"></legend>

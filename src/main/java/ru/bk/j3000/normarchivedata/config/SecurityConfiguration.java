@@ -58,6 +58,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/source/**",
                                 "/sourceproperty/**",
                                 "/tariffzone/**",
+                                "/branch/**",
                                 "/ssfc/**",
                                 "/report/**",
                                 "/css/*")

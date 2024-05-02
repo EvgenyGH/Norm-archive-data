@@ -78,7 +78,9 @@
                         </form>
                     </li>
                     <li sec:authorize="hasRole('ADMIN')">
-                        <a class="source-template" href="source/template">Скачать шаблон</a>
+                        <a class="source-template template-form" href="source/template">
+                            Скачать шаблон
+                        </a>
                     </li>
                 </ul>
             </li>
@@ -96,7 +98,9 @@
                         </form>
                     </li>
                     <li sec:authorize="hasRole('ADMIN')">
-                        <a class="tariff-zone-template" th:href="@{/tariffzone/template}">Скачать шаблон</a>
+                        <a class="tariff-zone-template template-form" th:href="@{/tariffzone/template}">
+                            Скачать шаблон
+                        </a>
                     </li>
                 </ul>
             </li>
@@ -114,7 +118,9 @@
                         </form>
                     </li>
                     <li sec:authorize="hasRole('ADMIN')">
-                        <a class="branch-template" th:href="@{/branch/template}">Скачать шаблон</a>
+                        <a class="branch-template template-form" th:href="@{/branch/template}">
+                            Скачать шаблон
+                        </a>
                     </li>
                 </ul>
             </li>
@@ -136,7 +142,7 @@
                         </form>
                     </li>
                     <li sec:authorize="hasRole('ADMIN')">
-                        <a class="source-property-template" th:href="@{/sourceproperty/template}">
+                        <a class="source-property-template template-form" th:href="@{/sourceproperty/template}">
                             Скачать шаблон
                         </a>
                     </li>

@@ -23,4 +23,8 @@ public interface BranchService {
     void uploadBranches(MultipartFile file);
 
     List<Branch> getAllBranches();
+
+    void saveBranch(BranchDTO branch);
+
+    void updateBranch(BranchDTO branch);
 }

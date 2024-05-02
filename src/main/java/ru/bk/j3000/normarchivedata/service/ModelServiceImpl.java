@@ -15,6 +15,8 @@ import ru.bk.j3000.normarchivedata.service.admin.UserService;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 @Slf4j
@@ -28,6 +30,7 @@ public class ModelServiceImpl implements ModelService {
             "sourceProperty",
             "ssfc",
             "report"};
+    private final Pattern urlOriginPattern = Pattern.compile("^/[a-zA-z0-9]*");
     private final SourceService sourceService;
     private final UserService userService;
     private final TariffZoneService tariffZoneService;
@@ -104,9 +107,19 @@ public class ModelServiceImpl implements ModelService {
     }
 
     @Override
-    public Map<String, Object> getErrorAttributes(Exception e) {
+    public Map<String, Object> getErrorAttributes(Exception e, String requestUri) {
+        String originUri;
+        Matcher matcher = urlOriginPattern.matcher(requestUri);
+
+        if (matcher.find()) {
+            originUri = matcher.group(0);
+        } else {
+            originUri = "/source";
+        }
+
         var errorAttributes = Map.of("message", e.getMessage(), "className", e.getClass().getName());
-        Map<String, Object> attributes = Map.of("error", errorAttributes);
+        Map<String, Object> attributes = Map.of("error", errorAttributes,
+                "originUri", originUri);
 
         log.info("Error view attributes created.");
 

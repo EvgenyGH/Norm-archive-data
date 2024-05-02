@@ -10,7 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import ru.bk.j3000.normarchivedata.model.Branch;
+import ru.bk.j3000.normarchivedata.model.dto.BranchDTO;
 import ru.bk.j3000.normarchivedata.service.BranchService;
 import ru.bk.j3000.normarchivedata.service.ModelService;
 
@@ -38,14 +38,14 @@ public class BranchController {
     }
 
     @PostMapping("/branch")
-    public String addNewBranch(@ModelAttribute(name = "branch") Branch branch) {
+    public String addNewBranch(@ModelAttribute(name = "branch") BranchDTO branch) {
         branchService.saveBranch(branch);
 
         return "redirect:/branch";
     }
 
     @PutMapping("branch")
-    public String updateBranch(@ModelAttribute(name = "branch") Branch branch) {
+    public String updateBranch(@ModelAttribute(name = "branch") BranchDTO branch) {
         branchService.updateBranch(branch);
 
         return "redirect:/branch";

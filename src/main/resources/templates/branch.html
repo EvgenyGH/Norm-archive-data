@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+</head>
+
+<body>
+<div class="branches-list list-data" th:fragment="all-branches(branches)">
+    <table>
+        <th>№ п/п</th>
+        <th>Номер</th>
+        <th>Название</th>
+        <th>Изменить</th>
+        <th>Удалить</th>
+        <tr th:if="${branches.size() == 0}">
+            <td colspan="4">Нет данных</td>
+        </tr>
+        <tr th:each="br : ${branches}" th:object="${br}">
+            <td th:text="${brStat.count}">Номер по порядку</td>
+            <td th:text="*{branchId}">Id</td>
+            <td th:text="*{branchName}">branchName</td>
+            <td>
+                <form th:action="@{/branch/alter}" th:method="get">
+                    <input type="hidden" name="id" th:value="*{branchId}">
+                    <input type="submit" value="Изменить">
+                </form>
+            </td>
+            <td>
+                <form th:action="@{'/branch/' + *{branchId}}" th:method="delete">
+                    <input type="submit" value="Удалить">
+                </form>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div class="alter-branch alter-data" th:fragment="alter-branch(branch)">
+    <form th:action="@{/branch}" th:object="${branch}"
+          th:with="newBranch=${branch.branchId == null}"
+          th:method="${newBranch ? 'post' : 'put'}">
+        <fieldset>
+            <legend th:text="${newBranch ? 'Создать новый филиал:'
+                        : 'Изменить данные филиала:'}">
+            </legend>
+            <label th:for="${#ids.next('branchId')}">Номер:</label>
+            <br>
+            <input type="text" th:field="*{branchId}" placeholder="Номер филиала"
+                   th:readonly="${!newBranch}" th:value="branch.id">
+            <br>
+            <label th:for="${#ids.next('branchName')}">Название филиала:</label>
+            <br>
+            <input type="text" th:field="*{branchName}" placeholder="Название филиала"
+                   th:value="${branch.branchName}">
+            <br>
+            <input type="submit" value="Сохранить">
+            <a th:href="@{/branch}">Отмена</a>
+        </fieldset>
+    </form>
+</div>
+</body>
+</html>

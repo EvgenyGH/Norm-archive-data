@@ -3,7 +3,7 @@
 
 <body>
 
-<div class="users-list" th:fragment="all-users (users)">
+<div class="users-list list-data" th:fragment="all-users (users)">
     <div>
         <table>
             <th>Номер</th>
@@ -34,7 +34,7 @@
     </div>
 </div>
 
-<div class="alter-user" th:fragment="alter-user (user, secRoles)">
+<div class="alter-user alter-data" th:fragment="alter-user (user, secRoles)">
     <form th:action="@{/user}" th:method="${newUser ? 'post' : 'put'}" th:object="${user}"
           th:with="newUser=${user.name} == ''">
         <fieldset>

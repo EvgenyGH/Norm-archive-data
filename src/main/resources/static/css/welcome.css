@@ -1,3 +1,4 @@
+/* General */
 .welcome-container {
     color: black;
     font-size: 10px;
@@ -30,23 +31,6 @@
     background-color: white;
 }
 
-.menu-area a, .menu-area a:visited,
-.alter-source a, .alter-source a:visited,
-.alter-user a, .alter-user a:visited,
-.alter-tariff-zone a, .alter-tariff-zone a:visited,
-.alter-source-property a, .alter-source-property a:visited {
-    text-decoration: none;
-    color: black;
-}
-
-.menu-area a:hover, .menu-area label:hover,
-.alter-source a:hover,
-.alter-user a:hover,
-.alter-tariff-zone a:hover,
-.alter-source-property a:hover {
-    color: royalblue;
-}
-
 .sub-menu {
     padding-left: 3%;
     font-size: 0.65em;
@@ -67,27 +51,85 @@
     margin-top: 5em;
 }
 
-ul {
-    margin-top: -1%;
+
+/* Links base style */
+.menu-area a,
+.menu-area a:visited,
+.alter-data a,
+.alter-data a:visited {
+    text-decoration: none;
+    color: black;
 }
 
-.inactive {
-    display: none;
+/* Links hover style */
+.menu-area a:hover,
+.menu-area label:hover,
+.alter-data a:hover {
+    color: royalblue;
 }
 
-.upload-form,
-.source-template,
-.tariff-zone-template,
-.source-property-template {
-    border-left: dotted thin black;
-}
-
+/* Upload forms */
 .upload-form label {
     display: block;
 }
 
 .upload-form input {
     display: none;
+}
+
+.upload-form,
+.template-form {
+    border-left: dotted thin black;
+}
+
+
+/* Alter forms */
+.alter-data {
+    position: absolute;
+    top: 15vh;
+    text-align: left;
+    left: 25vw;
+    right: 25vw;
+    color: black;
+    z-index: 30;
+    font-size: 2em;
+}
+
+.alter-data input[type=text],
+.alter-data input[type=password] {
+    width: 100%;
+}
+
+.alter-data input[readonly] {
+    background: darkgrey;
+}
+
+.shadow {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 20;
+    opacity: 50%;
+    background-color: black;
+    width: 100vw;
+    height: 100vh;
+}
+
+
+/* Form submit button */
+.output-area input[type=submit] {
+    font-size: 0.8em;
+}
+
+.output-area select {
+    font-size: 0.8em;
+    margin: 0.2em;
+}
+
+
+/* Table data */
+.list-data tr:hover {
+    background: lavender;
 }
 
 table {
@@ -102,51 +144,4 @@ th, td {
 th {
     white-space: nowrap;
     background-color: bisque;
-}
-
-.shadow {
-    position: fixed;
-    left: 0;
-    top: 0;
-    z-index: 20;
-    opacity: 50%;
-    background-color: black;
-    width: 100vw;
-    height: 100vh;
-}
-
-.alter-source,
-.alter-user,
-.alter-tariff-zone,
-.alter-source-property {
-    position: absolute;
-    top: 15vh;
-    text-align: left;
-    left: 25vw;
-    right: 25vw;
-    color: black;
-    z-index: 30;
-    font-size: 2em;
-}
-
-.alter-source input[type=text],
-.alter-user input[type=password],
-.alter-user input[type=text],
-.alter-tariff-zone input[type=text],
-.alter-source-property input[type=text] {
-    width: 100%;
-}
-
-.alter-source input[readonly],
-.alter-user input[readonly],
-.alter-tariff-zone input[readonly],
-.alter-source-property input[readonly] {
-    background: darkgrey;
-}
-
-.sources-list tr:hover,
-.users-list tr:hover,
-.tariff-zones-list tr:hover
-.source-properties-list tr:hover {
-    background: lavender;
 }
