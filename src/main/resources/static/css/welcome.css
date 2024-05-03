@@ -7,21 +7,28 @@
 }
 
 .welcome-title {
+    overflow: scroll;
+    text-wrap: nowrap;
     position: fixed;
     top: 0;
     left: 0;
+    padding-left: 18vw;
     width: 100vw;
     font-size: 4em;
-    text-align: center;
+    text-align: left;
     z-index: 5;
     background-color: white;
 }
 
 .menu-area {
+    scrollbar-color: grey lightgrey;
+    scrollbar-width: thin;
+    overflow: scroll;
     position: fixed;
-    top: 3vh;
-    left: 1vw;
-    width: 14vw;
+    top: 15vh;
+    left: 0;
+    width: 15vw;
+    height: 50vh;
     font-size: 3em;
     padding-left: 1%;
     border-right: double black;
@@ -48,7 +55,8 @@
 .output-area {
     font-size: 1em;
     text-align: center;
-    margin-top: 5em;
+    margin-top: 5.5em;
+    margin-left: 1.5em;
 }
 
 
@@ -61,12 +69,14 @@
     color: black;
 }
 
+
 /* Links hover style */
 .menu-area a:hover,
 .menu-area label:hover,
 .alter-data a:hover {
     color: royalblue;
 }
+
 
 /* Upload forms */
 .upload-form label {
@@ -151,6 +161,10 @@
     padding-top: 0.3em;
 }
 
+.select-year {
+    padding-left: 2vw;
+    text-align: left;
+}
 
 
 /* Form submit button */
