@@ -7,35 +7,37 @@
 }
 
 .welcome-title {
-    overflow: scroll;
-    text-wrap: nowrap;
     position: fixed;
     top: 0;
     left: 0;
     padding-left: 18vw;
     width: 100vw;
     font-size: 4em;
+    font-style: italic;
+    font-weight: bolder;
     text-align: left;
-    z-index: 5;
+    overflow: scroll;
+    text-wrap: nowrap;
     background-color: white;
+    z-index: 5;
 }
 
 .menu-area {
-    scrollbar-color: grey lightgrey;
-    scrollbar-width: thin;
-    overflow: scroll;
     position: fixed;
     top: 15vh;
     left: 0;
     width: 15vw;
     height: 50vh;
-    font-size: 3em;
     padding-left: 1%;
-    border-right: double black;
+    font-size: 3em;
     font-weight: bold;
     font-style: italic;
-    z-index: 10;
+    scrollbar-color: grey lightgrey;
+    scrollbar-width: thin;
+    overflow: scroll;
+    border-right: double black;
     background-color: white;
+    z-index: 10;
 }
 
 .sub-menu {
@@ -46,8 +48,8 @@
 
 .sub-sub-menu {
     padding-left: 3%;
-    font-size: 0.8em;
     list-style-type: none;
+    font-size: 0.8em;
     font-weight: normal;
     font-style: italic;
 }
@@ -97,12 +99,12 @@
 .alter-data {
     position: absolute;
     top: 15vh;
-    text-align: left;
     left: 25vw;
     right: 25vw;
     color: black;
-    z-index: 30;
     font-size: 2em;
+    text-align: left;
+    z-index: 30;
 }
 
 .alter-data input[type=text],
@@ -118,17 +120,17 @@
     position: fixed;
     left: 0;
     top: 0;
-    z-index: 20;
-    opacity: 50%;
-    background-color: black;
     width: 100vw;
     height: 100vh;
+    opacity: 50%;
+    background-color: black;
+    z-index: 20;
 }
 
 
 /* Alter source property style */
 .alter-source-property {
-    width: 70vh;
+    width: 100vh;
 }
 
 .alter-source-property fieldset {
@@ -153,12 +155,12 @@
 }
 
 .alter-source-property div {
-    border: 0.13em inset lightgray;
-    background: darkgrey;
     width: 97.6%;
     margin-left: 0.1em;
     font-size: 0.8em;
     padding-top: 0.3em;
+    border: 0.13em inset lightgray;
+    background: darkgrey;
 }
 
 .select-year {
