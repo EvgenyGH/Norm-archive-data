@@ -42,8 +42,17 @@ public class SourcePropertyServiceImpl implements SourcePropertyService {
             "Комментарии"};
 
     @Override
-    public List<SourcePropertyDTO> findAllPropByYear(Integer reportYear) {
+    public List<SourcePropertyDTO> findAllPropDTOByYear(Integer reportYear) {
         List<SourcePropertyDTO> properties = srcPropRepository.findAllPropDTOByYear(reportYear);
+
+        log.info("Found {} source properties (DTO) for {} year.", properties.size(), reportYear);
+
+        return properties;
+    }
+
+    @Override
+    public List<SourceProperty> findAllPropByYear(Integer reportYear) {
+        List<SourceProperty> properties = srcPropRepository.findAllPropByYear(reportYear);
 
         log.info("Found {} source properties for {} year.", properties.size(), reportYear);
 

@@ -168,18 +168,11 @@ public class ModelServiceImpl implements ModelService {
         attributes.put("reportYear", reportYear);
         attributes.put("sourceProperties", srcPropService.findAllPropByYear(reportYear)
                 .stream()
-                .sorted((o1, o2) -> {
-                    if (o1.getTariffZone().getZoneId() > (o2.getTariffZone().getZoneId())) {
-                        return 1;
-                    } else if (o1.getTariffZone().getZoneId().equals(o2.getTariffZone().getZoneId())) {
-                        if (o1.getBranch().getBranchId() > (o2.getBranch().getBranchId())) {
-                            return 1;
-                        } else if (o1.getBranch().getBranchId().equals(o2.getBranch().getBranchId())) {
-                            return 0;
-                        }
-                    }
-                    return -1;
-                })
+                .sorted(Comparator.comparing(sp -> sp.getId().getSource().getName()))
+                .sorted(Comparator.comparing(sp -> sp.getId().getSource().getSourceType().ordinal()))
+                .sorted(Comparator.comparing(sp -> sp.getBranch().getId()))
+                .sorted(Comparator.comparing(sp -> sp.getTariffZone().getId()))
+                .map(SourcePropertyDTO::new)
                 .toList());
 
         log.info("All source properties view attributes for year {} created.", reportYear);

@@ -2,13 +2,14 @@ package ru.bk.j3000.normarchivedata.service;
 
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
+import ru.bk.j3000.normarchivedata.model.SourceProperty;
 import ru.bk.j3000.normarchivedata.model.dto.SourcePropertyDTO;
 
 import java.util.List;
 import java.util.UUID;
 
 public interface SourcePropertyService {
-    List<SourcePropertyDTO> findAllPropByYear(Integer reportYear);
+    List<SourcePropertyDTO> findAllPropDTOByYear(Integer reportYear);
 
     void deleteSrcPropertyById(UUID srcId, Integer year);
 
@@ -21,4 +22,6 @@ public interface SourcePropertyService {
     Resource getSourcePropertyTemplate();
 
     void uploadSourceProperties(MultipartFile file, Integer year);
+
+    List<SourceProperty> findAllPropByYear(Integer reportYear);
 }

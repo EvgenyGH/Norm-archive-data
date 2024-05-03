@@ -37,4 +37,10 @@ public interface SourcePropertyRepository extends JpaRepository<SourceProperty, 
     @Query("DELETE SourceProperty sp " +
             "WHERE sp.id.year = :year")
     void deleteAllByYear(@Param("year") Integer year);
+
+    @Query("SELECT sp " +
+            "FROM SourceProperty sp " +
+            "WHERE sp.id.year = :year " +
+            "ORDER BY sp.id.source.name desc")
+    List<SourceProperty> findAllPropByYear(@Param("year") Integer reportYear);
 }

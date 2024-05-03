@@ -116,7 +116,7 @@ public class SourceServiceImplTest {
     @Sql(scripts = {"/testData.sql"})
     public void whenGetSourceIdsAndNamesDTOListThenGetSourceDTOListWithNoPropertiesAssigned() {
         assertThat(service.getAllSources()).hasSize(141);
-        assertThat(srcPropService.findAllPropByYear(2024)).hasSize(136);
+        assertThat(srcPropService.findAllPropDTOByYear(2024)).hasSize(136);
         assertThat(service.getSourceIdsAndNamesWithNoProp(2024)).hasSize(5);
     }
 }

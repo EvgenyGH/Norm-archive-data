@@ -35,12 +35,12 @@ public class SourcePropertiesImpTest {
     @Test
     @DisplayName("Test get all source properties method.")
     public void whenSaveOneSourcePropertyAndGetAllSourcePropertiesThenNumberSourcePropertiesIncreasedByOne() {
-        int propertiesNumber = srcPropService.findAllPropByYear(2023).size();
+        int propertiesNumber = srcPropService.findAllPropDTOByYear(2023).size();
         SourceProperty sourceProperty = createTestSourceProperty(2023, 1,
                 1, null);
         srcPropService.addSourceProperty(new SourcePropertyDTO(sourceProperty));
 
-        assertThat(srcPropService.findAllPropByYear(2023).size())
+        assertThat(srcPropService.findAllPropDTOByYear(2023).size())
                 .isEqualTo(propertiesNumber + 1);
     }
 
@@ -59,14 +59,14 @@ public class SourcePropertiesImpTest {
     @Test
     @DisplayName("Test delete source property method.")
     public void whenAddSrcPropertyAndDeleteSrcPropertyThenNumberOfSrcPropertiesNotChanged() {
-        int propertiesNumber = srcPropService.findAllPropByYear(2023).size();
+        int propertiesNumber = srcPropService.findAllPropDTOByYear(2023).size();
         SourceProperty sourceProperty = createTestSourceProperty(2023, 1,
                 1, null);
         srcPropService.addSourceProperty(new SourcePropertyDTO(sourceProperty));
         srcPropService.deleteSrcPropertyById(sourceProperty.getId().getSource().getId(),
                 2023);
 
-        assertThat(srcPropService.findAllPropByYear(2023).size())
+        assertThat(srcPropService.findAllPropDTOByYear(2023).size())
                 .isEqualTo(propertiesNumber);
     }
 
@@ -103,12 +103,12 @@ public class SourcePropertiesImpTest {
     @Test
     @DisplayName("Test add source property method.")
     public void whenSaveSrcPropertyAndRetrieveAllSrcPropertiesThenNumberOfSrcPropertiesIncreasedByOne() {
-        int propertiesNumber = srcPropService.findAllPropByYear(2023).size();
+        int propertiesNumber = srcPropService.findAllPropDTOByYear(2023).size();
         SourceProperty sourceProperty = createTestSourceProperty(2023, 1,
                 1, null);
         srcPropService.addSourceProperty(new SourcePropertyDTO(sourceProperty));
 
-        assertThat(srcPropService.findAllPropByYear(2023).size())
+        assertThat(srcPropService.findAllPropDTOByYear(2023).size())
                 .isEqualTo(propertiesNumber + 1);
     }
 
@@ -129,6 +129,6 @@ public class SourcePropertiesImpTest {
         Resource resource = new ClassPathResource("/testdata/sourceProperties.xlsm");
         MockMultipartFile file = new MockMultipartFile("file.xlsm", resource.getContentAsByteArray());
         srcPropService.uploadSourceProperties(file, 2022);
-        assertThat(srcPropService.findAllPropByYear(2022)).hasSize(136);
+        assertThat(srcPropService.findAllPropDTOByYear(2022)).hasSize(136);
     }
 }
