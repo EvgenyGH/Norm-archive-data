@@ -150,11 +150,26 @@
             </li>
             <li><a th:href="@{/ssfc}">Нормативы (НУР)</a>
                 <ul class="sub-sub-menu" th:if="${activeMenu.contains('ssfc')}">
-                    <li>Вывести НУР</li>
-                    <li>Добавить НУР источника</li>
-                    <li>Удалить НУР источника</li>
-                    <li>Загрузить из файла</li>
-                    <li>Скачать шаблон</li>
+                    <li><a th:href="@{/ssfc}">Список НУР по источникам</a></li>
+                    <li>
+                        <a th:href="@{'/ssfc/alter/' + ${reportYear}}">
+                            Добавить НУР по источнику
+                        </a>
+                    </li>
+                    <li sec:authorize="hasRole('ADMIN')">
+                        <form class="upload-form" th:action="@{'/ssfc/template/' + ${reportYear}}"
+                              method="post" enctype="multipart/form-data">
+                            <label for="file-upload-ssfc">Выбрать файл</label>
+                            <input type="file" id="file-upload-ssfc" name="file">
+                            <label for="upload-submit-ssfc">Загрузить файл</label>
+                            <input type="submit" id="upload-submit-ssfc">
+                        </form>
+                    </li>
+                    <li sec:authorize="hasRole('ADMIN')">
+                        <a class="ssfc-template template-form" th:href="@{/ssfc/template}">
+                            Скачать шаблон
+                        </a>
+                    </li>
                 </ul>
             </li>
             <li><a th:href="@{/report}">Отчеты</a>

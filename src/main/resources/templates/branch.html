@@ -8,7 +8,6 @@
 <body>
 <div class="branches-list list-data" th:fragment="all-branches(branches)">
     <table>
-        <th>№ п/п</th>
         <th>Номер</th>
         <th>Название</th>
         <th>Изменить</th>
@@ -17,7 +16,6 @@
             <td colspan="4">Нет данных</td>
         </tr>
         <tr th:each="br : ${branches}" th:object="${br}">
-            <td th:text="${brStat.count}">Номер по порядку</td>
             <td th:text="*{branchId}">Id</td>
             <td th:text="*{branchName}">branchName</td>
             <td>
