@@ -29,8 +29,7 @@ body {
 .menu-area {
     grid-column: 1;
     grid-row: 2;
-    max-height: 13.6em;
-    max-width: 6em;
+    max-width: 7em;
     margin-top: 10vh;
     padding-left: 1%;
     font-size: 3em;
@@ -39,6 +38,9 @@ body {
     scrollbar-color: grey lightgrey;
     scrollbar-width: thin;
     overflow: scroll;
+}
+
+.menu-area > ul {
     border-right: double black;
 }
 
