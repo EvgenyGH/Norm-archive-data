@@ -26,4 +26,8 @@ public interface ModelService {
     Map<String, Object> getAllBranchesViewAttributes();
 
     Map<String, Object> getAlterBranchAttributes(Optional<Integer> id);
+
+    Map<String, Object> getAllSsfcViewAttributes(Optional<Integer> year);
+
+    Map<String, Object> getAlterSsfcAttributes(Integer year, Optional<UUID> id);
 }

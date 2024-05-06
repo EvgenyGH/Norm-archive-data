@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+</head>
+
+<body>
+<div class="ssfcs-list list-data" th:fragment="all-ssfcs(ssfcs, reportYear)">
+    <table>
+        <th>Номер</th>
+        <th>Источник</th>
+        <th>Филиал</th>
+        <th>Имя тарифной зоны</th>
+        <th>Изменить</th>
+        <th>Удалить</th>
+        <tr th:if="${sourceProperties.size() == 0}">
+            <td colspan="6">Нет данных</td>
+        </tr>
+        <tr th:each="property : ${sourceProperties}" th:object="${property}">
+            <td th:text="${propertyStat.count}">Номер</td>
+            <td th:text="*{source.sourceName}">Источник (имя)</td>
+            <td th:text="*{branch.branchName}">Филиал</td>
+            <td th:text="*{tariffZone.zoneName}">Имя тарифной зоны</td>
+            <td>
+                <form th:action="@{'/ssfc/alter/' + *{year}}" th:method="get">
+                    <input type="hidden" name="srcId" th:value="*{source.sourceId}">
+                    <input type="submit" value="Изменить">
+                </form>
+            </td>
+            <td>
+                <form th:action="@{/sourceproperty}" th:method="delete">
+                    <input hidden="hidden" th:id="${'srcId'}" th:name="srcId"
+                           th:value="*{source.sourceId}">
+                    <input hidden="hidden" th:id="${'propYear'}" th:name="propYear"
+                           th:value="*{year}">
+                    <input type="submit" value="Удалить">
+                </form>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div class="alter-ssfc alter-data" th:fragment="alter-ssfc(ssfc, sourcesLeft,
+tariffZones, branches)">
+    <form th:action="@{/ssfc}" th:object="${sourceProperty}"
+          th:with="newProperty=${sourceProperty.source == null}"
+          th:method="${newProperty ? 'post' : 'put'}">
+        <fieldset>
+            <legend th:text="${newProperty ? 'Новое свойство источника:'
+                        : 'Изменить свойство источника:'}">
+            </legend>
+            <label th:for="${#ids.next('source')}" th:text="${'Источник:'}">
+                Источник:
+            </label>
+            <input th:if="${!newProperty}" type="text" th:field="*{source}"
+                   placeholder="Источник" readonly hidden="hidden">
+            <div th:if="${!newProperty}" th:text="*{source.sourceName}">Источник</div>
+            <select th:if="${newProperty}" th:field="*{source}">
+                <option th:if="newProperty" th:value="null" th:text="'Выбрать источник'"
+                        selected hidden="hidden">
+                </option>
+                <option th:each="source : ${sourcesLeft}"
+                        th:value="${source}"
+                        th:text="${source.sourceName}">
+                </option>
+            </select>
+            <label th:for="${#ids.next('year')}">Год:</label>
+            <input type="text" th:field="*{year}" placeholder="Год" readonly>
+            <label th:for="${#ids.next('branch')}">Филиал:</label>
+            <select th:field="*{branch}" placeholder="Филиал">
+                <option th:if="newProperty" th:value="null" th:text="'Выбрать филиал'"
+                        selected hidden="hidden">
+                </option>
+                <option th:each="b : ${branches}"
+                        th:value="${b}"
+                        th:text="${b.branchName}"
+                        th:selected="${newProperty ? false : sourceProperty.branch.equals(b)}">
+                </option>
+            </select>
+            <label th:for="${#ids.next('tariffZone')}">Тарифная зона:</label>
+            <select th:field="*{tariffZone}" placeholder="Тарифная зона">
+                <option th:if="newProperty" th:value="null" th:text="'Выбрать тарифную зону'"
+                        selected hidden="hidden">
+                </option>
+                <option th:each="tz : ${tariffZones}"
+                        th:value="${tz}"
+                        th:text="${tz.zoneName}"
+                        th:selected="${newProperty ? false : sourceProperty.tariffZone.equals(tz)}">
+                </option>
+            </select>
+            <input type="submit" value="Сохранить">
+            <a th:href="@{/sourceproperty}">Отмена</a>
+        </fieldset>
+    </form>
+</div>
+</body>
+</html>

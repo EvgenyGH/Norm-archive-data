@@ -26,7 +26,7 @@ public class SourcePropertyController {
 
     // Get all source properties for a particular year
     @GetMapping("/sourceproperty")
-    public String welcome(Model model,
+    public String getAllSrcProperties(Model model,
                           @RequestParam(name = "selectedYear", required = false) Optional<Integer> year) {
         model.addAllAttributes(modelService.getAllSrcPropertiesViewAttributes(year));
 

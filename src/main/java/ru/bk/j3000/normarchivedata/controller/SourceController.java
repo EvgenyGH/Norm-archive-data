@@ -25,7 +25,7 @@ public class SourceController {
     private final ModelService modelService;
 
     @GetMapping("/source")
-    public String welcome(Model model) {
+    public String getAllSources(Model model) {
         model.addAllAttributes(modelService.getAllSourcesViewAttributes());
 
         return "welcome";

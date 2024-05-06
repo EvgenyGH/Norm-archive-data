@@ -51,6 +51,18 @@
         </div>
 
         <!--/* НУР */-->
+        <div th:if="${activeMenu.contains('ssfc')}"
+             th:insert="~{util::select-year(${'ssfc'}, ${reportYear})}">
+            select report years
+        </div>
+        <div th:if="${activeMenu.contains('ssfc')}"
+             th:insert="~{ssfc::all-ssfc(${ssfcs}, ${reportYear})}">ssfcs
+        </div>
+        <div th:if="${alterSsfc}"
+             th:insert="~{ssfc::alter-ssfc(${ssfc},
+             ${sourcesLeft}, ${tariffZones}, ${branches})}">alter ssfc
+        </div>
+
         <!--/* Отчеты */-->
         <!--/* Ошибки */-->
     </div>

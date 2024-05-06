@@ -34,7 +34,7 @@ public class ModelServiceImpl implements ModelService {
     private final SourceService sourceService;
     private final UserService userService;
     private final TariffZoneService tariffZoneService;
-    private final StandardSFCService standardSFCService;
+    private final StandardSFCService ssfcService;
     private final SourcePropertyService srcPropService;
     private final BranchService branchService;
 
@@ -234,5 +234,17 @@ public class ModelServiceImpl implements ModelService {
                 id.isEmpty() ? "new" : id.get());
 
         return attributes;
+    }
+
+    @Override
+    public Map<String, Object> getAllSsfcViewAttributes(Optional<Integer> year) {
+        //model.addAttribute("title", "Нормативные удельные расходы топлива");
+//        model.addAttribute("activeMenu", Set.of("ssfc"));
+        return Map.of();
+    }
+
+    @Override
+    public Map<String, Object> getAlterSsfcAttributes(Integer year, Optional<UUID> id) {
+        return Map.of();
     }
 }
