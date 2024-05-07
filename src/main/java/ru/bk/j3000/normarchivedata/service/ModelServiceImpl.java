@@ -10,6 +10,7 @@ import ru.bk.j3000.normarchivedata.model.TariffZone;
 import ru.bk.j3000.normarchivedata.model.admin.SECURITY_ROLES;
 import ru.bk.j3000.normarchivedata.model.dto.BranchDTO;
 import ru.bk.j3000.normarchivedata.model.dto.SourcePropertyDTO;
+import ru.bk.j3000.normarchivedata.model.dto.StandardSfcDTO;
 import ru.bk.j3000.normarchivedata.model.dto.UserDTO;
 import ru.bk.j3000.normarchivedata.service.admin.UserService;
 
@@ -240,7 +241,23 @@ public class ModelServiceImpl implements ModelService {
     public Map<String, Object> getAllSsfcViewAttributes(Optional<Integer> year) {
         //model.addAttribute("title", "Нормативные удельные расходы топлива");
 //        model.addAttribute("activeMenu", Set.of("ssfc"));
-        return Map.of();
+
+
+        Map<String, Object> attributes = new HashMap<>();
+        Integer reportYear = year.orElse(LocalDate.now().getYear());
+
+        attributes.put("title", String.format("Нормативные удельные расходы топлива на %s год",
+                reportYear));
+        attributes.put("activeMenu", Set.of("ssfc"));
+        attributes.put("reportYear", reportYear);
+        attributes.put("ssfcs", ssfcService.findAllSsfcByYear(reportYear)
+                .stream()
+                .map(StandardSfcDTO::new)
+                .toList());
+
+        log.info("All ssfcs view attributes for year {} created.", reportYear);
+
+        return attributes;
     }
 
     @Override

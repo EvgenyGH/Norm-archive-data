@@ -56,7 +56,7 @@
             select report years
         </div>
         <div th:if="${activeMenu.contains('ssfc')}"
-             th:insert="~{ssfc::all-ssfc(${ssfcs}, ${reportYear})}">ssfcs
+             th:insert="~{ssfc::all-ssfcs(${ssfcs}, ${reportYear})}">ssfcs
         </div>
         <div th:if="${alterSsfc}"
              th:insert="~{ssfc::alter-ssfc(${ssfc},

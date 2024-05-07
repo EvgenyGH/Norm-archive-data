@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS standard_sfcs
     standard_sfc  DOUBLE PRECISION NOT NULL,
     standard_sfcg DOUBLE PRECISION NOT NULL,
     ssfc_month    INTEGER          NOT NULL,
-    fuel_type VARCHAR(17) NOT NULL,
+    fuel_type INTEGER NOT NULL,
 
     CONSTRAINT pk_ssfc PRIMARY KEY (ssfc_id),
     CONSTRAINT fk_source_prop FOREIGN KEY (source_id, ssfc_year)

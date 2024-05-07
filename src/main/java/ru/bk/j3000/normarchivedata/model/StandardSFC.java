@@ -68,7 +68,7 @@ public class StandardSFC {
 
     // тип топлива
     @Column(name = "fuel_type", nullable = false)
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.ORDINAL)
     @NonNull
     private FUEL_TYPE fuelType;
 

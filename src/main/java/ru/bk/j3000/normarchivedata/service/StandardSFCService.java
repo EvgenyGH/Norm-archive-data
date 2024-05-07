@@ -2,8 +2,10 @@ package ru.bk.j3000.normarchivedata.service;
 
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
+import ru.bk.j3000.normarchivedata.model.StandardSFC;
 import ru.bk.j3000.normarchivedata.model.dto.StandardSfcDTO;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface StandardSFCService {
@@ -16,4 +18,6 @@ public interface StandardSFCService {
     void uploadSsfc(MultipartFile file, Integer year);
 
     Resource getSsfcTemplate();
+
+    List<StandardSFC> findAllSsfcByYear(Integer reportYear);
 }
