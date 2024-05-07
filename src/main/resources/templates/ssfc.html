@@ -40,6 +40,7 @@
             <tr th:if="${srcStat.first || !srcSsfc.branchName.equals(ssfcs[srcStat.index - 1].branchName)}">
                 <td th:text="${srcSsfc.branchName}" colspan="17">Филиал</td>
             </tr>
+            <tbody>
             <tr>
                 <td rowspan="6" th:text="${srcStat.count}">Номер</td>
                 <td rowspan="6" th:text="${srcSsfc.srcName}">Источник</td>
@@ -81,6 +82,7 @@
                     УРУТ на отпуск тепловой энергии, кг у.т./Гкал
                 </td>
             </tr>
+            </tbody>
         </th:block>
     </table>
 </div>
