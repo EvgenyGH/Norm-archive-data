@@ -11,7 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.util.MimeType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import ru.bk.j3000.normarchivedata.model.dto.StandardSfcDTO;
+import ru.bk.j3000.normarchivedata.model.dto.SsfcDTO;
 import ru.bk.j3000.normarchivedata.service.ModelService;
 import ru.bk.j3000.normarchivedata.service.StandardSFCService;
 
@@ -45,7 +45,7 @@ public class StandardSFCController {
     // Update ssfc
     @PutMapping("/ssfc")
     public String updateSsfc(@ModelAttribute(name = "ssfc")
-                             StandardSfcDTO ssfcDTO) {
+                                 SsfcDTO ssfcDTO) {
         ssfcService.updateSsfc(ssfcDTO);
 
         return "redirect:/ssfc";
@@ -54,7 +54,7 @@ public class StandardSFCController {
     // Add ssfc
     @PostMapping("/ssfc")
     public String addSsfc(@ModelAttribute(name = "ssfc")
-                          StandardSfcDTO ssfcDTO) {
+                              SsfcDTO ssfcDTO) {
         ssfcService.addSsfc(ssfcDTO);
 
         return "redirect:/ssfc";

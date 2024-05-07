@@ -40,9 +40,9 @@ CREATE TABLE IF NOT EXISTS source_properties
 
 CREATE TABLE IF NOT EXISTS standard_sfcs
 (
-    ssfc_id       UUID             NOT NULL,
+    ssfc_id   UUID    NOT NULL DEFAULT gen_random_uuid(),
     source_id     UUID             NOT NULL,
-    ssfc_year INTEGER     NOT NULL,
+    ssfc_year INTEGER NOT NULL,
     generation    DOUBLE PRECISION NOT NULL,
     own_needs     DOUBLE PRECISION NOT NULL,
     production    DOUBLE PRECISION NOT NULL,

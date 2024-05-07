@@ -3,15 +3,15 @@ package ru.bk.j3000.normarchivedata.service;
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 import ru.bk.j3000.normarchivedata.model.StandardSFC;
-import ru.bk.j3000.normarchivedata.model.dto.StandardSfcDTO;
+import ru.bk.j3000.normarchivedata.model.dto.SsfcDTO;
 
 import java.util.List;
 import java.util.UUID;
 
 public interface StandardSFCService {
-    void updateSsfc(StandardSfcDTO ssfcDTO);
+    void updateSsfc(SsfcDTO ssfcDTO);
 
-    void addSsfc(StandardSfcDTO ssfcDTO);
+    void addSsfc(SsfcDTO ssfcDTO);
 
     void deleteSsfcById(UUID id, Integer year);
 

@@ -7,7 +7,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.bk.j3000.normarchivedata.model.StandardSFC;
-import ru.bk.j3000.normarchivedata.model.dto.StandardSfcDTO;
+import ru.bk.j3000.normarchivedata.model.dto.SsfcDTO;
 import ru.bk.j3000.normarchivedata.repository.StandardSFCRepository;
 
 import java.util.List;
@@ -29,12 +29,12 @@ public class StandardSFCServiceImpl implements StandardSFCService {
     }
 
     @Override
-    public void updateSsfc(StandardSfcDTO ssfcDTO) {
+    public void updateSsfc(SsfcDTO ssfcDTO) {
 
     }
 
     @Override
-    public void addSsfc(StandardSfcDTO ssfcDTO) {
+    public void addSsfc(SsfcDTO ssfcDTO) {
 
     }
 

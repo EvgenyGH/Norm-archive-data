@@ -10,7 +10,7 @@ import ru.bk.j3000.normarchivedata.model.TariffZone;
 import ru.bk.j3000.normarchivedata.model.admin.SECURITY_ROLES;
 import ru.bk.j3000.normarchivedata.model.dto.BranchDTO;
 import ru.bk.j3000.normarchivedata.model.dto.SourcePropertyDTO;
-import ru.bk.j3000.normarchivedata.model.dto.StandardSfcDTO;
+import ru.bk.j3000.normarchivedata.model.dto.SsfcsDTO;
 import ru.bk.j3000.normarchivedata.model.dto.UserDTO;
 import ru.bk.j3000.normarchivedata.service.admin.UserService;
 
@@ -18,6 +18,7 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -239,21 +240,23 @@ public class ModelServiceImpl implements ModelService {
 
     @Override
     public Map<String, Object> getAllSsfcViewAttributes(Optional<Integer> year) {
-        //model.addAttribute("title", "Нормативные удельные расходы топлива");
-//        model.addAttribute("activeMenu", Set.of("ssfc"));
-
-
         Map<String, Object> attributes = new HashMap<>();
         Integer reportYear = year.orElse(LocalDate.now().getYear());
+        List<SsfcsDTO> dtos = ssfcService.findAllSsfcByYear(reportYear)
+                .stream()
+                .collect(Collectors.groupingBy(ssfc -> ssfc.getProperties().getId().getSource().getId()))
+                .values()
+                .stream()
+                .sorted(Comparator.comparing(e -> e.getFirst().getProperties().getBranch().getId()))
+                .sorted(Comparator.comparing(e -> e.getFirst().getProperties().getTariffZone().getId()))
+                .map(SsfcsDTO::new)
+                .toList();
 
         attributes.put("title", String.format("Нормативные удельные расходы топлива на %s год",
                 reportYear));
         attributes.put("activeMenu", Set.of("ssfc"));
         attributes.put("reportYear", reportYear);
-        attributes.put("ssfcs", ssfcService.findAllSsfcByYear(reportYear)
-                .stream()
-                .map(StandardSfcDTO::new)
-                .toList());
+        attributes.put("ssfcs", dtos);
 
         log.info("All ssfcs view attributes for year {} created.", reportYear);
 

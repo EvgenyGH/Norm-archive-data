@@ -8,8 +8,10 @@ import java.util.UUID;
 
 @Data
 @NoArgsConstructor
-public class StandardSfcDTO {
+public class SsfcDTO {
     private UUID id;
+    private UUID srcId;
+    private String srcName;
     private Double generation;
     private Double ownNeeds;
     private Double production;
@@ -22,7 +24,7 @@ public class StandardSfcDTO {
     private Integer month;
 
 
-    public StandardSfcDTO(StandardSFC ssfc) {
+    public SsfcDTO(StandardSFC ssfc) {
         this.id = ssfc.getId();
         this.generation = ssfc.getGeneration();
         this.ownNeeds = ssfc.getOwnNeeds();
@@ -34,6 +36,8 @@ public class StandardSfcDTO {
         this.zoneName = ssfc.getProperties().getTariffZone().getZoneName();
         this.year = ssfc.getProperties().getId().getYear();
         this.month = ssfc.getMonth();
+        this.srcId = ssfc.getProperties().getId().getSource().getId();
+        this.srcName = ssfc.getProperties().getId().getSource().getName();
     }
 }
 

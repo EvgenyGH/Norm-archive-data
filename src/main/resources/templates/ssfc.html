@@ -8,36 +8,80 @@
 <body>
 <div class="ssfcs-list list-data" th:fragment="all-ssfcs(ssfcs, reportYear)">
     <table>
-        <th>Номер</th>
-        <th>Источник</th>
-        <th>Филиал</th>
-        <th>Имя тарифной зоны</th>
-        <th>Изменить</th>
-        <th>Удалить</th>
-        <tr th:if="${sourceProperties.size() == 0}">
-            <td colspan="6">Нет данных</td>
+        <tr>
+            <th>Номер</th>
+            <th>Источник</th>
+            <th>Вид топлива/Год</th>
+
+            <th>Январь</th>
+            <th>Февраль</th>
+            <th>Март</th>
+            <th>Апрель</th>
+            <th>Май</th>
+            <th>Июнь</th>
+            <th>Июль</th>
+            <th>Август</th>
+            <th>Сентябрь</th>
+            <th>Октябрь</th>
+            <th>Ноябрь</th>
+            <th>Декабрь</th>
+            <th>Изменить</th>
+            <th>Удалить</th>
         </tr>
-        <tr th:each="property : ${sourceProperties}" th:object="${property}">
-            <td th:text="${propertyStat.count}">Номер</td>
-            <td th:text="*{source.sourceName}">Источник (имя)</td>
-            <td th:text="*{branch.branchName}">Филиал</td>
-            <td th:text="*{tariffZone.zoneName}">Имя тарифной зоны</td>
-            <td>
-                <form th:action="@{'/ssfc/alter/' + *{year}}" th:method="get">
-                    <input type="hidden" name="srcId" th:value="*{source.sourceId}">
-                    <input type="submit" value="Изменить">
-                </form>
-            </td>
-            <td>
-                <form th:action="@{/sourceproperty}" th:method="delete">
-                    <input hidden="hidden" th:id="${'srcId'}" th:name="srcId"
-                           th:value="*{source.sourceId}">
-                    <input hidden="hidden" th:id="${'propYear'}" th:name="propYear"
-                           th:value="*{year}">
-                    <input type="submit" value="Удалить">
-                </form>
-            </td>
+
+        <tr th:if="${ssfcs.size() == 0}">
+            <td colspan="17">Нет данных</td>
         </tr>
+
+        <th:block th:each="srcSsfc, srcStat: ${ssfcs}" th:object="${srcSsfc}">
+            <tr th:if="${srcStat.first || !srcSsfc.zoneName.equals(ssfcs[srcStat.index - 1].zoneName)}">
+                <td th:text="${srcSsfc.zoneName}" colspan="17">Тарифная зона</td>
+            </tr>
+            <tr th:if="${srcStat.first || !srcSsfc.branchName.equals(ssfcs[srcStat.index - 1].branchName)}">
+                <td th:text="${srcSsfc.branchName}" colspan="17">Филиал</td>
+            </tr>
+            <tr>
+                <td rowspan="6" th:text="${srcStat.count}">Номер</td>
+                <td rowspan="6" th:text="${srcSsfc.srcName}">Источник</td>
+                <td rowspan="6" th:text="${srcSsfc.fuelType}">Вид топлива</td>
+                <td th:each="ssfc : ${srcSsfc.ssfcs}" th:object="${ssfc}" th:text="${ssfc.generation}">
+                    Выработка тепловой энергии, Гкал
+                </td>
+                <td rowspan="6">
+                    <form th:action="@{'/ssfc/alter'}" th:method="get">
+                        <input type="hidden" th:id="${'ssfcId'}" th:name="ssfcId" th:value="${srcSsfc.id}">
+                        <input type="submit" value="Изменить">
+                    </form>
+                </td>
+                <td rowspan="6">
+                    <form th:action="@{/ssfc}" th:method="delete">
+                        <input hidden="hidden" th:id="${'ssfcId'}" th:name="ssfcId"
+                               th:value="${srcSsfc.id}">
+                        <input type="submit" value="Удалить">
+                    </form>
+                </td>
+            </tr>
+            <tr>
+                <td th:each="ssfc : ${srcSsfc.ssfcs}" th:object="${ssfc}" th:text="${ssfc.ownNeeds}">
+                    Тепловая энергия на собственные нужды, Гкал
+                </td>
+            </tr>
+            <tr>
+                <td th:each="ssfc : ${srcSsfc.ssfcs}" th:object="${ssfc}" th:text="${ssfc.production}">
+                    Отпуск тепловой энергии с коллекторов источников, Гкал
+                </td>
+            </tr>
+            <tr>
+                <td th:each="ssfc : ${srcSsfc.ssfcs}" th:object="${ssfc}" th:text="${ssfc.ssfcg}">
+                    УРУТ на выработу тепловой энергии, кг у.т./Гкал
+                </td>
+            </tr>
+            <tr>
+                <td th:each="ssfc : ${srcSsfc.ssfcs}" th:object="${ssfc}" th:text="${ssfc.ssfc}">
+                    УРУТ на отпуск тепловой энергии, кг у.т./Гкал
+                </td>
+            </tr>
+        </th:block>
     </table>
 </div>
 
