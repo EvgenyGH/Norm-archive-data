@@ -4,12 +4,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import ru.bk.j3000.normarchivedata.exception.FileReadException;
 import ru.bk.j3000.normarchivedata.model.StandardSFC;
 import ru.bk.j3000.normarchivedata.model.dto.SsfcDTO;
 import ru.bk.j3000.normarchivedata.repository.StandardSFCRepository;
 
+import java.net.MalformedURLException;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.UUID;
 
@@ -50,7 +54,17 @@ public class StandardSFCServiceImpl implements StandardSFCService {
 
     @Override
     public Resource getSsfcTemplate() {
-        return null;
+        Path path = Path.of("src/main/resources/exceltemplates/ssfcsTemplate.xlsm");
+        try {
+            Resource resource = new UrlResource(path.toUri());
+
+            log.info("Ssfcs template resource created.");
+
+            return resource;
+
+        } catch (MalformedURLException e) {
+            throw new FileReadException("Error reading template file.", "Ssfcs template.");
+        }
     }
 
 

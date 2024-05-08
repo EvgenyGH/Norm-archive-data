@@ -184,6 +184,7 @@ public class SourceServiceImpl implements SourceService {
             log.info("Sources template resource created.");
 
             return resource;
+
         } catch (MalformedURLException e) {
             throw new FileReadException("Error reading template file.", "Sources template.");
         }
