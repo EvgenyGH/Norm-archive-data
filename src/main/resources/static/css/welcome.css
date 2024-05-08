@@ -191,12 +191,12 @@ body {
 
 
 /* Table data */
-.list-data tr:hover td:not([rowspan]) {
+tr:has(td:not([rowspan]):hover) td:not([rowspan]) {
     background: lavender;
 }
 
-.list-data tbody {
-    background: antiquewhite;
+.list-data .one-row:hover {
+    background: #d7d7e1;
 }
 
 .list-data table {

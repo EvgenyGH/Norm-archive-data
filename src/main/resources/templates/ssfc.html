@@ -11,8 +11,9 @@
         <tr>
             <th>Номер</th>
             <th>Источник</th>
-            <th>Вид топлива/Год</th>
-
+            <th>Вид топлива</th>
+            <th>Показатель</th>
+            <th>Итого</th>
             <th>Январь</th>
             <th>Февраль</th>
             <th>Март</th>
@@ -30,21 +31,23 @@
         </tr>
 
         <tr th:if="${ssfcs.size() == 0}">
-            <td colspan="17">Нет данных</td>
+            <td colspan="19">Нет данных</td>
         </tr>
 
         <th:block th:each="srcSsfc, srcStat: ${ssfcs}" th:object="${srcSsfc}">
             <tr th:if="${srcStat.first || !srcSsfc.zoneName.equals(ssfcs[srcStat.index - 1].zoneName)}">
-                <td th:text="${srcSsfc.zoneName}" colspan="17">Тарифная зона</td>
+                <td th:text="${srcSsfc.zoneName}" colspan="19">Тарифная зона</td>
             </tr>
             <tr th:if="${srcStat.first || !srcSsfc.branchName.equals(ssfcs[srcStat.index - 1].branchName)}">
-                <td th:text="${srcSsfc.branchName}" colspan="17">Филиал</td>
+                <td th:text="${srcSsfc.branchName}" colspan="19">Филиал</td>
             </tr>
-            <tbody>
+            <tbody class="one-row">
             <tr>
                 <td rowspan="6" th:text="${srcStat.count}">Номер</td>
                 <td rowspan="6" th:text="${srcSsfc.srcName}">Источник</td>
                 <td rowspan="6" th:text="${srcSsfc.fuelType}">Вид топлива</td>
+                <td th:text="'Выработка тепловой энергии, Гкал'">Показатель</td>
+                <td>Итого</td>
                 <td th:each="ssfc : ${srcSsfc.ssfcs}" th:object="${ssfc}" th:text="${ssfc.generation}">
                     Выработка тепловой энергии, Гкал
                 </td>
@@ -63,21 +66,29 @@
                 </td>
             </tr>
             <tr>
+                <td th:text="'Тепловая энергия на собственные нужды, Гкал'">Показатель</td>
+                <td>Итого</td>
                 <td th:each="ssfc : ${srcSsfc.ssfcs}" th:object="${ssfc}" th:text="${ssfc.ownNeeds}">
                     Тепловая энергия на собственные нужды, Гкал
                 </td>
             </tr>
             <tr>
+                <td th:text="'Отпуск тепловой энергии с коллекторов источников, Гкал'">Показатель</td>
+                <td>Итого</td>
                 <td th:each="ssfc : ${srcSsfc.ssfcs}" th:object="${ssfc}" th:text="${ssfc.production}">
                     Отпуск тепловой энергии с коллекторов источников, Гкал
                 </td>
             </tr>
             <tr>
+                <td th:text="'УРУТ на выработу тепловой энергии, кг у.т./Гкал'">Показатель</td>
+                <td>Итого</td>
                 <td th:each="ssfc : ${srcSsfc.ssfcs}" th:object="${ssfc}" th:text="${ssfc.ssfcg}">
                     УРУТ на выработу тепловой энергии, кг у.т./Гкал
                 </td>
             </tr>
             <tr>
+                <td th:text="'УРУТ на отпуск тепловой энергии, кг у.т./Гкал'">Показатель</td>
+                <td>Итого</td>
                 <td th:each="ssfc : ${srcSsfc.ssfcs}" th:object="${ssfc}" th:text="${ssfc.ssfc}">
                     УРУТ на отпуск тепловой энергии, кг у.т./Гкал
                 </td>
