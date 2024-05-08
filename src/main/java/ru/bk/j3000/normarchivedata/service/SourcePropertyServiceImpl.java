@@ -185,4 +185,15 @@ public class SourcePropertyServiceImpl implements SourcePropertyService {
 
         log.info("Source properties template headers are OK.");
     }
+
+    @Override
+    public SourceProperty getSourcePropertyById(SrcPropertyId srcPropId) {
+        SourceProperty property = srcPropRepository.findById(srcPropId)
+                .orElseThrow(() -> new EntityNotFoundException(String
+                        .format("Source property not exists. Id %s", srcPropId)));
+
+        log.info("Source property found. Id {}.", property.getId());
+
+        return property;
+    }
 }

@@ -1,6 +1,7 @@
 package ru.bk.j3000.normarchivedata.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -15,4 +16,9 @@ public interface StandardSFCRepository extends JpaRepository<StandardSFC, UUID> 
     @Query("SELECT ssfc FROM StandardSFC ssfc " +
             "WHERE ssfc.properties.id.year = :year")
     List<StandardSFC> findAllSsfcByYear(@Param("year") Integer reportYear);
+
+    @Modifying
+    @Query("DELETE StandardSFC ssfc " +
+            "WHERE ssfc.properties.id.year = :year")
+    void deleteAllByYear(@Param("year") Integer year);
 }
