@@ -12,6 +12,7 @@ import java.util.UUID;
 @NoArgsConstructor
 public class SsfcsDTO {
     private String srcName;
+    private UUID srcId;
     private String fuelType;
     private String zoneName;
     private String branchName;

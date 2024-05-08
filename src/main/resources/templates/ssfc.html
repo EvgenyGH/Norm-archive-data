@@ -47,48 +47,49 @@
                 <td rowspan="6" th:text="${srcSsfc.srcName}">Источник</td>
                 <td rowspan="6" th:text="${srcSsfc.fuelType}">Вид топлива</td>
                 <td th:text="'Выработка тепловой энергии, Гкал'">Показатель</td>
-                <td th:text="${#aggregates.sum(srcSsfc.ssfcs.generation)}">Итого</td>
+                <td th:text="${srcSsfc.avgGeneration}">Итого</td>
                 <td th:each="ssfc : ${srcSsfc.ssfcs}" th:object="${ssfc}" th:text="${ssfc.generation}">
                     Выработка тепловой энергии, Гкал
                 </td>
                 <td rowspan="6">
                     <form th:action="@{'/ssfc/alter'}" th:method="get">
-                        <input type="hidden" th:id="${'ssfcId'}" th:name="ssfcId" th:value="${srcSsfc.id}">
+                        <input type="hidden" th:id="${'reportYear'}" th:name="reportYear" th:value="${reportYear}">
+                        <input type="hidden" th:id="${'srcId'}" th:name="srcId" th:value="${srcSsfc.srcId}">
                         <input type="submit" value="Изменить">
                     </form>
                 </td>
                 <td rowspan="6">
                     <form th:action="@{/ssfc}" th:method="delete">
-                        <input hidden="hidden" th:id="${'ssfcId'}" th:name="ssfcId"
-                               th:value="${srcSsfc.id}">
+                        <input type="hidden" th:id="${'reportYear'}" th:name="reportYear" th:value="${reportYear}">
+                        <input type="hidden" th:id="${'srcId'}" th:name="srcId" th:value="${srcSsfc.srcId}">
                         <input type="submit" value="Удалить">
                     </form>
                 </td>
             </tr>
             <tr>
                 <td th:text="'Тепловая энергия на собственные нужды, Гкал'">Показатель</td>
-                <td>Итого</td>
+                <td th:text="${srcSsfc.avgOwnNeeds}">Итого</td>
                 <td th:each="ssfc : ${srcSsfc.ssfcs}" th:object="${ssfc}" th:text="${ssfc.ownNeeds}">
                     Тепловая энергия на собственные нужды, Гкал
                 </td>
             </tr>
             <tr>
                 <td th:text="'Отпуск тепловой энергии с коллекторов источников, Гкал'">Показатель</td>
-                <td>Итого</td>
+                <td th:text="${srcSsfc.avgProduction}">Итого</td>
                 <td th:each="ssfc : ${srcSsfc.ssfcs}" th:object="${ssfc}" th:text="${ssfc.production}">
                     Отпуск тепловой энергии с коллекторов источников, Гкал
                 </td>
             </tr>
             <tr>
                 <td th:text="'УРУТ на выработу тепловой энергии, кг у.т./Гкал'">Показатель</td>
-                <td>Итого</td>
+                <td th:text="${srcSsfc.avgSsfcg}">Итого</td>
                 <td th:each="ssfc : ${srcSsfc.ssfcs}" th:object="${ssfc}" th:text="${ssfc.ssfcg}">
                     УРУТ на выработу тепловой энергии, кг у.т./Гкал
                 </td>
             </tr>
             <tr>
                 <td th:text="'УРУТ на отпуск тепловой энергии, кг у.т./Гкал'">Показатель</td>
-                <td>Итого</td>
+                <td th:text="${srcSsfc.avgSsfc}">Итого</td>
                 <td th:each="ssfc : ${srcSsfc.ssfcs}" th:object="${ssfc}" th:text="${ssfc.ssfc}">
                     УРУТ на отпуск тепловой энергии, кг у.т./Гкал
                 </td>
