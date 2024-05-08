@@ -47,7 +47,7 @@
                 <td rowspan="6" th:text="${srcSsfc.srcName}">Источник</td>
                 <td rowspan="6" th:text="${srcSsfc.fuelType}">Вид топлива</td>
                 <td th:text="'Выработка тепловой энергии, Гкал'">Показатель</td>
-                <td>Итого</td>
+                <td th:text="${#aggregates.sum(srcSsfc.ssfcs.generation)}">Итого</td>
                 <td th:each="ssfc : ${srcSsfc.ssfcs}" th:object="${ssfc}" th:text="${ssfc.generation}">
                     Выработка тепловой энергии, Гкал
                 </td>
