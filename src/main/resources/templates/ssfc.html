@@ -47,8 +47,9 @@
                 <td rowspan="6" th:text="${srcSsfc.srcName}">Источник</td>
                 <td rowspan="6" th:text="${srcSsfc.fuelType}">Вид топлива</td>
                 <td th:text="'Выработка тепловой энергии, Гкал'">Показатель</td>
-                <td th:text="${srcSsfc.avgGeneration}">Итого</td>
-                <td th:each="ssfc : ${srcSsfc.ssfcs}" th:object="${ssfc}" th:text="${ssfc.generation}">
+                <td th:text="${#numbers.formatDecimal(srcSsfc.avgGeneration, 3, 3)}">Итого</td>
+                <td th:each="ssfc : ${srcSsfc.ssfcs}" th:object="${ssfc}"
+                    th:text="${#numbers.formatDecimal(ssfc.generation, 3, 3)}">
                     Выработка тепловой энергии, Гкал
                 </td>
                 <td rowspan="6">
@@ -68,29 +69,33 @@
             </tr>
             <tr>
                 <td th:text="'Тепловая энергия на собственные нужды, Гкал'">Показатель</td>
-                <td th:text="${srcSsfc.avgOwnNeeds}">Итого</td>
-                <td th:each="ssfc : ${srcSsfc.ssfcs}" th:object="${ssfc}" th:text="${ssfc.ownNeeds}">
+                <td th:text="${#numbers.formatDecimal(srcSsfc.avgOwnNeeds, 3, 3)}">Итого</td>
+                <td th:each="ssfc : ${srcSsfc.ssfcs}" th:object="${ssfc}"
+                    th:text="${#numbers.formatDecimal(ssfc.ownNeeds, 3, 3)}">
                     Тепловая энергия на собственные нужды, Гкал
                 </td>
             </tr>
             <tr>
                 <td th:text="'Отпуск тепловой энергии с коллекторов источников, Гкал'">Показатель</td>
-                <td th:text="${srcSsfc.avgProduction}">Итого</td>
-                <td th:each="ssfc : ${srcSsfc.ssfcs}" th:object="${ssfc}" th:text="${ssfc.production}">
+                <td th:text="${#numbers.formatDecimal(srcSsfc.avgProduction, 3, 3)}">Итого</td>
+                <td th:each="ssfc : ${srcSsfc.ssfcs}" th:object="${ssfc}"
+                    th:text="${#numbers.formatDecimal(ssfc.production, 3, 3)}">
                     Отпуск тепловой энергии с коллекторов источников, Гкал
                 </td>
             </tr>
             <tr>
                 <td th:text="'УРУТ на выработу тепловой энергии, кг у.т./Гкал'">Показатель</td>
-                <td th:text="${srcSsfc.avgSsfcg}">Итого</td>
-                <td th:each="ssfc : ${srcSsfc.ssfcs}" th:object="${ssfc}" th:text="${ssfc.ssfcg}">
+                <td th:text="${#numbers.formatDecimal(srcSsfc.avgSsfcg, 2, 2)}">Итого</td>
+                <td th:each="ssfc : ${srcSsfc.ssfcs}" th:object="${ssfc}"
+                    th:text="${#numbers.formatDecimal(ssfc.ssfcg, 2, 2)}">
                     УРУТ на выработу тепловой энергии, кг у.т./Гкал
                 </td>
             </tr>
             <tr>
                 <td th:text="'УРУТ на отпуск тепловой энергии, кг у.т./Гкал'">Показатель</td>
-                <td th:text="${srcSsfc.avgSsfc}">Итого</td>
-                <td th:each="ssfc : ${srcSsfc.ssfcs}" th:object="${ssfc}" th:text="${ssfc.ssfc}">
+                <td th:text="${#numbers.formatDecimal(srcSsfc.avgSsfc, 2, 2)}">Итого</td>
+                <td th:each="ssfc : ${srcSsfc.ssfcs}" th:object="${ssfc}"
+                    th:text="${#numbers.formatDecimal(ssfc.ssfc, 2, 2)}">
                     УРУТ на отпуск тепловой энергии, кг у.т./Гкал
                 </td>
             </tr>
