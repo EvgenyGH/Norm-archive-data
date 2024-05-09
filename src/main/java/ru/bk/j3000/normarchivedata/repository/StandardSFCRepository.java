@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Repository;
 import ru.bk.j3000.normarchivedata.model.StandardSFC;
 
@@ -21,4 +22,10 @@ public interface StandardSFCRepository extends JpaRepository<StandardSFC, UUID> 
     @Query("DELETE StandardSFC ssfc " +
             "WHERE ssfc.properties.id.year = :year")
     void deleteAllByYear(@Param("year") Integer year);
+
+    @Modifying
+    @Query("DELETE StandardSFC ssfc " +
+            "WHERE ssfc.properties.id.year = :year " +
+            "AND ssfc.properties.id.source.id = :srcId")
+    void deleteSsfcsBySrcIdAndYear(@P("srcId") UUID srcId, @Param("year") Integer year);
 }

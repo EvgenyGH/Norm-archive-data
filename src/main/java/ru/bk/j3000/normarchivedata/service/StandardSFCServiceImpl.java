@@ -51,18 +51,50 @@ public class StandardSFCServiceImpl implements StandardSFCService {
     }
 
     @Override
-    public void updateSsfc(SsfcDTO ssfcDTO) {
+    public StandardSFC getSsfcById(UUID id) {
+        StandardSFC ssfc = ssfcRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Ssfc not found. Id=%s.", id)));
 
+        log.info("Found ssfc with id {}.", id);
+
+        return ssfc;
+    }
+
+    @Override
+    public void updateSsfc(SsfcDTO ssfcDTO) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void addSsfc(SsfcDTO ssfcDTO) {
-
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public void deleteSsfcById(UUID id, Integer year) {
+    @Transactional
+    public void deleteSsfcById(UUID id) {
+        StandardSFC ssfc = this.getSsfcById(id);
+        ssfcRepository.deleteById(id);
 
+        log.info("Ssfc id {} deleted. Name {}", id,
+                ssfc.getProperties().getId().getSource().getName());
+    }
+
+    @Override
+    @Transactional
+    public void deleteSsfcByIds(List<UUID> ids) {
+        ssfcRepository.deleteAllById(ids);
+
+        log.info("Ssfcs deleted. {} in Total.", ids.size());
+    }
+
+    @Override
+    @Transactional
+    public void deleteSsfcBySrcIdAndYear(UUID srcId, Integer year) {
+        ssfcRepository.deleteSsfcsBySrcIdAndYear(srcId, year);
+
+        log.info("Ssfcs deleted for year {} and sourceId {}.", year, srcId);
     }
 
     @Override

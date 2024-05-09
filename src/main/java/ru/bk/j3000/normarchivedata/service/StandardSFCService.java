@@ -9,15 +9,21 @@ import java.util.List;
 import java.util.UUID;
 
 public interface StandardSFCService {
-    void updateSsfc(SsfcDTO ssfcDTO);
+    StandardSFC getSsfcById(UUID id);
+
+    List<StandardSFC> findAllSsfcByYear(Integer reportYear);
 
     void addSsfc(SsfcDTO ssfcDTO);
 
-    void deleteSsfcById(UUID id, Integer year);
+    void updateSsfc(SsfcDTO ssfcDTO);
+
+    void deleteSsfcById(UUID id);
+
+    void deleteSsfcByIds(List<UUID> ids);
+
+    void deleteSsfcBySrcIdAndYear(UUID srcId, Integer year);
 
     void uploadSsfc(MultipartFile file, Integer year);
 
     Resource getSsfcTemplate();
-
-    List<StandardSFC> findAllSsfcByYear(Integer reportYear);
 }

@@ -62,9 +62,9 @@ public class StandardSFCController {
 
     // Delete ssfc
     @DeleteMapping("/ssfc")
-    public String deleteSsfc(@RequestParam(name = "ssfcId") UUID id,
-                             @RequestParam(name = "propYear") Integer year) {
-        ssfcService.deleteSsfcById(id, year);
+    public String deleteSsfc(@RequestParam(name = "srcId") UUID srcId,
+                             @RequestParam(name = "reportYear") Integer year) {
+        ssfcService.deleteSsfcBySrcIdAndYear(srcId, year);
 
         return "redirect:/ssfc";
     }

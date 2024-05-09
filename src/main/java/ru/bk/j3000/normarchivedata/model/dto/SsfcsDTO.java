@@ -22,6 +22,7 @@ public class SsfcsDTO {
         StandardSFC ssfc = ssfcs.getFirst();
 
         this.srcName = ssfc.getProperties().getId().getSource().getName();
+        this.srcId = ssfc.getProperties().getId().getSource().getId();
         this.fuelType = ssfc.getFuelType().getName();
         this.zoneName = ssfc.getProperties().getTariffZone().getZoneName();
         this.branchName = ssfc.getProperties().getBranch().getBranchName();
