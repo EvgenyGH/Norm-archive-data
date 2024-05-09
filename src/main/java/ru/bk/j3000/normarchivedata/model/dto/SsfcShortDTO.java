@@ -28,5 +28,9 @@ public class SsfcShortDTO {
         this.ssfc = ssfc.getSsfc();
         this.ssfcg = ssfc.getSsfcg();
     }
+
+    private Double getPercentOwnNeeds() {
+        return ownNeeds / generation * 100d;
+    }
 }
 

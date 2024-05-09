@@ -100,4 +100,8 @@ public class SsfcsDTO {
                         })
                 .total;
     }
+
+    public Double avgPercentOwnNeeds() {
+        return avgOwnNeeds() / avgGeneration() * 100d;
+    }
 }
