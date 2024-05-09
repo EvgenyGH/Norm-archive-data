@@ -42,10 +42,19 @@ public class StandardSFCServiceImpl implements StandardSFCService {
             "Декабрь", "2024 год", "Комментарии"};
 
     @Override
-    public List<StandardSFC> findAllSsfcByYear(Integer reportYear) {
-        List<StandardSFC> ssfcs = ssfcRepository.findAllSsfcByYear(reportYear);
+    public List<StandardSFC> findAllSsfcByYear(Integer year) {
+        List<StandardSFC> ssfcs = ssfcRepository.findAllSsfcByYear(year);
 
-        log.info("Found {} ssfcs for {} year.", ssfcs.size(), reportYear);
+        log.info("Found {} ssfcs for {} year.", ssfcs.size(), year);
+
+        return ssfcs;
+    }
+
+    @Override
+    public List<StandardSFC> findAllSsfcByYearAndSrcId(Integer year, UUID srcId) {
+        List<StandardSFC> ssfcs = ssfcRepository.findAllSsfcByYearAndSrcId(year, srcId);
+
+        log.info("Found {} ssfcs for {} year.", ssfcs.size(), year);
 
         return ssfcs;
     }

@@ -16,7 +16,7 @@ public interface StandardSFCRepository extends JpaRepository<StandardSFC, UUID> 
 
     @Query("SELECT ssfc FROM StandardSFC ssfc " +
             "WHERE ssfc.properties.id.year = :year")
-    List<StandardSFC> findAllSsfcByYear(@Param("year") Integer reportYear);
+    List<StandardSFC> findAllSsfcByYear(@Param("year") Integer year);
 
     @Modifying
     @Query("DELETE StandardSFC ssfc " +
@@ -28,4 +28,11 @@ public interface StandardSFCRepository extends JpaRepository<StandardSFC, UUID> 
             "WHERE ssfc.properties.id.year = :year " +
             "AND ssfc.properties.id.source.id = :srcId")
     void deleteSsfcsBySrcIdAndYear(@P("srcId") UUID srcId, @Param("year") Integer year);
+
+
+    @Query("SELECT ssfc FROM StandardSFC ssfc " +
+            "WHERE ssfc.properties.id.year = :year " +
+            "AND ssfc.properties.id.source.id = :srcId")
+    List<StandardSFC> findAllSsfcByYearAndSrcId(@Param("yer") Integer year,
+                                                @Param("srcId") UUID srcId);
 }

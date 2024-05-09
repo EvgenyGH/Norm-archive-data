@@ -119,11 +119,12 @@
     </table>
 </div>
 
-<div class="alter-ssfc alter-data" th:fragment="alter-ssfc(ssfc, sourcesLeft,
-tariffZones, branches)">
+<div class="alter-ssfc alter-data" th:fragment="alter-ssfc(ssfcs, reportYear)">
     <form th:action="@{/ssfc}" th:object="${sourceProperty}"
           th:with="newProperty=${sourceProperty.source == null}"
           th:method="${newProperty ? 'post' : 'put'}">
+
+
         <fieldset>
             <legend th:text="${newProperty ? 'Новое свойство источника:'
                         : 'Изменить свойство источника:'}">
@@ -167,8 +168,10 @@ tariffZones, branches)">
                         th:selected="${newProperty ? false : sourceProperty.tariffZone.equals(tz)}">
                 </option>
             </select>
+
+
             <input type="submit" value="Сохранить">
-            <a th:href="@{/sourceproperty}">Отмена</a>
+            <a th:href="@{/ssfc(reportYear=${reportYear})}">Отмена</a>
         </fieldset>
     </form>
 </div>

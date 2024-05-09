@@ -11,7 +11,9 @@ import java.util.UUID;
 public interface StandardSFCService {
     StandardSFC getSsfcById(UUID id);
 
-    List<StandardSFC> findAllSsfcByYear(Integer reportYear);
+    List<StandardSFC> findAllSsfcByYear(Integer year);
+
+    List<StandardSFC> findAllSsfcByYearAndSrcId(Integer year, UUID srcId);
 
     void addSsfc(SsfcDTO ssfcDTO);
 

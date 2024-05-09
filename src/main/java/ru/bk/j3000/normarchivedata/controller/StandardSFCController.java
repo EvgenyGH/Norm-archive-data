@@ -34,8 +34,9 @@ public class StandardSFCController {
     }
 
     // Request alter ssfc view
-    @GetMapping("/ssfc/alter/{reportYear}")
-    public String alterSsfc(Model model, @PathVariable(name = "reportYear") Integer year,
+    @GetMapping("/ssfc/alter")
+    public String alterSsfc(Model model,
+                            @RequestParam(name = "reportYear") Integer year,
                             @RequestParam(name = "srcId", required = false) Optional<UUID> id) {
         model.addAllAttributes(modelService.getAlterSsfcAttributes(year, id));
 

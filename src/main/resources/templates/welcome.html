@@ -59,8 +59,7 @@
              th:insert="~{ssfc::all-ssfcs(${ssfcs}, ${reportYear})}">ssfcs
         </div>
         <div th:if="${alterSsfc}"
-             th:insert="~{ssfc::alter-ssfc(${ssfc},
-             ${sourcesLeft}, ${tariffZones}, ${branches})}">alter ssfc
+             th:insert="~{ssfc::alter-ssfc(${ssfc}, ${reportYear})}">alter ssfc
         </div>
 
         <!--/* Отчеты */-->

@@ -4,21 +4,18 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.bk.j3000.normarchivedata.model.SOURCE_TYPE;
-import ru.bk.j3000.normarchivedata.model.Source;
-import ru.bk.j3000.normarchivedata.model.TariffZone;
+import ru.bk.j3000.normarchivedata.model.*;
 import ru.bk.j3000.normarchivedata.model.admin.SECURITY_ROLES;
-import ru.bk.j3000.normarchivedata.model.dto.BranchDTO;
-import ru.bk.j3000.normarchivedata.model.dto.SourcePropertyDTO;
-import ru.bk.j3000.normarchivedata.model.dto.SsfcsDTO;
-import ru.bk.j3000.normarchivedata.model.dto.UserDTO;
+import ru.bk.j3000.normarchivedata.model.dto.*;
 import ru.bk.j3000.normarchivedata.service.admin.UserService;
 
+import java.security.InvalidParameterException;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 @Slf4j
@@ -271,6 +268,41 @@ public class ModelServiceImpl implements ModelService {
 
     @Override
     public Map<String, Object> getAlterSsfcAttributes(Integer year, Optional<UUID> id) {
-        return Map.of();
+        //todo
+        String srcName;
+        HashMap<String, Object> attributes = new HashMap<>();
+
+        attributes.put("shadow", true);
+        attributes.put("alterSsfc", true);
+        attributes.put("activeMenu", Collections.emptySet());
+
+        if (id.isEmpty()) {
+            throw new InvalidParameterException(
+                    String.format("Source id %s is empty.", id));
+        } else {
+            Source source = sourceService.getSourceById(id.get())
+                    .orElseThrow(() -> new EntityNotFoundException(
+                            String.format("Source id %s not found.", id.get())));
+            srcName = source.getName();
+
+            List<StandardSFC> ssfcs = ssfcService.findAllSsfcByYearAndSrcId(year, source.getId());
+
+            if (ssfcs.isEmpty()) {
+                attributes.put("ssfcs",
+                        new SsfcsDTO(source.getName(), source.getId(),
+                                null, FUEL_TYPE.GAS.getName(), null, null,
+                                IntStream.rangeClosed(1, 12)
+                                        .mapToObj(month -> new SsfcShortDTO(null, year, month,
+                                                null, null, null,
+                                                null, null))
+                                        .toList()));
+            } else {
+                attributes.put("ssfcs", new SsfcsDTO(ssfcs));
+            }
+        }
+
+        log.info("Alter ssfc attributes created. Source {} id {}, year {}.", srcName, id.get(), year);
+
+        return attributes;
     }
 }
