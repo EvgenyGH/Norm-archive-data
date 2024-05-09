@@ -34,11 +34,18 @@
             <td colspan="19">Нет данных</td>
         </tr>
 
-        <th:block th:each="srcSsfc, srcStat: ${ssfcs}" th:object="${srcSsfc}">
-            <tr th:if="${srcStat.first || !srcSsfc.zoneName.equals(ssfcs[srcStat.index - 1].zoneName)}">
-                <td th:text="${srcSsfc.zoneName}" colspan="19">Тарифная зона</td>
-            </tr>
-            <tr th:if="${srcStat.first || !srcSsfc.branchName.equals(ssfcs[srcStat.index - 1].branchName)}">
+        <th:block th:each="srcSsfc, srcStat: ${ssfcs}" th:object="${srcSsfc}"
+                  th:with="newTZ=${srcStat.first || !srcSsfc.zoneName.equals(ssfcs[srcStat.index - 1].zoneName)},
+        newBranch=${srcStat.first || !srcSsfc.branchName.equals(ssfcs[srcStat.index - 1].branchName)}">
+            <th:block th:if="${newTZ}">
+                <tr>
+                    <td th:text="${srcSsfc.zoneName}" colspan="19">Тарифная зона</td>
+                </tr>
+                <tr>
+                    <td th:text="${srcSsfc.branchName}" colspan="19">Филиал</td>
+                </tr>
+            </th:block>
+            <tr th:if="${!newTZ && newBranch}">
                 <td th:text="${srcSsfc.branchName}" colspan="19">Филиал</td>
             </tr>
             <tbody class="one-row">

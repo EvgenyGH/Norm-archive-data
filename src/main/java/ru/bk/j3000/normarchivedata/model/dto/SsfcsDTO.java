@@ -13,6 +13,7 @@ import java.util.UUID;
 public class SsfcsDTO {
     private String srcName;
     private UUID srcId;
+    private Integer sourceType;
     private String fuelType;
     private String zoneName;
     private String branchName;
@@ -23,6 +24,7 @@ public class SsfcsDTO {
 
         this.srcName = ssfc.getProperties().getId().getSource().getName();
         this.srcId = ssfc.getProperties().getId().getSource().getId();
+        this.sourceType = ssfc.getProperties().getId().getSource().getSourceType().ordinal();
         this.fuelType = ssfc.getFuelType().getName();
         this.zoneName = ssfc.getProperties().getTariffZone().getZoneName();
         this.branchName = ssfc.getProperties().getBranch().getBranchName();
