@@ -1,5 +1,6 @@
 package ru.bk.j3000.normarchivedata.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,8 +22,7 @@ import ru.bk.j3000.normarchivedata.repository.StandardSFCRepository;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.IntStream;
 
 @Service
@@ -91,69 +91,67 @@ public class StandardSFCServiceImpl implements StandardSFCService {
     }
 
     private List<StandardSFC> readSsfcsFromFile(MultipartFile file, Integer year) {
-        List<StandardSFC> ssfcs;
+        List<StandardSFC> ssfcs = new LinkedList<>();
 
         try (Workbook workbook = new XSSFWorkbook(file.getInputStream())) {
             Sheet sheet = workbook.getSheet("ssfcs");
 
             checkHeaders(sheet.getRow(0));
 
-            ssfcs = IntStream.iterate(1, i -> i + 7)
-                    .limit((sheet.getLastRowNum() - 1) / 7)
-                    .mapToObj(i -> {
-                        var ref = new Object() {
-                            Row row = sheet.getRow(i);
-                        };
+            for (int i = 1; i <= sheet.getLastRowNum(); i += 6) {
+                Row row1 = sheet.getRow(i);
+                Row row2 = sheet.getRow(i + 1);
+                Row row4 = sheet.getRow(i + 3);
+                Row row5 = sheet.getRow(i + 4);
+                Row row6 = sheet.getRow(i + 5);
 
-                        UUID srcId = UUID.fromString(ref.row.getCell(6).getStringCellValue());
-                        Source src = sourceService.getSourceById(srcId).orElseThrow();
+                String srcIdString = row1.getCell(5).getStringCellValue();
 
-                        FUEL_TYPE fuelType = FUEL_TYPE.valueOf(ref.row.getCell(7).getStringCellValue());
+                if (Objects.isNull(srcIdString) || srcIdString.isBlank()) {
+                    break;
+                }
 
-                        List<Double> generations = IntStream.rangeClosed(8, 19)
-                                .mapToObj(j -> ref.row.getCell(j).getNumericCellValue())
-                                .toList();
+                UUID srcId = UUID.fromString(srcIdString);
+                Source src = sourceService.getSourceById(srcId)
+                        .orElseThrow(() -> new EntityNotFoundException(
+                                String.format("Source id=%s not found.", srcId)));
+                FUEL_TYPE fuelType = FUEL_TYPE.values()[(int) row1.getCell(6).getNumericCellValue()];
+                SrcPropertyId srcPropId = new SrcPropertyId(src, year);
+                SourceProperty sourceProperty = srcPropService.getSourcePropertyById(srcPropId);
 
-                        ref.row = sheet.getRow(i + 1);
-                        List<Double> ownNeeds = IntStream.rangeClosed(6, 19)
-                                .mapToObj(j -> ref.row.getCell(j).getNumericCellValue())
-                                .toList();
+                List<Double> generations = new ArrayList<>();
+                List<Double> ownNeeds = new ArrayList<>();
+                List<Double> productions = new ArrayList<>();
+                List<Double> ssfcgs = new ArrayList<>();
+                List<Double> ssfcz = new ArrayList<>();
 
-                        ref.row = sheet.getRow(i + 3);
-                        List<Double> productions = IntStream.rangeClosed(6, 19)
-                                .mapToObj(j -> ref.row.getCell(j).getNumericCellValue())
-                                .toList();
+                IntStream.rangeClosed(7, 18).forEach(j -> {
+                    Double genCellValue = row1.getCell(j).getNumericCellValue();
+                    generations.add(genCellValue);
+                    Double ownNeedsCellValue = row2.getCell(j).getNumericCellValue();
+                    ownNeeds.add(ownNeedsCellValue);
+                    Double prodCellValue = row4.getCell(j).getNumericCellValue();
+                    productions.add(prodCellValue);
+                    Double ssfcgCellValue = row5.getCell(j).getNumericCellValue();
+                    ssfcgs.add(ssfcgCellValue);
+                    Double ssfcCellValue = row6.getCell(j).getNumericCellValue();
+                    ssfcz.add(ssfcCellValue);
+                });
 
-                        ref.row = sheet.getRow(i + 4);
-                        List<Double> ssfcgs = IntStream.rangeClosed(6, 19)
-                                .mapToObj(j -> ref.row.getCell(j).getNumericCellValue())
-                                .toList();
+                List<StandardSFC> standardSFCS = IntStream.rangeClosed(0, 11)
+                        .mapToObj(k -> new StandardSFC(null,
+                                generations.get(k),
+                                ownNeeds.get(k),
+                                productions.get(k),
+                                ssfcz.get(k),
+                                ssfcgs.get(k),
+                                sourceProperty,
+                                k + 1,
+                                fuelType))
+                        .toList();
 
-                        ref.row = sheet.getRow(i + 5);
-                        List<Double> ssfcz = IntStream.rangeClosed(6, 19)
-                                .mapToObj(j -> ref.row.getCell(j).getNumericCellValue())
-                                .toList();
-
-                        SrcPropertyId srcPropId = new SrcPropertyId(src, year);
-                        SourceProperty sourceProperty = srcPropService.getSourcePropertyById(srcPropId);
-
-                        List<StandardSFC> standardSFCS = IntStream.rangeClosed(0, 11)
-                                .mapToObj(k -> new StandardSFC(null,
-                                        generations.get(k),
-                                        ownNeeds.get(k),
-                                        productions.get(k),
-                                        ssfcz.get(k),
-                                        ssfcgs.get(k),
-                                        sourceProperty,
-                                        k + 1,
-                                        fuelType))
-                                .toList();
-
-                        return standardSFCS;
-                    })
-                    .flatMap(List::stream)
-                    .toList();
-
+                ssfcs.addAll(standardSFCS);
+            }
         } catch (IOException e) {
             throw new FileReadException("Error reading excel file.", "Ssfcs template.");
         }
