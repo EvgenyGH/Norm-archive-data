@@ -119,56 +119,96 @@
     </table>
 </div>
 
-<div class="alter-ssfc alter-data" th:fragment="alter-ssfc(ssfcs, reportYear)">
-    <form th:action="@{/ssfc}" th:object="${sourceProperty}"
-          th:with="newProperty=${sourceProperty.source == null}"
-          th:method="${newProperty ? 'post' : 'put'}">
 
+<div class="alter-ssfc alter-data" th:fragment="alter-ssfc(srcSsfcs, reportYear, newSsfc, sources)">
+    <form th:action="@{/ssfc}" th:object="${srcSsfcs}"
+          th:method="${newSsfc ? 'post' : 'put'}">
 
         <fieldset>
-            <legend th:text="${newProperty ? 'Новое свойство источника:'
-                        : 'Изменить свойство источника:'}">
-            </legend>
-            <label th:for="${#ids.next('source')}" th:text="${'Источник:'}">
-                Источник:
-            </label>
-            <input th:if="${!newProperty}" type="text" th:field="*{source}"
-                   placeholder="Источник" readonly hidden="hidden">
-            <div th:if="${!newProperty}" th:text="*{source.sourceName}">Источник</div>
-            <select th:if="${newProperty}" th:field="*{source}">
-                <option th:if="newProperty" th:value="null" th:text="'Выбрать источник'"
-                        selected hidden="hidden">
-                </option>
-                <option th:each="source : ${sourcesLeft}"
-                        th:value="${source}"
-                        th:text="${source.sourceName}">
-                </option>
-            </select>
-            <label th:for="${#ids.next('year')}">Год:</label>
-            <input type="text" th:field="*{year}" placeholder="Год" readonly>
-            <label th:for="${#ids.next('branch')}">Филиал:</label>
-            <select th:field="*{branch}" placeholder="Филиал">
-                <option th:if="newProperty" th:value="null" th:text="'Выбрать филиал'"
-                        selected hidden="hidden">
-                </option>
-                <option th:each="b : ${branches}"
-                        th:value="${b}"
-                        th:text="${b.branchName}"
-                        th:selected="${newProperty ? false : sourceProperty.branch.equals(b)}">
-                </option>
-            </select>
-            <label th:for="${#ids.next('tariffZone')}">Тарифная зона:</label>
-            <select th:field="*{tariffZone}" placeholder="Тарифная зона">
-                <option th:if="newProperty" th:value="null" th:text="'Выбрать тарифную зону'"
-                        selected hidden="hidden">
-                </option>
-                <option th:each="tz : ${tariffZones}"
-                        th:value="${tz}"
-                        th:text="${tz.zoneName}"
-                        th:selected="${newProperty ? false : sourceProperty.tariffZone.equals(tz)}">
+            <legend th:text="${newSsfc ? 'Новый норматив:': 'Изменить норматив:'}"></legend>
+
+            <label th:for="${#ids.next('srcId')}" th:text="'Источник:'">Источник:</label>
+            <select th:field="*{srcId}" th:readonly="!newSsfc">
+                <option th:each="src : ${sources}"
+                        th:text="|${src.sourceName}${src.defined ? ' (есть данные)' : ''}|"
+                        th:value="${src.sourceId}">
                 </option>
             </select>
 
+
+            <label th:for="${#ids.next('fuelType')}" th:text="'Вид топлива:'">Вид топлива:</label>
+            <select th:field="*{fuelType}" th:readonly="!newSsfc">
+                <option th:each="type : ${T(ru.bk.j3000.normarchivedata.model.FUEL_TYPE).values()}"
+                        th:text="${type.getName}" th:value="type.getName"
+                        th:selected="${newSsfc ? false : srcSsfcs.fuelType.equals(type.getName)}">
+                </option>
+            </select>
+
+
+            <!--            <select th:field="*{tariffZone}" placeholder="Тарифная зона">-->
+            <!--                <option th:if="newProperty" th:value="null" th:text="'Выбрать тарифную зону'"-->
+            <!--                        selected hidden="hidden">-->
+            <!--                </option>-->
+            <!--                <option th:each="tz : ${tariffZones}"-->
+            <!--                        th:value="${tz}"-->
+            <!--                        th:text="${tz.zoneName}"-->
+            <!--                        th:selected="${newProperty ? false : sourceProperty.tariffZone.equals(tz)}">-->
+            <!--                </option>-->
+            <!--            </select>-->
+
+            <table>
+                <tr>
+                    <th>Показатель</th>
+                    <th>Январь</th>
+                    <th>Февраль</th>
+                    <th>Март</th>
+                    <th>Апрель</th>
+                    <th>Май</th>
+                    <th>Июнь</th>
+                    <th>Июль</th>
+                    <th>Август</th>
+                    <th>Сентябрь</th>
+                    <th>Октябрь</th>
+                    <th>Ноябрь</th>
+                    <th>Декабрь</th>
+                </tr>
+
+                <tr>
+                    <td th:text="'Выработка тепловой энергии, Гкал'">Показатель</td>
+                    <td th:each="monthSsfc, stats : *{ssfcs}">
+                        Выработка тепловой энергии, Гкал
+                        <input th:field="*{ssfcs[__${stats.index}__].generation}">
+                    </td>
+                </tr>
+                <tr>
+                    <td th:text="'Тепловая энергия на собственные нужды, Гкал'">Показатель</td>
+                    <td th:each="monthSsfc, stats : *{ssfcs}">
+                        Тепловая энергия на собственные нужды, Гкал
+                        <input th:field="*{ssfcs[__${stats.index}__].ownNeeds}">
+                    </td>
+                </tr>
+                <tr>
+                    <td th:text="'Отпуск тепловой энергии с коллекторов источников, Гкал'">Показатель</td>
+                    <td th:each="monthSsfc, stats : *{ssfcs}">
+                        Отпуск тепловой энергии с коллекторов источников, Гкал
+                        <input th:field="*{ssfcs[__${stats.index}__].production}">
+                    </td>
+                </tr>
+                <tr>
+                    <td th:text="'УРУТ на выработу тепловой энергии, кг у.т./Гкал'">Показатель</td>
+                    <td th:each="monthSsfc, stats : *{ssfcs}">
+                        УРУТ на выработу тепловой энергии, кг у.т./Гкал
+                        <input th:field="*{ssfcs[__${stats.index}__].ssfcg}">
+                    </td>
+                </tr>
+                <tr>
+                    <td th:text="'УРУТ на отпуск тепловой энергии, кг у.т./Гкал'">Показатель</td>
+                    <td th:each="monthSsfc, stats : *{ssfcs}">
+                        УРУТ на отпуск тепловой энергии, кг у.т./Гкал
+                        <input th:field="*{ssfcs[__${stats.index}__].ssfc}">
+                    </td>
+                </tr>
+            </table>
 
             <input type="submit" value="Сохранить">
             <a th:href="@{/ssfc(reportYear=${reportYear})}">Отмена</a>

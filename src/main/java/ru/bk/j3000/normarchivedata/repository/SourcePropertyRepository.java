@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import ru.bk.j3000.normarchivedata.model.Source;
 import ru.bk.j3000.normarchivedata.model.SourceProperty;
 import ru.bk.j3000.normarchivedata.model.SrcPropertyId;
 import ru.bk.j3000.normarchivedata.model.dto.SourcePropertyDTO;
@@ -43,4 +44,10 @@ public interface SourcePropertyRepository extends JpaRepository<SourceProperty, 
             "WHERE sp.id.year = :year " +
             "ORDER BY sp.id.source.name desc")
     List<SourceProperty> findAllPropByYear(@Param("year") Integer reportYear);
+
+    @Query("SELECT sp.id.source " +
+            "FROM SourceProperty sp " +
+            "WHERE sp.id.year = :year")
+    List<Source> findAllSourcesByYear(@Param("year") Integer year);
+
 }

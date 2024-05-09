@@ -10,7 +10,7 @@ public enum FUEL_TYPE {
     DIESEL {
         @Override
         public String getName(){
-            return "Дизельное топлтво";
+            return "Дизельное топливо";
         }
     };
 

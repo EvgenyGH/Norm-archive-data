@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.bk.j3000.normarchivedata.exception.FileParseException;
 import ru.bk.j3000.normarchivedata.exception.FileReadException;
+import ru.bk.j3000.normarchivedata.model.Source;
 import ru.bk.j3000.normarchivedata.model.SourceProperty;
 import ru.bk.j3000.normarchivedata.model.SrcPropertyId;
 import ru.bk.j3000.normarchivedata.model.dto.SourcePropertyDTO;
@@ -195,5 +196,15 @@ public class SourcePropertyServiceImpl implements SourcePropertyService {
         log.info("Source property found. Id {}.", property.getId());
 
         return property;
+    }
+
+    @Override
+    public List<Source> findAllSourcesByYear(Integer year) {
+        List<Source> sources = srcPropRepository.findAllSourcesByYear(year);
+
+        log.info("All sources defined in source properties for {} year found. {} in total",
+                year, sources.size());
+
+        return sources;
     }
 }

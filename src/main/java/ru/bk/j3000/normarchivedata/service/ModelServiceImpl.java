@@ -268,13 +268,8 @@ public class ModelServiceImpl implements ModelService {
 
     @Override
     public Map<String, Object> getAlterSsfcAttributes(Integer year, Optional<UUID> id) {
-        //todo
         String srcName;
         HashMap<String, Object> attributes = new HashMap<>();
-
-        attributes.put("shadow", true);
-        attributes.put("alterSsfc", true);
-        attributes.put("activeMenu", Collections.emptySet());
 
         if (id.isEmpty()) {
             throw new InvalidParameterException(
@@ -288,7 +283,7 @@ public class ModelServiceImpl implements ModelService {
             List<StandardSFC> ssfcs = ssfcService.findAllSsfcByYearAndSrcId(year, source.getId());
 
             if (ssfcs.isEmpty()) {
-                attributes.put("ssfcs",
+                attributes.put("srcSsfcs",
                         new SsfcsDTO(source.getName(), source.getId(),
                                 null, FUEL_TYPE.GAS.getName(), null, null,
                                 IntStream.rangeClosed(1, 12)
@@ -296,10 +291,28 @@ public class ModelServiceImpl implements ModelService {
                                                 null, null, null,
                                                 null, null))
                                         .toList()));
+                attributes.put("newSsfc", true);
             } else {
-                attributes.put("ssfcs", new SsfcsDTO(ssfcs));
+                attributes.put("srcSsfcs", new SsfcsDTO(ssfcs));
+                attributes.put("newSsfc", false);
             }
         }
+
+        attributes.put("shadow", true);
+        attributes.put("alterSsfc", true);
+        attributes.put("activeMenu", Collections.emptySet());
+
+        List<SourceDefinedDTO> sources = srcPropService.findAllSourcesByYear(year)
+                .stream().map(SourceDefinedDTO::new).toList();
+        List<SourceDefinedDTO> sourcesDefined = ssfcService.findAllDefinedSourcesByYear(year)
+                .stream().map(SourceDefinedDTO::new).toList();
+        sources.forEach(s -> {
+            if (sourcesDefined.contains(s)) {
+                s.setDefined(true);
+            }
+        });
+
+        attributes.put("sources", sources);
 
         log.info("Alter ssfc attributes created. Source {} id {}, year {}.", srcName, id.get(), year);
 

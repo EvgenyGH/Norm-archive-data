@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Repository;
+import ru.bk.j3000.normarchivedata.model.Source;
 import ru.bk.j3000.normarchivedata.model.StandardSFC;
 
 import java.util.List;
@@ -33,6 +34,11 @@ public interface StandardSFCRepository extends JpaRepository<StandardSFC, UUID> 
     @Query("SELECT ssfc FROM StandardSFC ssfc " +
             "WHERE ssfc.properties.id.year = :year " +
             "AND ssfc.properties.id.source.id = :srcId")
-    List<StandardSFC> findAllSsfcByYearAndSrcId(@Param("yer") Integer year,
+    List<StandardSFC> findAllSsfcByYearAndSrcId(@Param("year") Integer year,
                                                 @Param("srcId") UUID srcId);
+
+    @Query("SELECT ssfc.properties.id.source " +
+            "FROM StandardSFC ssfc " +
+            "WHERE ssfc.properties.id.year = :year")
+    List<Source> findAllDefinedSourcesByYear(@Param("year") Integer year);
 }

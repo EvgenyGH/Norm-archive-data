@@ -212,4 +212,14 @@ public class StandardSFCServiceImpl implements StandardSFCService {
 
         log.info("Ssfcs template headers are OK.");
     }
+
+    @Override
+    public List<Source> findAllDefinedSourcesByYear(Integer year) {
+        List<Source> sources = ssfcRepository.findAllDefinedSourcesByYear(year);
+
+        log.info("All sources with defined ssfc for {} year found. {} in total.",
+                year, sources.size());
+
+        return sources;
+    }
 }
