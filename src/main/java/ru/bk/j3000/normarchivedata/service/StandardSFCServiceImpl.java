@@ -72,12 +72,51 @@ public class StandardSFCServiceImpl implements StandardSFCService {
 
     @Override
     public void updateSsfc(SsfcsDTO ssfcsDTO, Integer year) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        List<StandardSFC> ssfcs = this.toStandartSFCs(ssfcsDTO);
+
+        ssfcRepository.saveAll(ssfcs);
+
+        log.info("Updated {} ssfcs for source {} in {} year.",
+                ssfcs.size(),
+                ssfcs.getFirst().getProperties().getId().getSource().getName()
+                , year);
+    }
+
+    private List<StandardSFC> toStandartSFCs(SsfcsDTO ssfcsDTO) {
+        List<StandardSFC> ssfcs = ssfcsDTO.getSsfcs().stream().map(dto -> {
+                    return new StandardSFC(dto.getId(),
+                            dto.getGeneration(),
+                            dto.getOwnNeeds(),
+                            dto.getProduction(),
+                            dto.getSsfc(),
+                            dto.getSsfcg(),
+                            srcPropService.getSourcePropertyById(
+                                    new SrcPropertyId(sourceService.getSourceById(ssfcsDTO.getSrcId())
+                                            .orElseThrow(() -> new EntityNotFoundException(String
+                                                    .format("Source id {} not found.", ssfcsDTO.getSrcId())))
+                                            , dto.getYear())),
+                            dto.getMonth(),
+                            FUEL_TYPE.getByName(ssfcsDTO.getFuelType()));
+                })
+                .toList();
+
+        log.info("List of StandardSFCs for source {} and year {} converted from DTO",
+                ssfcs.getFirst().getProperties().getId().getSource().getName(),
+                ssfcs.getFirst().getProperties().getId().getYear());
+
+        return ssfcs;
     }
 
     @Override
     public void addSsfc(SsfcsDTO ssfcsDTO, Integer year) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        List<StandardSFC> ssfcs = this.toStandartSFCs(ssfcsDTO);
+
+        ssfcRepository.saveAll(ssfcs);
+
+        log.info("Added {} ssfcs for source id {} in {} year.",
+                ssfcs.size(),
+                ssfcs.getFirst().getProperties().getId().getSource().getId()
+                , year);
     }
 
     @Override
