@@ -39,8 +39,10 @@ public class StandardSFCController {
     public String alterSsfc(Model model,
                             @RequestParam(name = "reportYear") Integer year,
                             @RequestParam(name = "srcId", required = false) Optional<UUID> id,
-                            @RequestParam(name = "fuelType") String fuelType) {
-        model.addAllAttributes(modelService.getAlterSsfcAttributes(year, id, FUEL_TYPE.getByName(fuelType)));
+                            @RequestParam(name = "fuelType", required = false,
+                                    defaultValue = "Газ") String fuelType) {
+        model.addAllAttributes(modelService.getAlterSsfcAttributes(year, id,
+                FUEL_TYPE.getByName(fuelType)));
 
         return "welcome";
     }
