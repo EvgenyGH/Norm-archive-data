@@ -71,12 +71,12 @@ public class StandardSFCServiceImpl implements StandardSFCService {
     }
 
     @Override
-    public void updateSsfc(SsfcsDTO ssfcsDTO) {
+    public void updateSsfc(SsfcsDTO ssfcsDTO, Integer year) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public void addSsfc(SsfcsDTO ssfcsDTO) {
+    public void addSsfc(SsfcsDTO ssfcsDTO, Integer year) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

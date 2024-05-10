@@ -4,12 +4,14 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.bk.j3000.normarchivedata.model.*;
+import ru.bk.j3000.normarchivedata.model.SOURCE_TYPE;
+import ru.bk.j3000.normarchivedata.model.Source;
+import ru.bk.j3000.normarchivedata.model.StandardSFC;
+import ru.bk.j3000.normarchivedata.model.TariffZone;
 import ru.bk.j3000.normarchivedata.model.admin.SECURITY_ROLES;
 import ru.bk.j3000.normarchivedata.model.dto.*;
 import ru.bk.j3000.normarchivedata.service.admin.UserService;
 
-import java.security.InvalidParameterException;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -268,12 +270,23 @@ public class ModelServiceImpl implements ModelService {
 
     @Override
     public Map<String, Object> getAlterSsfcAttributes(Integer year, Optional<UUID> id) {
-        String srcName;
         HashMap<String, Object> attributes = new HashMap<>();
+        String srcName;
+
+        List<SourceDefinedDTO> sources = srcPropService.findAllSourcesByYear(year)
+                .stream().map(SourceDefinedDTO::new).toList();
 
         if (id.isEmpty()) {
-            throw new InvalidParameterException(
-                    String.format("Source id %s is empty.", id));
+            attributes.put("srcSsfcs",
+                    new SsfcsDTO(null, null,
+                            null, null, null, null,
+                            IntStream.rangeClosed(1, 12)
+                                    .mapToObj(month -> new SsfcShortDTO(null, year, month,
+                                            null, null, null,
+                                            null, null))
+                                    .toList()));
+            attributes.put("newSsfc", true);
+            srcName = "new";
         } else {
             Source source = sourceService.getSourceById(id.get())
                     .orElseThrow(() -> new EntityNotFoundException(
@@ -282,39 +295,34 @@ public class ModelServiceImpl implements ModelService {
 
             List<StandardSFC> ssfcs = ssfcService.findAllSsfcByYearAndSrcId(year, source.getId());
 
-            if (ssfcs.isEmpty()) {
-                attributes.put("srcSsfcs",
-                        new SsfcsDTO(source.getName(), source.getId(),
-                                null, FUEL_TYPE.GAS.getName(), null, null,
-                                IntStream.rangeClosed(1, 12)
-                                        .mapToObj(month -> new SsfcShortDTO(null, year, month,
-                                                null, null, null,
-                                                null, null))
-                                        .toList()));
-                attributes.put("newSsfc", true);
-            } else {
-                attributes.put("srcSsfcs", new SsfcsDTO(ssfcs));
-                attributes.put("newSsfc", false);
-            }
+            attributes.put("srcSsfcs", new SsfcsDTO(ssfcs));
+            attributes.put("newSsfc", false);
         }
 
-        attributes.put("shadow", true);
-        attributes.put("alterSsfc", true);
-        attributes.put("activeMenu", Collections.emptySet());
-
-        List<SourceDefinedDTO> sources = srcPropService.findAllSourcesByYear(year)
-                .stream().map(SourceDefinedDTO::new).toList();
         List<SourceDefinedDTO> sourcesDefined = ssfcService.findAllDefinedSourcesByYear(year)
-                .stream().map(SourceDefinedDTO::new).toList();
-        sources.forEach(s -> {
-            if (sourcesDefined.contains(s)) {
-                s.setDefined(true);
-            }
-        });
+                .stream()
+                .map(SourceDefinedDTO::new)
+                .toList();
+
+        sources = sources.stream()
+                .map(s -> {
+                    if (sourcesDefined.contains(s)) {
+                        s.setDefined(true);
+                    }
+                    return s;
+                })
+                .sorted((s1, s2) -> Boolean.compare(s1.getDefined(), s2.getDefined()))
+                .toList();
 
         attributes.put("sources", sources);
 
-        log.info("Alter ssfc attributes created. Source {} id {}, year {}.", srcName, id.get(), year);
+        attributes.put("shadow", true);
+        attributes.put("alterSsfc", true);
+        attributes.put("reportYear", year);
+        attributes.put("activeMenu", Collections.emptySet());
+
+        log.info("Alter ssfc attributes created. Source {} id {}, year {}.",
+                srcName, id.isEmpty() ? "new" : id.get(), year);
 
         return attributes;
     }

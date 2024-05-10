@@ -121,14 +121,14 @@
 
 
 <div class="alter-ssfc alter-data" th:fragment="alter-ssfc(srcSsfcs, reportYear, newSsfc, sources)">
-    <form th:action="@{/ssfc}" th:object="${srcSsfcs}"
+    <form th:action="@{/ssfc(reportYear=${reportYear})}" th:object="${srcSsfcs}"
           th:method="${newSsfc ? 'post' : 'put'}">
 
         <fieldset>
             <legend th:text="${newSsfc ? 'Новый норматив:': 'Изменить норматив:'}"></legend>
 
             <label th:for="${#ids.next('srcId')}" th:text="'Источник:'">Источник:</label>
-            <select th:if="${newSsfc}" th:field="*{srcId}" th:placeholder="Выбрать источник">
+            <select th:if="${newSsfc}" th:field="*{srcId}" th:placeholder="'Выбрать источник'">
                 <option th:value="null" th:text="'Выбрать источник'">
                     selected hidden="hidden">
                 </option>
@@ -137,8 +137,9 @@
                         th:value="${src.sourceId}">
                 </option>
             </select>
-            <input th:if="${!newSsfc}" th:field="*{srcName}" th:readonly>
-            <input th:if="${!newSsfc}" th:field="*{srcId}" th:text="${srcSsfcs.srcName}" hidden="hidden">
+            <input th:if="${!newSsfc}" th:field="*{srcName}" readonly>
+            <input th:if="${!newSsfc}" th:field="*{srcId}" hidden="hidden">
+            <br>
 
             <label th:for="${#ids.next('fuelType')}" th:text="'Вид топлива:'">Вид топлива:</label>
             <select th:field="*{fuelType}">

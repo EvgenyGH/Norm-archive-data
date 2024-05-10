@@ -45,18 +45,18 @@ public class StandardSFCController {
 
     // Update ssfc
     @PutMapping("/ssfc")
-    public String updateSsfc(@ModelAttribute(name = "srcSsfc")
-                             SsfcsDTO ssfcsDTO) {
-        ssfcService.updateSsfc(ssfcsDTO);
+    public String updateSsfc(@ModelAttribute(name = "srcSsfc") SsfcsDTO ssfcsDTO,
+                             @RequestParam(name = "reportYear") Integer year) {
+        ssfcService.updateSsfc(ssfcsDTO, year);
 
         return "redirect:/ssfc";
     }
 
     // Add ssfc
     @PostMapping("/ssfc")
-    public String addSsfc(@ModelAttribute(name = "srcSsfc")
-                          SsfcsDTO ssfcsDTO) {
-        ssfcService.addSsfc(ssfcsDTO);
+    public String addSsfc(@ModelAttribute(name = "srcSsfc") SsfcsDTO ssfcsDTO,
+                          @RequestParam(name = "reportYear") Integer year) {
+        ssfcService.addSsfc(ssfcsDTO, year);
 
         return "redirect:/ssfc";
     }

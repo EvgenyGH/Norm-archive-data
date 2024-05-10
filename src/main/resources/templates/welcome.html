@@ -163,7 +163,7 @@
                 <ul class="sub-sub-menu" th:if="${activeMenu.contains('ssfc')}">
                     <li><a th:href="@{/ssfc}">Список НУР по источникам</a></li>
                     <li>
-                        <a th:href="@{'/ssfc/alter/' + ${reportYear}}">
+                        <a th:href="@{/ssfc/alter(reportYear=${reportYear})}">
                             Добавить НУР по источнику
                         </a>
                     </li>

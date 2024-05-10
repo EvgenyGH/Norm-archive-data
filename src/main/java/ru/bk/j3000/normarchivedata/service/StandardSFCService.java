@@ -16,9 +16,9 @@ public interface StandardSFCService {
 
     List<StandardSFC> findAllSsfcByYearAndSrcId(Integer year, UUID srcId);
 
-    void addSsfc(SsfcsDTO ssfcDTO);
+    void addSsfc(SsfcsDTO ssfcDTO, Integer year);
 
-    void updateSsfc(SsfcsDTO ssfcDTO);
+    void updateSsfc(SsfcsDTO ssfcDTO, Integer year);
 
     void deleteSsfcById(UUID id);
 
