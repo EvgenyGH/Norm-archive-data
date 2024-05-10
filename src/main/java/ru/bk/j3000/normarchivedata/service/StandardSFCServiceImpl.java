@@ -16,7 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.bk.j3000.normarchivedata.exception.FileParseException;
 import ru.bk.j3000.normarchivedata.exception.FileReadException;
 import ru.bk.j3000.normarchivedata.model.*;
-import ru.bk.j3000.normarchivedata.model.dto.SsfcDTO;
+import ru.bk.j3000.normarchivedata.model.dto.SsfcsDTO;
 import ru.bk.j3000.normarchivedata.repository.StandardSFCRepository;
 
 import java.io.IOException;
@@ -71,12 +71,12 @@ public class StandardSFCServiceImpl implements StandardSFCService {
     }
 
     @Override
-    public void updateSsfc(SsfcDTO ssfcDTO) {
+    public void updateSsfc(SsfcsDTO ssfcsDTO) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public void addSsfc(SsfcDTO ssfcDTO) {
+    public void addSsfc(SsfcsDTO ssfcsDTO) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
