@@ -1,5 +1,6 @@
 package ru.bk.j3000.normarchivedata.service;
 
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -71,8 +72,13 @@ public class StandardSFCServiceImpl implements StandardSFCService {
     }
 
     @Override
-    public void updateSsfc(SsfcsDTO ssfcsDTO, Integer year) {
+    public void updateSsfc(SsfcsDTO ssfcsDTO, Integer year, String originalFuelType) {
         List<StandardSFC> ssfcs = this.toStandartSFCs(ssfcsDTO);
+
+        if (!originalFuelType.equals(ssfcsDTO.getFuelType())) {
+            chechSsfcExists(ssfcsDTO.getSrcId(),
+                    FUEL_TYPE.getByName(ssfcsDTO.getFuelType()), year);
+        }
 
         ssfcRepository.saveAll(ssfcs);
 
@@ -83,21 +89,19 @@ public class StandardSFCServiceImpl implements StandardSFCService {
     }
 
     private List<StandardSFC> toStandartSFCs(SsfcsDTO ssfcsDTO) {
-        List<StandardSFC> ssfcs = ssfcsDTO.getSsfcs().stream().map(dto -> {
-                    return new StandardSFC(dto.getId(),
-                            dto.getGeneration(),
-                            dto.getOwnNeeds(),
-                            dto.getProduction(),
-                            dto.getSsfc(),
-                            dto.getSsfcg(),
-                            srcPropService.getSourcePropertyById(
-                                    new SrcPropertyId(sourceService.getSourceById(ssfcsDTO.getSrcId())
-                                            .orElseThrow(() -> new EntityNotFoundException(String
-                                                    .format("Source id {} not found.", ssfcsDTO.getSrcId())))
-                                            , dto.getYear())),
-                            dto.getMonth(),
-                            FUEL_TYPE.getByName(ssfcsDTO.getFuelType()));
-                })
+        List<StandardSFC> ssfcs = ssfcsDTO.getSsfcs().stream().map(dto -> new StandardSFC(dto.getId(),
+                        dto.getGeneration(),
+                        dto.getOwnNeeds(),
+                        dto.getProduction(),
+                        dto.getSsfc(),
+                        dto.getSsfcg(),
+                        srcPropService.getSourcePropertyById(
+                                new SrcPropertyId(sourceService.getSourceById(ssfcsDTO.getSrcId())
+                                        .orElseThrow(() -> new EntityNotFoundException(String
+                                                .format("Source id %s not found.", ssfcsDTO.getSrcId())))
+                                        , dto.getYear())),
+                        dto.getMonth(),
+                        FUEL_TYPE.getByName(ssfcsDTO.getFuelType())))
                 .toList();
 
         log.info("List of StandardSFCs for source {} and year {} converted from DTO",
@@ -109,6 +113,9 @@ public class StandardSFCServiceImpl implements StandardSFCService {
 
     @Override
     public void addSsfc(SsfcsDTO ssfcsDTO, Integer year) {
+        chechSsfcExists(ssfcsDTO.getSrcId(),
+                FUEL_TYPE.getByName(ssfcsDTO.getFuelType()), year);
+
         List<StandardSFC> ssfcs = this.toStandartSFCs(ssfcsDTO);
 
         ssfcRepository.saveAll(ssfcs);
@@ -117,6 +124,21 @@ public class StandardSFCServiceImpl implements StandardSFCService {
                 ssfcs.size(),
                 ssfcs.getFirst().getProperties().getId().getSource().getId()
                 , year);
+    }
+
+    private void chechSsfcExists(UUID srcId, FUEL_TYPE fuelType, Integer year) {
+        List<StandardSFC> ssfcs = ssfcRepository.findAllBySrcIdAndFuelTypeAndYear(srcId, fuelType, year);
+
+        if (!ssfcs.isEmpty()) {
+            throw new EntityExistsException(String
+                    .format("Ssfc for source %s (%s) fuel type %s for %s year already exists.",
+                            ssfcs.getFirst().getProperties().getId().getSource().getName(),
+                            ssfcs.getFirst().getProperties().getId().getSource().getId(),
+                            ssfcs.getFirst().getFuelType().getName(), year));
+        }
+
+        log.info("Ssfcs for source id {} fuel type {} year {} not found. Check OK.",
+                srcId, fuelType.name(), year);
     }
 
     @Override
@@ -139,10 +161,11 @@ public class StandardSFCServiceImpl implements StandardSFCService {
 
     @Override
     @Transactional
-    public void deleteSsfcBySrcIdAndYear(UUID srcId, Integer year) {
-        ssfcRepository.deleteSsfcsBySrcIdAndYear(srcId, year);
+    public void deleteSsfcBySrcIdAndYear(UUID srcId, Integer year, FUEL_TYPE fuelType) {
+        ssfcRepository.deleteSsfcsBySrcIdAndYearAndFuelType(srcId, year, fuelType);
 
-        log.info("Ssfcs deleted for year {} and sourceId {}.", year, srcId);
+        log.info("Ssfcs deleted for year {} and sourceId {}.and fuel type {}",
+                year, srcId, fuelType.getName());
     }
 
     @Override
@@ -260,5 +283,14 @@ public class StandardSFCServiceImpl implements StandardSFCService {
                 year, sources.size());
 
         return sources;
+    }
+
+    @Override
+    public List<StandardSFC> findAllSsfcByYearAndSrcIdAndFuelType(Integer year, UUID srcId, FUEL_TYPE fuelType) {
+        List<StandardSFC> ssfcs = ssfcRepository.findAllBySrcIdAndFuelTypeAndYear(srcId, fuelType, year);
+
+        log.info("Found {} ssfcs for {} year and fuel type {}.", ssfcs.size(), year, fuelType.getName());
+
+        return ssfcs;
     }
 }

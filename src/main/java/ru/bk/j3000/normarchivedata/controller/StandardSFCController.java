@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.util.MimeType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import ru.bk.j3000.normarchivedata.model.FUEL_TYPE;
 import ru.bk.j3000.normarchivedata.model.dto.SsfcsDTO;
 import ru.bk.j3000.normarchivedata.service.ModelService;
 import ru.bk.j3000.normarchivedata.service.StandardSFCService;
@@ -37,8 +38,9 @@ public class StandardSFCController {
     @GetMapping("/ssfc/alter")
     public String alterSsfc(Model model,
                             @RequestParam(name = "reportYear") Integer year,
-                            @RequestParam(name = "srcId", required = false) Optional<UUID> id) {
-        model.addAllAttributes(modelService.getAlterSsfcAttributes(year, id));
+                            @RequestParam(name = "srcId", required = false) Optional<UUID> id,
+                            @RequestParam(name = "fuelType") String fuelType) {
+        model.addAllAttributes(modelService.getAlterSsfcAttributes(year, id, FUEL_TYPE.getByName(fuelType)));
 
         return "welcome";
     }
@@ -46,8 +48,9 @@ public class StandardSFCController {
     // Update ssfc
     @PutMapping("/ssfc")
     public String updateSsfc(@ModelAttribute(name = "srcSsfc") SsfcsDTO ssfcsDTO,
-                             @RequestParam(name = "reportYear") Integer year) {
-        ssfcService.updateSsfc(ssfcsDTO, year);
+                             @RequestParam(name = "reportYear") Integer year,
+                             @RequestParam(name = "originalFuelType") String originalFuelType) {
+        ssfcService.updateSsfc(ssfcsDTO, year, originalFuelType);
 
         return "redirect:/ssfc";
     }
@@ -64,8 +67,10 @@ public class StandardSFCController {
     // Delete ssfc
     @DeleteMapping("/ssfc")
     public String deleteSsfc(@RequestParam(name = "srcId") UUID srcId,
-                             @RequestParam(name = "reportYear") Integer year) {
-        ssfcService.deleteSsfcBySrcIdAndYear(srcId, year);
+                             @RequestParam(name = "reportYear") Integer year,
+                             @RequestParam(name = "fuelType") String fuelType) {
+
+        ssfcService.deleteSsfcBySrcIdAndYear(srcId, year, FUEL_TYPE.getByName(fuelType));
 
         return "redirect:/ssfc";
     }

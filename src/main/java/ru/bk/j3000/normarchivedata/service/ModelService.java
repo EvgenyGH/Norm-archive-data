@@ -1,5 +1,7 @@
 package ru.bk.j3000.normarchivedata.service;
 
+import ru.bk.j3000.normarchivedata.model.FUEL_TYPE;
+
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -29,5 +31,5 @@ public interface ModelService {
 
     Map<String, Object> getAllSsfcViewAttributes(Optional<Integer> year);
 
-    Map<String, Object> getAlterSsfcAttributes(Integer year, Optional<UUID> id);
+    Map<String, Object> getAlterSsfcAttributes(Integer year, Optional<UUID> id, FUEL_TYPE fuelType);
 }

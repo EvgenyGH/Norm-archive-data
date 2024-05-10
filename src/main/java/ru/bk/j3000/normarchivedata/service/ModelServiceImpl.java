@@ -4,10 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.bk.j3000.normarchivedata.model.SOURCE_TYPE;
-import ru.bk.j3000.normarchivedata.model.Source;
-import ru.bk.j3000.normarchivedata.model.StandardSFC;
-import ru.bk.j3000.normarchivedata.model.TariffZone;
+import ru.bk.j3000.normarchivedata.model.*;
 import ru.bk.j3000.normarchivedata.model.admin.SECURITY_ROLES;
 import ru.bk.j3000.normarchivedata.model.dto.*;
 import ru.bk.j3000.normarchivedata.service.admin.UserService;
@@ -243,7 +240,9 @@ public class ModelServiceImpl implements ModelService {
         Integer reportYear = year.orElse(LocalDate.now().getYear());
         List<SsfcsDTO> dtos = ssfcService.findAllSsfcByYear(reportYear)
                 .stream()
-                .collect(Collectors.groupingBy(ssfc -> ssfc.getProperties().getId().getSource().getId()))
+                .collect(Collectors.groupingBy(ssfc ->
+                        new SrcIdAndFuelType(ssfc.getProperties().getId().getSource().getId(),
+                                ssfc.getFuelType())))
                 .values()
                 .stream()
                 .sorted(Comparator.comparing(e -> e.getFirst()
@@ -269,7 +268,7 @@ public class ModelServiceImpl implements ModelService {
     }
 
     @Override
-    public Map<String, Object> getAlterSsfcAttributes(Integer year, Optional<UUID> id) {
+    public Map<String, Object> getAlterSsfcAttributes(Integer year, Optional<UUID> id, FUEL_TYPE fuelType) {
         HashMap<String, Object> attributes = new HashMap<>();
         String srcName;
 
@@ -293,7 +292,8 @@ public class ModelServiceImpl implements ModelService {
                             String.format("Source id %s not found.", id.get())));
             srcName = source.getName();
 
-            List<StandardSFC> ssfcs = ssfcService.findAllSsfcByYearAndSrcId(year, source.getId());
+            List<StandardSFC> ssfcs = ssfcService
+                    .findAllSsfcByYearAndSrcIdAndFuelType(year, source.getId(), fuelType);
 
             attributes.put("srcSsfcs", new SsfcsDTO(ssfcs));
             attributes.put("newSsfc", false);
@@ -311,6 +311,7 @@ public class ModelServiceImpl implements ModelService {
                     }
                     return s;
                 })
+                .sorted(Comparator.comparing(SourceDefinedDTO::getSourceName))
                 .sorted((s1, s2) -> Boolean.compare(s1.getDefined(), s2.getDefined()))
                 .toList();
 

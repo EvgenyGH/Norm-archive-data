@@ -63,6 +63,7 @@
                     <form th:action="@{'/ssfc/alter'}" th:method="get">
                         <input type="hidden" th:id="${'reportYear'}" th:name="reportYear" th:value="${reportYear}">
                         <input type="hidden" th:id="${'srcId'}" th:name="srcId" th:value="${srcSsfc.srcId}">
+                        <input type="hidden" th:id="fuelType" th:name="fuelType" th:value="${srcSsfc.fuelType}">
                         <input type="submit" value="Изменить">
                     </form>
                 </td>
@@ -70,6 +71,7 @@
                     <form th:action="@{/ssfc}" th:method="delete">
                         <input type="hidden" th:id="${'reportYear'}" th:name="reportYear" th:value="${reportYear}">
                         <input type="hidden" th:id="srcId" th:name="srcId" th:value="${srcSsfc.srcId}">
+                        <input type="hidden" th:id="fuelType" th:name="fuelType" th:value="${srcSsfc.fuelType}">
                         <input type="submit" value="Удалить">
                     </form>
                 </td>
@@ -121,8 +123,8 @@
 
 
 <div class="alter-ssfc alter-data" th:fragment="alter-ssfc(srcSsfcs, reportYear, newSsfc, sources)">
-    <form th:action="@{/ssfc(reportYear=${reportYear})}" th:object="${srcSsfcs}"
-          th:method="${newSsfc ? 'post' : 'put'}">
+    <form th:action="@{/ssfc(reportYear=${reportYear}, originalFuelType=${originalFuelType})}" th:object="${srcSsfcs}"
+          th:method="${newSsfc ? 'post' : 'put'}" th:with="originalFuelType=${srcSsfcs.fuelType}">
 
         <fieldset>
             <legend th:text="${newSsfc ? 'Новый норматив:': 'Изменить норматив:'}"></legend>

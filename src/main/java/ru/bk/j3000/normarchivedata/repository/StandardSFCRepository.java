@@ -4,8 +4,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Repository;
+import ru.bk.j3000.normarchivedata.model.FUEL_TYPE;
 import ru.bk.j3000.normarchivedata.model.Source;
 import ru.bk.j3000.normarchivedata.model.StandardSFC;
 
@@ -28,7 +28,16 @@ public interface StandardSFCRepository extends JpaRepository<StandardSFC, UUID> 
     @Query("DELETE StandardSFC ssfc " +
             "WHERE ssfc.properties.id.year = :year " +
             "AND ssfc.properties.id.source.id = :srcId")
-    void deleteSsfcsBySrcIdAndYear(@P("srcId") UUID srcId, @Param("year") Integer year);
+    void deleteSsfcsBySrcIdAndYear(@Param("srcId") UUID srcId, @Param("year") Integer year);
+
+    @Modifying
+    @Query("DELETE StandardSFC ssfc " +
+            "WHERE ssfc.properties.id.year = :year " +
+            "AND ssfc.properties.id.source.id = :srcId " +
+            "AND ssfc.fuelType = :fuelType")
+    void deleteSsfcsBySrcIdAndYearAndFuelType(@Param("srcId") UUID srcId,
+                                              @Param("year") Integer year,
+                                              @Param("fuelType") FUEL_TYPE fuelType);
 
 
     @Query("SELECT ssfc FROM StandardSFC ssfc " +
@@ -41,4 +50,12 @@ public interface StandardSFCRepository extends JpaRepository<StandardSFC, UUID> 
             "FROM StandardSFC ssfc " +
             "WHERE ssfc.properties.id.year = :year")
     List<Source> findAllDefinedSourcesByYear(@Param("year") Integer year);
+
+    @Query("SELECT ssfc FROM StandardSFC ssfc " +
+            "WHERE ssfc.properties.id.source.id = :srcId " +
+            "AND ssfc.fuelType = :fuelType " +
+            "AND ssfc.properties.id.year = :year")
+    List<StandardSFC> findAllBySrcIdAndFuelTypeAndYear(@Param("srcId") UUID srcId,
+                                                       @Param("fuelType") FUEL_TYPE fuelType,
+                                                       @Param("year") Integer year);
 }
