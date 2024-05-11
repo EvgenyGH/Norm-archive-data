@@ -58,7 +58,8 @@
         <div th:if="${activeMenu.contains('ssfc')}"
              th:insert="~{ssfc::all-ssfcs(${ssfcs}, ${reportYear})}">ssfcs
         </div>
-        <div th:if="${alterSsfc}"
+        <div th:class="'alter-ssfc-container'"
+             th:if="${alterSsfc}"
              th:insert="~{ssfc::alter-ssfc(${srcSsfcs}, ${reportYear}, ${newSsfc}, ${sources})}">alter ssfc
         </div>
 

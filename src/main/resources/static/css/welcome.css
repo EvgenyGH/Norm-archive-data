@@ -203,6 +203,7 @@ tr:has(td:not([rowspan]):hover) td:not([rowspan]) {
 .list-data table {
     border-collapse: separate;
     border-spacing: 1px;
+    text-align: center;
 }
 
 .list-data th, td {
@@ -220,4 +221,65 @@ tr:has(td:not([rowspan]):hover) td:not([rowspan]) {
 .list-data {
     overflow: scroll;
     max-height: calc(95vh - 7em);
+    text-align: center;
+}
+
+
+/* Alter SSFC */
+.alter-data {
+    border-style: groove;
+}
+
+.alter-ssfc-container {
+    position: relative;
+    overflow: scroll;
+    max-height: calc(95vh - 7em);
+    font-size: 0.7em;
+    left: 0;
+    top: 0;
+}
+
+.alter-ssfc {
+    position: relative;
+    left: 0;
+    top: 0;
+    right: 0;
+    width: fit-content;
+}
+
+.alter-ssfc input:not([type=submit]):not([readonly]) {
+    width: fit-content;
+    font-size: 0.7em;
+    text-align: center;
+    border: none;
+    background: cornsilk;
+}
+
+.alter-ssfc tr:hover input:not([type=submit]) {
+    background: lavender;
+}
+
+.ssfc-param {
+    min-width: 25em;
+}
+
+#fuelType {
+    position: relative;
+    left: 0.9em;
+    width: 15.7em;
+    font-size: 0.7em;
+}
+
+#srcName {
+    position: relative;
+    left: 2.75em;
+    width: 15em;
+    font-size: 0.7em;
+}
+
+#srcId {
+    position: relative;
+    left: 2.4em;
+    width: 15.7em;
+    font-size: 0.7em;
 }
