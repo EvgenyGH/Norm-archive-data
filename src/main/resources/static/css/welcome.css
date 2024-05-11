@@ -283,3 +283,17 @@ tr:has(td:not([rowspan]):hover) td:not([rowspan]) {
     width: 15.7em;
     font-size: 0.7em;
 }
+
+/* Invalid field */
+input:invalid {
+    box-shadow: 0 0 0.5em 0.1em red;
+}
+
+input:focus,
+select:focus {
+    box-shadow: none;
+}
+
+select:invalid {
+    box-shadow: 0 0 0.2em 0.05em red;
+}

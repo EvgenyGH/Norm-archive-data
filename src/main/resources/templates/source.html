@@ -48,12 +48,12 @@
             <label th:for="@{#ids.next('name')}">Источник:</label>
             <br>
             <input type="text" th:field="*{name}" placeholder="Имя"
-                   th:value="*{name}">
+                   th:value="*{name}" required minlength="1">
             <br>
             <label th:for="@{#ids.next('address')}">Адрес источника:</label>
             <br>
             <input type="text" th:field="*{address}" placeholder="Адрес"
-                   th:value="*{address}">
+                   th:value="*{address}" required minlength="1">
             <br>
             <div>Тип источника:</div>
             <label for="RTS">РТС</label>
@@ -72,7 +72,7 @@
             <input type="radio" id="AIT" name="sourceType" th:value="AIT"
                    th:checked="${source.sourceType.toString() == 'AIT' ? 'checked' : _}">
             <br>
-            <input type="submit" th:value="Сохранить">
+            <input type="submit" th:value="Сохранить" autofocus>
             <a th:href="@{/source}">Отмена</a>
         </fieldset>
     </form>

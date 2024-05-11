@@ -130,7 +130,7 @@
             <legend th:text="${newSsfc ? 'Новый норматив:': 'Изменить норматив:'}"></legend>
 
             <label th:for="${#ids.next('srcId')}" th:text="'Источник:'">Источник:</label>
-            <select th:if="${newSsfc}" th:field="*{srcId}" th:placeholder="'Выбрать источник'">
+            <select th:if="${newSsfc}" th:field="*{srcId}" th:placeholder="'Выбрать источник'" required>
                 <option th:value="null" th:text="'Выбрать источник'">
                     selected hidden="hidden">
                 </option>
@@ -144,7 +144,7 @@
             <br>
 
             <label th:for="${#ids.next('fuelType')}" th:text="'Вид топлива:'">Вид топлива:</label>
-            <select th:field="*{fuelType}">
+            <select th:field="*{fuelType}" required>
                 <option th:if="${newSsfc}" th:value="null" th:text="'Выбрать вид топлива'"
                         selected hidden="hidden">
                 </option>
@@ -175,35 +175,45 @@
                     <td>1</td>
                     <td th:text="'Выработка тепловой энергии, Гкал'">Показатель</td>
                     <td th:each="monthSsfc, stats : *{ssfcs}">
-                        <input th:field="*{ssfcs[__${stats.index}__].generation}">
+                        <input th:field="*{ssfcs[__${stats.index}__].generation}"
+                               type="text" required minlength="1"
+                               pattern="^-?([0-9]*[.])?[0-9]+$">
                     </td>
                 </tr>
                 <tr>
                     <td>2</td>
                     <td th:text="'Тепловая энергия на собственные нужды, Гкал'">Показатель</td>
                     <td th:each="monthSsfc, stats : *{ssfcs}">
-                        <input th:field="*{ssfcs[__${stats.index}__].ownNeeds}">
+                        <input th:field="*{ssfcs[__${stats.index}__].ownNeeds}"
+                               type="text" required minlength="1"
+                               pattern="^-?([0-9]*[.])?[0-9]+$">
                     </td>
                 </tr>
                 <tr>
                     <td>3</td>
                     <td th:text="'Отпуск тепловой энергии с коллекторов источников, Гкал'">Показатель</td>
                     <td th:each="monthSsfc, stats : *{ssfcs}">
-                        <input th:field="*{ssfcs[__${stats.index}__].production}">
+                        <input th:field="*{ssfcs[__${stats.index}__].production}"
+                               type="text" required minlength="1"
+                               pattern="^-?([0-9]*[.])?[0-9]+$">
                     </td>
                 </tr>
                 <tr>
                     <td>4</td>
                     <td th:text="'УРУТ на выработу тепловой энергии, кг у.т./Гкал'">Показатель</td>
                     <td th:each="monthSsfc, stats : *{ssfcs}">
-                        <input th:field="*{ssfcs[__${stats.index}__].ssfcg}">
+                        <input th:field="*{ssfcs[__${stats.index}__].ssfcg}"
+                               type="text" required minlength="1"
+                               pattern="^-?([0-9]*[.])?[0-9]+$">
                     </td>
                 </tr>
                 <tr>
                     <td>5</td>
                     <td th:text="'УРУТ на отпуск тепловой энергии, кг у.т./Гкал'">Показатель</td>
                     <td th:each="monthSsfc, stats : *{ssfcs}">
-                        <input th:field="*{ssfcs[__${stats.index}__].ssfc}">
+                        <input th:field="*{ssfcs[__${stats.index}__].ssfc}"
+                               type="text" required minlength="1"
+                               pattern="^-?([0-9]*[.])?[0-9]+$">
                     </td>
                 </tr>
             </table>
@@ -214,7 +224,7 @@
                 <input th:field="*{ssfcs[__${stats.index}__].id}" hidden="hidden">
             </th:block>
 
-            <input type="submit" value="Сохранить">
+            <input type="submit" value="Сохранить" autofocus>
             <a th:href="@{/ssfc(reportYear=${reportYear})}">Отмена</a>
         </fieldset>
     </form>

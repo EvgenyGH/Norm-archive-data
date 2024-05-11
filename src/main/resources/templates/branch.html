@@ -43,15 +43,17 @@
             </legend>
             <label th:for="${#ids.next('branchId')}">Номер:</label>
             <br>
-            <input type="text" th:field="*{branchId}" placeholder="Номер филиала"
-                   th:readonly="${!newBranch}" th:value="branch.id">
+            <input type="number" th:field="*{branchId}" placeholder="Номер филиала"
+                   th:readonly="${!newBranch}" th:value="branch.id"
+                   required min="1" max="30">
             <br>
             <label th:for="${#ids.next('branchName')}">Название филиала:</label>
             <br>
             <input type="text" th:field="*{branchName}" placeholder="Название филиала"
-                   th:value="${branch.branchName}">
+                   th:value="${branch.branchName}"
+                   required minlength="1">
             <br>
-            <input type="submit" value="Сохранить">
+            <input type="submit" value="Сохранить" autofocus>
             <a th:href="@{/branch}">Отмена</a>
         </fieldset>
     </form>

@@ -56,7 +56,7 @@ tariffZones, branches)">
             <input th:if="${!newProperty}" type="text" th:field="*{source}"
                    placeholder="Источник" readonly hidden="hidden">
             <div th:if="${!newProperty}" th:text="*{source.sourceName}">Источник</div>
-            <select th:if="${newProperty}" th:field="*{source}">
+            <select th:if="${newProperty}" th:field="*{source}" required>
                 <option th:if="newProperty" th:value="null" th:text="'Выбрать источник'"
                         selected hidden="hidden">
                 </option>
@@ -68,7 +68,7 @@ tariffZones, branches)">
             <label th:for="${#ids.next('year')}">Год:</label>
             <input type="text" th:field="*{year}" placeholder="Год" readonly>
             <label th:for="${#ids.next('branch')}">Филиал:</label>
-            <select th:field="*{branch}" placeholder="Филиал">
+            <select th:field="*{branch}" placeholder="Филиал" required>
                 <option th:if="newProperty" th:value="null" th:text="'Выбрать филиал'"
                         selected hidden="hidden">
                 </option>
@@ -79,7 +79,7 @@ tariffZones, branches)">
                 </option>
             </select>
             <label th:for="${#ids.next('tariffZone')}">Тарифная зона:</label>
-            <select th:field="*{tariffZone}" placeholder="Тарифная зона">
+            <select th:field="*{tariffZone}" placeholder="Тарифная зона" required>
                 <option th:if="newProperty" th:value="null" th:text="'Выбрать тарифную зону'"
                         selected hidden="hidden">
                 </option>
@@ -89,7 +89,7 @@ tariffZones, branches)">
                         th:selected="${newProperty ? false : sourceProperty.tariffZone.equals(tz)}">
                 </option>
             </select>
-            <input type="submit" value="Сохранить">
+            <input type="submit" value="Сохранить" autofocus>
             <a th:href="@{/sourceproperty}">Отмена</a>
         </fieldset>
     </form>

@@ -43,10 +43,12 @@
             </legend>
             <label th:for="${#ids.next('name')}">Имя пользователя:</label>
             <br>
-            <input type="text" th:field="*{name}" th:placeholder="Новый" th:readonly="${!newUser}">
+            <input type="text" th:field="*{name}" th:placeholder="Новый" th:readonly="${!newUser}"
+                   required minlength="1">
             <label th:for="${#ids.next('password')}">Пароль:</label>
             <br>
-            <input type="password" th:field="*{password}" placeholder="Новый пароль">
+            <input type="password" th:field="*{password}" placeholder="Новый пароль"
+                   required minlength="1">
             <br>
             <div>Роль:</div>
             <th:block th:each="oneRole : ${secRoles}">
@@ -54,7 +56,7 @@
                 <input type="radio" th:field="*{role}" th:value="${oneRole}">
             </th:block>
             <br>
-            <input type="submit" th:value="Сохранить">
+            <input type="submit" th:value="Сохранить" autofocus>
             <a th:href="@{/user}">Отмена</a>
         </fieldset>
     </form>

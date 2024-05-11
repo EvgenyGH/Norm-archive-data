@@ -43,15 +43,17 @@
             </legend>
             <label th:for="${#ids.next('id')}">Номер:</label>
             <br>
-            <input type="text" th:field="*{id}" placeholder="Номер зоны"
-                   th:readonly="${!newZone}" th:value="tariffZone.id">
+            <input type="number" th:field="*{id}" placeholder="Номер зоны"
+                   th:readonly="${!newZone}" th:value="tariffZone.id"
+                   required min="1" max="30">
             <br>
             <label th:for="${#ids.next('zoneName')}">Название тарифной зоны:</label>
             <br>
             <input type="text" th:field="*{zoneName}" placeholder="Название тарифной зоны"
-                   th:value="${tariffZone.zoneName}">
+                   th:value="${tariffZone.zoneName}"
+                   required minlength="1">
             <br>
-            <input type="submit" value="Сохранить">
+            <input type="submit" value="Сохранить" autofocus>
             <a th:href="@{/tariffzone}">Отмена</a>
         </fieldset>
     </form>
