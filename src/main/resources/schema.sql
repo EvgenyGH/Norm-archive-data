@@ -53,7 +53,8 @@ CREATE TABLE IF NOT EXISTS standard_sfcs
 
     CONSTRAINT pk_ssfc PRIMARY KEY (ssfc_id),
     CONSTRAINT fk_source_prop FOREIGN KEY (source_id, ssfc_year)
-        REFERENCES source_properties (source_id, ssfc_year) ON DELETE CASCADE
+        REFERENCES source_properties (source_id, ssfc_year) ON DELETE CASCADE,
+    CONSTRAINT unique_src_d_fuel_type unique (source_id, fuel_type, ssfc_month)
 );
 
 CREATE TABLE IF NOT EXISTS users

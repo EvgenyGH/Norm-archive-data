@@ -17,7 +17,8 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "standard_sfcs")
+@Table(name = "standard_sfcs",
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"properties", "fuelType"})})
 public class StandardSFC {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
