@@ -80,7 +80,7 @@
                 <ul class="sub-sub-menu" th:if="${activeMenu.contains('source')}">
                     <li><a th:href="@{/source}">Список источников</a></li>
                     <li><a th:href="@{/source/alter}">Добавить источник</a></li>
-                    <li sec:authorize="hasRole('ADMIN')">
+                    <li sec:authorize="hasRole('EXPERT')">
                         <form class="upload-form" th:action="@{source/template}" method="post"
                               enctype="multipart/form-data">
                             <label for="file-upload-source">Выбрать файл</label>
@@ -89,7 +89,7 @@
                             <input type="submit" id="upload-submit-source">
                         </form>
                     </li>
-                    <li sec:authorize="hasRole('ADMIN')">
+                    <li sec:authorize="hasRole('EXPERT')">
                         <a class="source-template template-form" href="source/template">
                             Скачать шаблон
                         </a>
@@ -100,7 +100,7 @@
                 <ul class="sub-sub-menu" th:if="${activeMenu.contains('tariffZone')}">
                     <li><a th:href="@{/tariffzone}">Список тарифных зон</a></li>
                     <li><a th:href="@{/tariffzone/alter}">Добавить тарифную зону</a></li>
-                    <li sec:authorize="hasRole('ADMIN')">
+                    <li sec:authorize="hasRole('EXPERT')">
                         <form class="upload-form" th:action="@{/tariffzone/template}" method="post"
                               enctype="multipart/form-data">
                             <label for="file-upload-tariffzones">Выбрать файл</label>
@@ -109,7 +109,7 @@
                             <input type="submit" id="upload-submit-tariffzones">
                         </form>
                     </li>
-                    <li sec:authorize="hasRole('ADMIN')">
+                    <li sec:authorize="hasRole('EXPERT')">
                         <a class="tariff-zone-template template-form" th:href="@{/tariffzone/template}">
                             Скачать шаблон
                         </a>
@@ -120,7 +120,7 @@
                 <ul class="sub-sub-menu" th:if="${activeMenu.contains('branch')}">
                     <li><a th:href="@{/branch}">Список филиалов</a></li>
                     <li><a th:href="@{/branch/alter}">Добавить филиал</a></li>
-                    <li sec:authorize="hasRole('ADMIN')">
+                    <li sec:authorize="hasRole('EXPERT')">
                         <form class="upload-form" th:action="@{/branch/template}" method="post"
                               enctype="multipart/form-data">
                             <label for="file-upload-branches">Выбрать файл</label>
@@ -129,7 +129,7 @@
                             <input type="submit" id="upload-submit-branches">
                         </form>
                     </li>
-                    <li sec:authorize="hasRole('ADMIN')">
+                    <li sec:authorize="hasRole('EXPERT')">
                         <a class="branch-template template-form" th:href="@{/branch/template}">
                             Скачать шаблон
                         </a>
@@ -144,7 +144,7 @@
                             Добавить свойство источника
                         </a>
                     </li>
-                    <li sec:authorize="hasRole('ADMIN')">
+                    <li sec:authorize="hasRole('EXPERT')">
                         <form class="upload-form" th:action="@{'/sourceproperty/template/' + ${reportYear}}"
                               method="post" enctype="multipart/form-data">
                             <label for="file-upload-source-properties">Выбрать файл</label>
@@ -153,7 +153,7 @@
                             <input type="submit" id="upload-submit-source-properties">
                         </form>
                     </li>
-                    <li sec:authorize="hasRole('ADMIN')">
+                    <li sec:authorize="hasRole('EXPERT')">
                         <a class="source-property-template template-form" th:href="@{/sourceproperty/template}">
                             Скачать шаблон
                         </a>
@@ -168,7 +168,7 @@
                             Добавить НУР по источнику
                         </a>
                     </li>
-                    <li sec:authorize="hasRole('ADMIN')">
+                    <li sec:authorize="hasRole('EXPERT')">
                         <form class="upload-form" th:action="@{'/ssfc/template/' + ${reportYear}}"
                               method="post" enctype="multipart/form-data">
                             <label for="file-upload-ssfc">Выбрать файл</label>
@@ -177,7 +177,7 @@
                             <input type="submit" id="upload-submit-ssfc">
                         </form>
                     </li>
-                    <li sec:authorize="hasRole('ADMIN')">
+                    <li sec:authorize="hasRole('EXPERT')">
                         <a class="ssfc-template template-form" th:href="@{/ssfc/template}">
                             Скачать шаблон
                         </a>

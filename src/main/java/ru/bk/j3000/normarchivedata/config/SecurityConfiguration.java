@@ -33,6 +33,13 @@ public class SecurityConfiguration {
                     .build());
         }
 
+        if (!manager.userExists("expert")) {
+            manager.createUser(User.withUsername("expert")
+                    .password(encoder.encode("2103"))
+                    .roles("EXPERT")
+                    .build());
+        }
+
         if (!manager.userExists("user")) {
             manager.createUser(User.withUsername("user")
                     .password(encoder.encode("54321"))
@@ -75,7 +82,7 @@ public class SecurityConfiguration {
     @Bean
     RoleHierarchy roleHierarchy() {
         var hierarchy = new RoleHierarchyImpl();
-        hierarchy.setHierarchy("ROLE_ADMIN > ROLE_USER");
+        hierarchy.setHierarchy("ROLE_ADMIN > ROLE_EXPERT > ROLE_USER");
         return hierarchy;
     }
 }

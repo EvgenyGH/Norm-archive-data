@@ -12,6 +12,17 @@ public enum SECURITY_ROLES {
             return "Администратор";
         }
     },
+    ROLE_EXPERT {
+        @Override
+        public String getRole() {
+            return "EXPERT";
+        }
+
+        @Override
+        public String getRoleName() {
+            return "Эксперт";
+        }
+    },
     ROLE_USER {
         @Override
         public String getRole() {
