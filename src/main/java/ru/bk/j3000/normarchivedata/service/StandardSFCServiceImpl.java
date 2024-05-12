@@ -88,7 +88,8 @@ public class StandardSFCServiceImpl implements StandardSFCService {
                 , year);
     }
 
-    private List<StandardSFC> toStandartSFCs(SsfcsDTO ssfcsDTO) {
+    @Override
+    public List<StandardSFC> toStandartSFCs(SsfcsDTO ssfcsDTO) {
         List<StandardSFC> ssfcs = ssfcsDTO.getSsfcs().stream().map(dto -> new StandardSFC(dto.getId(),
                         dto.getGeneration(),
                         dto.getOwnNeeds(),
@@ -161,7 +162,7 @@ public class StandardSFCServiceImpl implements StandardSFCService {
 
     @Override
     @Transactional
-    public void deleteSsfcBySrcIdAndYear(UUID srcId, Integer year, FUEL_TYPE fuelType) {
+    public void deleteSsfcBySrcIdAndYearAndFuelType(UUID srcId, Integer year, FUEL_TYPE fuelType) {
         ssfcRepository.deleteSsfcsBySrcIdAndYearAndFuelType(srcId, year, fuelType);
 
         log.info("Ssfcs deleted for year {} and sourceId {}.and fuel type {}",

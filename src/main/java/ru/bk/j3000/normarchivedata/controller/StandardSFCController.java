@@ -72,7 +72,7 @@ public class StandardSFCController {
                              @RequestParam(name = "reportYear") Integer year,
                              @RequestParam(name = "fuelType") String fuelType) {
 
-        ssfcService.deleteSsfcBySrcIdAndYear(srcId, year, FUEL_TYPE.getByName(fuelType));
+        ssfcService.deleteSsfcBySrcIdAndYearAndFuelType(srcId, year, FUEL_TYPE.getByName(fuelType));
 
         return "redirect:/ssfc";
     }

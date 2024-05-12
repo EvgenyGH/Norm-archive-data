@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.Resource;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
 import ru.bk.j3000.normarchivedata.model.Branch;
 
 import java.io.IOException;
@@ -24,6 +25,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @ActiveProfiles("test")
 @Transactional
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@Sql(scripts = {"/testDataClean.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
 public class BranchServiceImplTest {
     private final BranchServiceImpl branchService;
 

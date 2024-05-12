@@ -19,13 +19,15 @@ public interface StandardSFCService {
 
     void updateSsfc(SsfcsDTO ssfcsDTO, Integer year, String originalFuelType);
 
+    List<StandardSFC> toStandartSFCs(SsfcsDTO ssfcsDTO);
+
     void addSsfc(SsfcsDTO ssfcDTO, Integer year);
 
     void deleteSsfcById(UUID id);
 
     void deleteSsfcByIds(List<UUID> ids);
 
-    void deleteSsfcBySrcIdAndYear(UUID srcId, Integer year, FUEL_TYPE fuelType);
+    void deleteSsfcBySrcIdAndYearAndFuelType(UUID srcId, Integer year, FUEL_TYPE fuelType);
 
     void uploadSsfc(MultipartFile file, Integer year);
 
