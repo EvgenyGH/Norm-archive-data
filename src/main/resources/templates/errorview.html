@@ -19,11 +19,17 @@
                 <legend>Сообщение:</legend>
                 <div th:text="${error.message}">Сообщение</div>
             </fieldset>
-            <br>
         </div>
+
         <form th:action="@{${originUri}}" method="get">
+            <fieldset>
+                <legend>Информация:</legend>
+                <div th:text="${error.userInfo}">Сообщение</div>
+            </fieldset>
+            <br>
             <input type="submit" value="Продолжить" autofocus>
         </form>
+
     </fieldset>
 </div>
 </body>
