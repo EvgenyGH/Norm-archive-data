@@ -15,7 +15,7 @@ public interface ModelService {
 
     Map<String, Object> getAlterUsersAttributes(Optional<String> name);
 
-    Map<String, Object> getErrorAttributes(Exception e, String requestUri);
+    Map<String, Object> getErrorAttributes(Throwable e, String requestUri, String userInfo);
 
     Map<String, Object> getAllTariffZonesViewAttributes();
 

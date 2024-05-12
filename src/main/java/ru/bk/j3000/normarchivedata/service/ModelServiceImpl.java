@@ -105,7 +105,7 @@ public class ModelServiceImpl implements ModelService {
     }
 
     @Override
-    public Map<String, Object> getErrorAttributes(Exception e, String requestUri) {
+    public Map<String, Object> getErrorAttributes(Throwable e, String requestUri, String userInfo) {
         String originUri;
         Matcher matcher = urlOriginPattern.matcher(requestUri);
 
@@ -115,7 +115,9 @@ public class ModelServiceImpl implements ModelService {
             originUri = "/source";
         }
 
-        var errorAttributes = Map.of("message", e.getMessage(), "className", e.getClass().getName());
+        var errorAttributes = Map.of("message", e.getMessage(),
+                "className", e.getClass().getName(),
+                "userInfo", userInfo);
         Map<String, Object> attributes = Map.of("error", errorAttributes,
                 "originUri", originUri);
 
