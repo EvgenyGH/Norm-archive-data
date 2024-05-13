@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
+import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -14,6 +16,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.stream.IntStream;
+
 
 @Service
 @Slf4j
@@ -33,6 +36,36 @@ public class ReportServiceImpl implements ReportService {
 
         try (Workbook wb = new XSSFWorkbook()) {
             CellStyle headerPrimary = wb.createCellStyle();
+            //alignment
+            headerPrimary.setAlignment(HorizontalAlignment.CENTER);
+            headerPrimary.setVerticalAlignment(VerticalAlignment.CENTER);
+            //border
+            headerPrimary.setBorderBottom(BorderStyle.THIN);
+            headerPrimary.setBorderLeft(BorderStyle.THIN);
+            headerPrimary.setBorderRight(BorderStyle.THIN);
+            headerPrimary.setBorderTop(BorderStyle.THIN);
+            headerPrimary.setLeftBorderColor(IndexedColors.BLACK.getIndex());
+            headerPrimary.setRightBorderColor(IndexedColors.BLACK.getIndex());
+            headerPrimary.setTopBorderColor(IndexedColors.BLACK.getIndex());
+            headerPrimary.setBottomBorderColor(IndexedColors.BLACK.getIndex());
+            //fill
+            headerPrimary.setFillBackgroundColor(
+                    new XSSFColor(new java.awt.Color(255, 204, 153), new DefaultIndexedColorMap()));
+            headerPrimary.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            //font
+            Font font = wb.createFont();
+            font.setFontHeightInPoints((short) 12);
+            font.setFontName("Times New Roman");
+            font.setBold(true);
+            font.setColor(IndexedColors.BLACK.getIndex());
+            headerPrimary.setFont(font);
+            //
+
+
+            //   DataFormatter df = new DataFormatter();
+            //   CreationHelper helper = wb.getCreationHelper();
+            //  sheet.addMergedRegion(new CellRangeAddress(1, //first row (0-based)1, //last row  (0-based)1, //first column (0-based)2  //last column  (0-based)));
+
             CellStyle headerSecondary = wb.createCellStyle();
             CellStyle cellText = wb.createCellStyle();
             CellStyle cellNumber = wb.createCellStyle();
@@ -41,6 +74,9 @@ public class ReportServiceImpl implements ReportService {
 
             Sheet sheet = wb.createSheet("Sources");
             Row row = sheet.createRow(0);
+            row.createCell(5).setCellValue("UUID7");
+            row.setRowStyle(headerPrimary);
+
 
             //set headers
             IntStream.rangeClosed(0, allSrcColumns.length - 1)
