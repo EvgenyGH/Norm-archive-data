@@ -329,4 +329,13 @@ public class ModelServiceImpl implements ModelService {
 
         return attributes;
     }
+
+    @Override
+    public Map<String, Object> getReportsAttributes() {
+        Map<String, Object> attributes = new HashMap<>();
+        attributes.put("title", "Отчеты");
+        attributes.put("activeMenu", Set.of("report"));
+
+        return attributes;
+    }
 }

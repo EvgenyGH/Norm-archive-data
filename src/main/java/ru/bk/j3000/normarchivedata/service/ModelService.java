@@ -32,4 +32,6 @@ public interface ModelService {
     Map<String, Object> getAllSsfcViewAttributes(Optional<Integer> year);
 
     Map<String, Object> getAlterSsfcAttributes(Integer year, Optional<UUID> id, FUEL_TYPE fuelType);
+
+    Map<String, Object> getReportsAttributes();
 }
