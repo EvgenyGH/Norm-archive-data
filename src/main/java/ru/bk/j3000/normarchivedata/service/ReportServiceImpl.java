@@ -3,10 +3,7 @@ package ru.bk.j3000.normarchivedata.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -35,6 +32,13 @@ public class ReportServiceImpl implements ReportService {
 
 
         try (Workbook wb = new XSSFWorkbook()) {
+            CellStyle headerPrimary = wb.createCellStyle();
+            CellStyle headerSecondary = wb.createCellStyle();
+            CellStyle cellText = wb.createCellStyle();
+            CellStyle cellNumber = wb.createCellStyle();
+            CellStyle cellDecimal = wb.createCellStyle();
+
+
             Sheet sheet = wb.createSheet("Sources");
             Row row = sheet.createRow(0);
 
