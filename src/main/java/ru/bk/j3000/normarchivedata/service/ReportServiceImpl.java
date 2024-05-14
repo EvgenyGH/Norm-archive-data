@@ -4,8 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
-import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -49,8 +47,8 @@ public class ReportServiceImpl implements ReportService {
             headerPrimary.setTopBorderColor(IndexedColors.BLACK.getIndex());
             headerPrimary.setBottomBorderColor(IndexedColors.BLACK.getIndex());
             //fill
-            headerPrimary.setFillBackgroundColor(
-                    new XSSFColor(new java.awt.Color(255, 204, 153), new DefaultIndexedColorMap()));
+            //headerPrimary.setFillForegroundColor(new XSSFColor(new java.awt.Color(255, 204, 153), new DefaultIndexedColorMap()));
+            headerPrimary.setFillForegroundColor(IndexedColors.TAN.getIndex());
             headerPrimary.setFillPattern(FillPatternType.SOLID_FOREGROUND);
             //font
             Font font = wb.createFont();
@@ -62,9 +60,13 @@ public class ReportServiceImpl implements ReportService {
             //
 
 
-            //   DataFormatter df = new DataFormatter();
-            //   CreationHelper helper = wb.getCreationHelper();
-            //  sheet.addMergedRegion(new CellRangeAddress(1, //first row (0-based)1, //last row  (0-based)1, //first column (0-based)2  //last column  (0-based)));
+            // DataFormatter df = new DataFormatter();
+            // CreationHelper helper = wb.getCreationHelper();
+            // RegionUtil
+            // CellUtil
+            // CellRangeUtil
+            // CellRefUtil
+            // sheet.addMergedRegion(new CellRangeAddress(1, //first row (0-based)1, //last row  (0-based)1, //first column (0-based)2  //last column  (0-based)));
 
             CellStyle headerSecondary = wb.createCellStyle();
             CellStyle cellText = wb.createCellStyle();
@@ -81,6 +83,8 @@ public class ReportServiceImpl implements ReportService {
             //set headers
             IntStream.rangeClosed(0, allSrcColumns.length - 1)
                     .forEach(i -> row.createCell(i, CellType.STRING).setCellValue(allSrcColumns[i]));
+            // set header style
+
 
             FileOutputStream outputStream = new FileOutputStream(fileLocation);
             wb.write(outputStream);
