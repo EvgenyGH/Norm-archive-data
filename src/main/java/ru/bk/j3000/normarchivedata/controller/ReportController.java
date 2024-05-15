@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.MimeType;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import ru.bk.j3000.normarchivedata.service.ModelService;
 import ru.bk.j3000.normarchivedata.service.ReportService;
 
@@ -27,13 +28,13 @@ public class ReportController {
     }
 
     @GetMapping("/report/source")
-    public ResponseEntity<Resource> getSourceReport() {
+    public ResponseEntity<Resource> getSourceReport(@RequestParam(name = "type") String type) {
 
         return ResponseEntity.ok()
                 .contentType(MediaType.asMediaType(MimeType.valueOf("application/vnd.ms-excel")))
                 .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=allSourcesReport.xlsx")
-                .body(reportService.getAllSourcesReport()
+                        "attachment; filename=sourceReport.xlsx")
+                .body(reportService.getSourcesReport(type)
                 );
     }
 

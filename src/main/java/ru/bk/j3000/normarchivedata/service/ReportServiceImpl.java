@@ -16,6 +16,7 @@ import ru.bk.j3000.normarchivedata.model.Source;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.security.InvalidParameterException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -31,8 +32,9 @@ public class ReportServiceImpl implements ReportService {
     private final String[] srcTemplateColumns = {"UUID", "Источник", "Адрес источника",
             "Тип источника", "Комментарии"};
 
-
     private final String[] brTemplateColumns = {"ID", "Название филиала", "Комментарии"};
+
+    private final String[] tzTemplateColumns = {"ID", "Название тарифной зоны", "Комментарии"};
 
     private final String[] srcPropTemplateColumns = {"ID источника", "ID Филиала",
             "ID тарифной зоны", "Комментарии"};
@@ -46,13 +48,13 @@ public class ReportServiceImpl implements ReportService {
             "Август", "Сентябрь", "Октябрь", "Ноябрь",
             "Декабрь", "2024 год", "Комментарии"};
 
-    private final String[] tzTemplateColumns = {"ID", "Название тарифной зоны", "Комментарии"};
     private final String[] ssfcRows = {"Выработка тепловой энергии, Гкал",
             "Тепловая энергия на собственные нужды, Гкал",
             "Тепловая энергия на собственные нужды, %",
             "Отпуск тепловой энергии с коллекторов источников, Гкал",
             "УРУТ на выработу тепловой энергии, кг у.т./Гкал",
             "УРУТ на отпуск тепловой энергии, кг у.т./Гкал"};
+
     private final String[] units = {"Гкал", "Гкал", "%", "тыс. Гкал", "кг у.т./Гкал", "кг у.т./Гкал"};
 
     // services
@@ -60,9 +62,79 @@ public class ReportServiceImpl implements ReportService {
 
 
     @Override
+    public Resource getSourcesReport(String type) {
+        Resource resource = switch (type) {
+            case "template" -> getSrcTemplateReport();
+            case "standard" -> getAllSourcesReport();
+            default -> throw new InvalidParameterException(String.format("Invalid source report type <%s>", type));
+        };
+
+        log.info("Source report formed. Type {}", type);
+
+        return resource;
+    }
+
+    @Override
+    public Resource getSrcTemplateReport() {
+        Resource resource;
+
+        List<Source> sources = sourceService.getAllSources().stream()
+                .sorted(Comparator.comparing(Source::getName))
+                .sorted(Comparator.comparing(Source::getSourceType))
+                .toList();
+
+        try (Workbook wb = new XSSFWorkbook()) {
+            Sheet sheet = wb.createSheet("Sources");
+            Font fontHeader = wb.createFont();
+            Font fontData = wb.createFont();
+
+            CellStyle headerStylePrimary = getPrimaryHeaderStyle(wb.createCellStyle(), fontHeader);
+            CellStyle headerStyleSecondary = getSecondaryHeaderStyle(wb.createCellStyle(), fontHeader);
+            CellStyle stringStyle = getStringStyle(wb.createCellStyle(), fontData);
+            CellStyle integerStyle = getIntegerStyle(wb.createCellStyle(), fontData);
+
+            // set headers
+            Row headerRow = sheet.createRow(0);
+            IntStream.rangeClosed(0, srcTemplateColumns.length - 1)
+                    .forEach(i -> createCell(headerRow, i, srcTemplateColumns[i],
+                            i == 0 || i == 5 ? headerStyleSecondary : headerStylePrimary));
+
+            // set data
+            for (int i = 0; i < sources.size(); i++) {
+                Row row = sheet.createRow(i + 1);
+                Source source = sources.get(i);
+
+                Cell cell = row.createCell(0, CellType.NUMERIC);
+                cell.setCellValue(i + 1);
+                cell.setCellStyle(integerStyle);
+
+                createCell(row, 0, source.getId().toString(), stringStyle);
+                createCell(row, 1, source.getName(), stringStyle);
+                createCell(row, 2, source.getAddress(), stringStyle);
+                createCell(row, 3, source.getSourceType().getName(), stringStyle);
+                createCell(row, 3, "-", stringStyle);
+            }
+
+            // autosize columns
+            IntStream.rangeClosed(0, allSrcColumns.length - 1)
+                    .forEach(sheet::autoSizeColumn);
+
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+            wb.write(out);
+
+            resource = new ByteArrayResource(out.toByteArray());
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return resource;
+    }
+
+    @Override
     public Resource getAllSourcesReport() {
         Resource resource;
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         List<Source> sources = sourceService.getAllSources().stream()
                 .sorted(Comparator.comparing(Source::getName))
@@ -100,6 +172,8 @@ public class ReportServiceImpl implements ReportService {
             IntStream.rangeClosed(0, allSrcColumns.length - 1)
                     .forEach(sheet::autoSizeColumn);
 
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+
             wb.write(out);
 
             resource = new ByteArrayResource(out.toByteArray());
@@ -109,9 +183,34 @@ public class ReportServiceImpl implements ReportService {
             throw new RuntimeException(e);
         }
 
-        log.info("All sources report created.");
+        log.info("Sources report type standard created.");
 
         return resource;
+    }
+
+    @Override
+    public Resource getAllBranchesReport() {
+        throw new NotImplementedException("Not implemented yet.");
+    }
+
+    @Override
+    public Resource getAllTariffZonesReport() {
+        throw new NotImplementedException("Not implemented yet.");
+    }
+
+    @Override
+    public Resource getAllSrcPropsReport() {
+        throw new NotImplementedException("Not implemented yet.");
+    }
+
+    @Override
+    public Resource getAllSsfcsReport() {
+//        CellStyle headerStylePrimary = getPrimaryHeaderStyle(wb.createCellStyle(), fontHeader);
+//        CellStyle headerStyleSecondary = getSecondaryHeaderStyle(wb.createCellStyle(), fontHeader);
+//        CellStyle stringStyle = getStringStyle(wb.createCellStyle(), fontData);
+//        CellStyle integerStyle = getIntegerStyle(wb.createCellStyle(), fontData);
+//        CellStyle decimalStyle = getDecimalStyle(wb.createCellStyle(), fontData, 3);
+        throw new NotImplementedException("Not implemented yet.");
     }
 
     private CellStyle getIntegerStyle(CellStyle cellStyle, Font font) {
@@ -181,30 +280,5 @@ public class ReportServiceImpl implements ReportService {
         cellStyle.setFont(font);
 
         return cellStyle;
-    }
-
-    @Override
-    public Resource getAllBranchesReport() {
-        throw new NotImplementedException("Not implemented yet.");
-    }
-
-    @Override
-    public Resource getAllTariffZonesReport() {
-        throw new NotImplementedException("Not implemented yet.");
-    }
-
-    @Override
-    public Resource getAllSrcPropsReport() {
-        throw new NotImplementedException("Not implemented yet.");
-    }
-
-    @Override
-    public Resource getAllSsfcsReport() {
-//        CellStyle headerStylePrimary = getPrimaryHeaderStyle(wb.createCellStyle(), fontHeader);
-//        CellStyle headerStyleSecondary = getSecondaryHeaderStyle(wb.createCellStyle(), fontHeader);
-//        CellStyle stringStyle = getStringStyle(wb.createCellStyle(), fontData);
-//        CellStyle integerStyle = getIntegerStyle(wb.createCellStyle(), fontData);
-//        CellStyle decimalStyle = getDecimalStyle(wb.createCellStyle(), fontData, 3);
-        throw new NotImplementedException("Not implemented yet.");
     }
 }
