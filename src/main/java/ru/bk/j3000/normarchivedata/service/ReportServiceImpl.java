@@ -63,9 +63,6 @@ public class ReportServiceImpl implements ReportService {
     public Resource getAllSourcesReport() {
         Resource resource;
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-//        File currDir = new File(".");
-//        String path = currDir.getAbsolutePath();
-//        String fileLocation = path.substring(0, path.length() - 1) + "temp.xlsx";
 
         List<Source> sources = sourceService.getAllSources().stream()
                 .sorted(Comparator.comparing(Source::getName))
@@ -91,7 +88,9 @@ public class ReportServiceImpl implements ReportService {
                 Row row = sheet.createRow(i + 1);
                 Source source = sources.get(i);
 
-                createCell(row, 0, String.valueOf(i + 1), integerStyle);
+                Cell cell = row.createCell(0, CellType.NUMERIC);
+                cell.setCellValue(i + 1);
+                cell.setCellStyle(integerStyle);
                 createCell(row, 1, source.getSourceType().getName(), stringStyle);
                 createCell(row, 2, source.getName(), stringStyle);
                 createCell(row, 3, source.getAddress(), stringStyle);
@@ -100,7 +99,6 @@ public class ReportServiceImpl implements ReportService {
             // autosize columns
             IntStream.rangeClosed(0, allSrcColumns.length - 1)
                     .forEach(sheet::autoSizeColumn);
-
 
             wb.write(out);
 

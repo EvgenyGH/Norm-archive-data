@@ -32,7 +32,7 @@ public class ReportController {
         return ResponseEntity.ok()
                 .contentType(MediaType.asMediaType(MimeType.valueOf("application/vnd.ms-excel")))
                 .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=allSourcesReport.xlsm")
+                        "attachment; filename=allSourcesReport.xlsx")
                 .body(reportService.getAllSourcesReport()
                 );
     }
