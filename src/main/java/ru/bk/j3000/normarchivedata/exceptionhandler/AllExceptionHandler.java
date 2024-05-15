@@ -14,6 +14,7 @@ import ru.bk.j3000.normarchivedata.exception.StandardException;
 import ru.bk.j3000.normarchivedata.service.ModelService;
 
 import java.io.IOException;
+import java.security.InvalidParameterException;
 
 
 @ControllerAdvice()
@@ -89,6 +90,18 @@ public class AllExceptionHandler {
         model.addAllAttributes(modelService.getErrorAttributes(e,
                 request.getRequestURI(),
                 "Ошибка ввода/вывода."));
+
+        log.warn(e.getMessage());
+
+        return "errorview";
+    }
+
+    @ExceptionHandler({InvalidParameterException.class})
+    public String invalidParameterExceptionHandler(Exception e, Model model,
+                                                   HttpServletRequest request) {
+        model.addAllAttributes(modelService.getErrorAttributes(e,
+                request.getRequestURI(),
+                "Недопустимый параметр."));
 
         log.warn(e.getMessage());
 
