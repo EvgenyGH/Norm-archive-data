@@ -5,72 +5,109 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.ss.util.CellUtil;
+import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
+import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
+import ru.bk.j3000.normarchivedata.model.Source;
 
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.IntStream;
+
+import static org.apache.poi.ss.util.CellUtil.createCell;
 
 
 @Service
 @Slf4j
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class ReportServiceImpl implements ReportService {
-    private final String[] allSrcColumns = {"UUID", "Источник", "Адрес источника",
-            "Тип источника"};
+    private final String[] allSrcColumns = {"№ п/п", "Тип источника", "Источник", "Адрес источника"};
+    private final String[] srcTemplateColumns = {"UUID", "Источник", "Адрес источника",
+            "Тип источника", "Комментарии"};
+
+
+    private final String[] brTemplateColumns = {"ID", "Название филиала", "Комментарии"};
+
+    private final String[] srcPropTemplateColumns = {"ID источника", "ID Филиала",
+            "ID тарифной зоны", "Комментарии"};
+
+    private final String[] ssfcsTemplateColumns = {"№ п/п",
+            "Наименование источника тепловой энергии",
+            "Вид топлива", "Наименование показателя",
+            "Единицы измерения", "Id источника",
+            "Id вида топлива", "Январь", "Февраль",
+            "Март", "Апрель", "Май", "Июнь", "Июль",
+            "Август", "Сентябрь", "Октябрь", "Ноябрь",
+            "Декабрь", "2024 год", "Комментарии"};
+
+    private final String[] tzTemplateColumns = {"ID", "Название тарифной зоны", "Комментарии"};
+    private final String[] ssfcRows = {"Выработка тепловой энергии, Гкал",
+            "Тепловая энергия на собственные нужды, Гкал",
+            "Тепловая энергия на собственные нужды, %",
+            "Отпуск тепловой энергии с коллекторов источников, Гкал",
+            "УРУТ на выработу тепловой энергии, кг у.т./Гкал",
+            "УРУТ на отпуск тепловой энергии, кг у.т./Гкал"};
+    private final String[] units = {"Гкал", "Гкал", "%", "тыс. Гкал", "кг у.т./Гкал", "кг у.т./Гкал"};
+
+    // services
     private final SourceService sourceService;
 
 
     @Override
     public Resource getAllSourcesReport() {
         Resource resource;
-        File currDir = new File(".");
-        String path = currDir.getAbsolutePath();
-        String fileLocation = path.substring(0, path.length() - 1) + "temp.xlsx";
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+//        File currDir = new File(".");
+//        String path = currDir.getAbsolutePath();
+//        String fileLocation = path.substring(0, path.length() - 1) + "temp.xlsx";
 
+        List<Source> sources = sourceService.getAllSources().stream()
+                .sorted(Comparator.comparing(Source::getName))
+                .sorted(Comparator.comparing(Source::getSourceType))
+                .toList();
 
         try (Workbook wb = new XSSFWorkbook()) {
-            Font font = wb.createFont();
-
-            CellStyle headerStylePrimary = getPrimaryHeaderStyle(wb.createCellStyle(), font);
-            CellStyle headerStyleSecondary = getSecondaryHeaderStyle(wb.createCellStyle(), font);
-            CellStyle stringStyle = getStringStyle(wb.createCellStyle(), font);
-            CellStyle integerStyle = getIntegerStyle(wb.createCellStyle(), font);
-            CellStyle decimalStyle = getDecimalStyle(wb.createCellStyle(), font, 3);
-
-            // DataFormatter df = new DataFormatter();
-            // CreationHelper helper = wb.getCreationHelper();
-            // RegionUtil
-            // CellUtil
-            // CellRangeUtil
-            // CellRefUtil
-            // sheet.addMergedRegion(new CellRangeAddress(1, //first row (0-based)1, //last row  (0-based)1, //first column (0-based)2  //last column  (0-based)));
-
             Sheet sheet = wb.createSheet("Sources");
-            Row row = sheet.createRow(0);
+            Font fontHeader = wb.createFont();
+            Font fontData = wb.createFont();
 
-            //setup headers
+            CellStyle headerStylePrimary = getPrimaryHeaderStyle(wb.createCellStyle(), fontHeader);
+            CellStyle stringStyle = getStringStyle(wb.createCellStyle(), fontData);
+            CellStyle integerStyle = getIntegerStyle(wb.createCellStyle(), fontData);
+
+            // set headers
+            Row headerRow = sheet.createRow(0);
             IntStream.rangeClosed(0, allSrcColumns.length - 1)
-                    .forEach(i -> CellUtil.createCell(row, i, allSrcColumns[i], headerStylePrimary));
+                    .forEach(i -> createCell(headerRow, i, allSrcColumns[i], headerStylePrimary));
+
+            // set data
+            for (int i = 0; i < sources.size(); i++) {
+                Row row = sheet.createRow(i + 1);
+                Source source = sources.get(i);
+
+                createCell(row, 0, String.valueOf(i + 1), integerStyle);
+                createCell(row, 1, source.getSourceType().getName(), stringStyle);
+                createCell(row, 2, source.getName(), stringStyle);
+                createCell(row, 3, source.getAddress(), stringStyle);
+            }
 
             // autosize columns
             IntStream.rangeClosed(0, allSrcColumns.length - 1)
                     .forEach(sheet::autoSizeColumn);
 
-            sheet.autoSizeColumn(2);
 
-            FileOutputStream outputStream = new FileOutputStream(fileLocation);
-            wb.write(outputStream);
+            wb.write(out);
 
-            resource = new ClassPathResource(fileLocation);
+            resource = new ByteArrayResource(out.toByteArray());
 
-        } catch (IOException e) {
+        } catch (
+                IOException e) {
             throw new RuntimeException(e);
         }
 
@@ -106,7 +143,8 @@ public class ReportServiceImpl implements ReportService {
         font.setBold(true);
         getStringStyle(cellStyle, font);
         //fill
-        cellStyle.setFillForegroundColor(IndexedColors.TAN.getIndex());
+        cellStyle.setFillForegroundColor(new XSSFColor(new java.awt.Color(244, 176, 132)
+                , new DefaultIndexedColorMap()));
         cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
         return cellStyle;
@@ -116,8 +154,8 @@ public class ReportServiceImpl implements ReportService {
         font.setBold(true);
         getStringStyle(cellStyle, font);
         //fill
-        //headerPrimary.setFillForegroundColor(new XSSFColor(new java.awt.Color(255, 204, 153), new DefaultIndexedColorMap()));
-        cellStyle.setFillForegroundColor(IndexedColors.LEMON_CHIFFON.getIndex());
+        cellStyle.setFillForegroundColor(new XSSFColor(new java.awt.Color(252, 228, 214)
+                , new DefaultIndexedColorMap()));
         cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
         return cellStyle;
@@ -164,7 +202,11 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public Resource getAllSsfcsReport() {
-
+//        CellStyle headerStylePrimary = getPrimaryHeaderStyle(wb.createCellStyle(), fontHeader);
+//        CellStyle headerStyleSecondary = getSecondaryHeaderStyle(wb.createCellStyle(), fontHeader);
+//        CellStyle stringStyle = getStringStyle(wb.createCellStyle(), fontData);
+//        CellStyle integerStyle = getIntegerStyle(wb.createCellStyle(), fontData);
+//        CellStyle decimalStyle = getDecimalStyle(wb.createCellStyle(), fontData, 3);
         throw new NotImplementedException("Not implemented yet.");
     }
 }
