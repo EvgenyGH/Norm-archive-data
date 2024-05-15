@@ -64,7 +64,28 @@
         </div>
 
         <!--/* Отчеты */-->
+        <div th:if="${activeMenu.contains('report')}"
+             th:replace="~{report::source}"> Source report
+        </div>
+        <div
+                th:if="${activeMenu.contains('report')}"
+                th:replace="~{report::branch}"> Branch report
+        </div>
+        <div
+                th:if="${activeMenu.contains('report')}"
+                th:replace="~{report::tariffzone}"> Tariff zone report
+        </div>
+        <div
+                th:if="${activeMenu.contains('report')}"
+                th:replace="~{report::sourceproperty}"> Source property report
+        </div>
+        <div
+                th:if="${activeMenu.contains('report')}"
+                th:replace="~{report::ssfc}"> Ssfc report
+        </div>
+
         <!--/* Ошибки */-->
+
     </div>
     <div th:if="${shadow}" class="shadow"></div>
     <div class="welcome-title" th:utext="${title}">Welcome!</div>
@@ -186,10 +207,6 @@
             </li>
             <li><a th:href="@{/report}">Отчеты</a>
                 <ul class="sub-sub-menu" th:if="${activeMenu.contains('report')}">
-                    <li><a href="/report/source">Отчет источники</a></li>
-                    <li>Отчет тарифные зоны</li>
-                    <li>Отчет свойства источника</li>
-                    <li>Отчет НУР</li>
                 </ul>
             </li>
             <li><a th:href="@{/logout}">Выход</a></li>

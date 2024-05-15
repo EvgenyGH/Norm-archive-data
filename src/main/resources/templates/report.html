@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+</head>
+
+<body>
+<div class="report" th:fragment="source">
+    <form method="get" th:action="@{/report/source}">
+        <fieldset>
+            <legend>Источники:</legend>
+
+            <input type="radio" id="source-template" name="type" value="template">
+            <label for="source-template">В формате шаблона загрузки</label>
+            <br>
+            <input type="radio" id="source-all" name="type" value="standard" checked>
+            <label for="source-all">В стандартном формате</label>
+            <br>
+            <input type="submit" value="Выгрузить отчет">
+        </fieldset>
+    </form>
+</div>
+
+<div class="report" th:fragment="branch">
+    <form method="get" th:action="@{/report/branch}">
+        <fieldset>
+            <legend>Филиалы:</legend>
+
+            <input type="radio" id="branch-template" name="type" value="template">
+            <label for="branch-template">В формате шаблона загрузки</label>
+            <br>
+            <input type="radio" id="branch-all" name="type" value="standard" checked>
+            <label for="branch-all">В стандартном формате</label>
+            <br>
+            <input type="submit" value="Выгрузить отчет">
+        </fieldset>
+    </form>
+</div>
+
+<div class="report" th:fragment="tariffzone">
+    <form method="get" th:action="@{/report/tariffzone}">
+        <fieldset>
+            <legend>Тарифные зоны:</legend>
+
+            <input type="radio" id="tariffzone-template" name="type" value="template">
+            <label for="tariffzone-template">В формате шаблона загрузки</label>
+            <br>
+            <input type="radio" id="tariffzone-all" name="type" value="standard" checked>
+            <label for="tariffzone-all">В стандартном формате</label>
+            <br>
+            <input type="submit" value="Выгрузить отчет">
+        </fieldset>
+    </form>
+</div>
+
+
+<div class="report" th:fragment="sourceproperty">
+    <form method="get" th:action="@{/report/sourceproperty}">
+        <fieldset>
+            <legend>Свойства источников:</legend>
+
+            <label for="year">Выбор отчетного года:</label>
+            <select id="year" name="year">
+                <option th:each="year : ${#numbers.sequence(2020, #dates.createNow().getYear() + 1905, 1)}"
+                        th:value="${year}" th:text="${year}"
+                        th:selected="${year == (#dates.createNow().getYear() + 1905)}">
+                </option>
+            </select>
+            <br>
+
+            <input type="radio" id="sourceproperty-template" name="type" value="template">
+            <label for="sourceproperty-template">В формате шаблона загрузки</label>
+            <br>
+            <input type="radio" id="sourceproperty-all" name="type" value="standard" checked>
+            <label for="sourceproperty-all">В стандартном формате</label>
+            <br>
+
+            <input type="submit" value="Выгрузить отчет">
+        </fieldset>
+    </form>
+</div>
+
+<div class="report" th:fragment="ssfc">
+    <form method="get" th:action="@{/report/ssfc}">
+        <fieldset>
+            <legend>НУР:</legend>
+
+            <label for="year">Выбор отчетного года:</label>
+            <select id="year" name="year">
+                <option th:each="year : ${#numbers.sequence(2020, #dates.createNow().getYear() + 1905, 1)}"
+                        th:value="${year}" th:text="${year}"
+                        th:selected="${year == #dates.createNow().getYear() + 1905}">
+                </option>
+            </select>
+            <br>
+
+            <input type="radio" id="ssfc-template" name="type" value="template">
+            <label for="ssfc-template">В формате шаблона загрузки</label>
+            <br>
+            <input type="radio" id="ssfc-all" name="type" value="standard" checked>
+            <label for="ssfc-all">В стандартном формате</label>
+            <br>
+            <input type="submit" value="Выгрузить отчет">
+        </fieldset>
+    </form>
+</div>
+
+</body>
+</html>
