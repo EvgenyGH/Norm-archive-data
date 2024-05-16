@@ -4,6 +4,7 @@ import org.springframework.core.io.Resource;
 
 public interface ReportService {
     Resource getSourcesReport(String type);
+
     Resource getBranchesReport(String type);
 
     Resource getTariffZonesReport(String type);

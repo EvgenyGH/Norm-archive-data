@@ -63,8 +63,9 @@
             <label for="year">Выбор отчетного года:</label>
             <select id="year" name="year">
                 <option th:each="year : ${#numbers.sequence(2020, #dates.createNow().getYear() + 1905, 1)}"
+                        th:with="activeYear=${#dates.createNow().getYear() + 1905}"
                         th:value="${year}" th:text="${year}"
-                        th:selected="${year == (#dates.createNow().getYear() + 1905)}">
+                        th:selected="${(#dates.createNow().getYear() + 1905) == year}">
                 </option>
             </select>
             <br>
@@ -90,7 +91,7 @@
             <select id="year" name="year">
                 <option th:each="year : ${#numbers.sequence(2020, #dates.createNow().getYear() + 1905, 1)}"
                         th:value="${year}" th:text="${year}"
-                        th:selected="${year == #dates.createNow().getYear() + 1905}">
+                        th:selected="${year == (#dates.createNow().getYear() + 1905)}">
                 </option>
             </select>
             <br>
