@@ -126,6 +126,20 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
+    public Resource getSsfcsReport(String type, Integer year) {
+        Resource resource = switch (type) {
+            case "template" -> getSsfcTemplateReport(year);
+            case "standard" -> getAllSsfcReport(year);
+            default -> throw new InvalidParameterException(String.format("Invalid ssfc report type <%s>",
+                    type));
+        };
+
+        log.info("Ssfc report formed. Type {}", type);
+
+        return resource;
+    }
+
+    @Override
     public Resource getSrcTemplateReport() {
         Resource resource;
 
@@ -577,12 +591,17 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public Resource getAllSsfcsReport() {
-//        CellStyle headerStylePrimary = getPrimaryHeaderStyle(wb.createCellStyle(), fontHeader);
+    public Resource getSsfcTemplateReport(Integer year) {
+        //        CellStyle headerStylePrimary = getPrimaryHeaderStyle(wb.createCellStyle(), fontHeader);
 //        CellStyle headerStyleSecondary = getSecondaryHeaderStyle(wb.createCellStyle(), fontHeader);
 //        CellStyle stringStyle = getStringStyle(wb.createCellStyle(), fontData);
 //        CellStyle integerStyle = getIntegerStyle(wb.createCellStyle(), fontData);
 //        CellStyle decimalStyle = getDecimalStyle(wb.createCellStyle(), fontData, 3);
+        throw new NotImplementedException("Not implemented yet.");
+    }
+
+    @Override
+    public Resource getAllSsfcReport(Integer year) {
         throw new NotImplementedException("Not implemented yet.");
     }
 

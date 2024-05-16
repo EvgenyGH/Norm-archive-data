@@ -11,6 +11,8 @@ public interface ReportService {
 
     Resource getSrcPropertyReport(String type, Integer year);
 
+    Resource getSsfcsReport(String type, Integer year);
+
     Resource getSrcTemplateReport();
 
     Resource getAllSourcesReport();
@@ -27,5 +29,7 @@ public interface ReportService {
 
     Resource getSrcPropTemplateReport(Integer year);
 
-    Resource getAllSsfcsReport();
+    Resource getSsfcTemplateReport(Integer year);
+
+    Resource getAllSsfcReport(Integer year);
 }

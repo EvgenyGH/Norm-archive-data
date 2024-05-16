@@ -70,12 +70,13 @@ public class ReportController {
     }
 
     @GetMapping("/report/ssfc")
-    public ResponseEntity<Resource> getSsfcReport(Model model) {
+    public ResponseEntity<Resource> getSsfcReport(@RequestParam(name = "type") String type,
+                                                  @RequestParam(name = "year") Integer year) {
 
         return ResponseEntity.ok()
                 .contentType(MediaType.asMediaType(MimeType.valueOf("application/vnd.ms-excel")))
                 .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=allSsfcsReport.xlsx")
-                .body(reportService.getAllSsfcsReport());
+                        "attachment; filename=ssfcReport.xlsx")
+                .body(reportService.getSsfcsReport(type, year));
     }
 }
