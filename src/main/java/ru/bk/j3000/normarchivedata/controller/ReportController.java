@@ -49,13 +49,13 @@ public class ReportController {
     }
 
     @GetMapping("/report/tariffzone")
-    public ResponseEntity<Resource> getTariffZoneReport(Model model) {
+    public ResponseEntity<Resource> getTariffZoneReport(@RequestParam(name = "type") String type) {
 
         return ResponseEntity.ok()
                 .contentType(MediaType.asMediaType(MimeType.valueOf("application/vnd.ms-excel")))
                 .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=allTariffZonesReport.xlsm")
-                .body(reportService.getAllTariffZonesReport());
+                        "attachment; filename=tzReport.xlsx")
+                .body(reportService.getTariffZonesReport(type));
     }
 
     @GetMapping("/report/sourceproperty")

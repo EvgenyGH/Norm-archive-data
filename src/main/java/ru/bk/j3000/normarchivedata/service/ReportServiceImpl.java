@@ -14,6 +14,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import ru.bk.j3000.normarchivedata.model.Branch;
 import ru.bk.j3000.normarchivedata.model.Source;
+import ru.bk.j3000.normarchivedata.model.TariffZone;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -64,6 +65,9 @@ public class ReportServiceImpl implements ReportService {
     // services
     private final SourceService sourceService;
     private final BranchService branchService;
+    private final TariffZoneService tzService;
+    private final SourcePropertyService srcPropService;
+    private final StandardSFCService ssfcService;
 
 
     @Override
@@ -88,6 +92,20 @@ public class ReportServiceImpl implements ReportService {
         };
 
         log.info("Branch report formed. Type {}", type);
+
+        return resource;
+    }
+
+    @Override
+    public Resource getTariffZonesReport(String type) {
+        Resource resource = switch (type) {
+            case "template" -> getTZTemplateReport();
+            case "standard" -> getAllTZReport();
+            default -> throw new InvalidParameterException(String.format("Invalid tariff zone report type <%s>",
+                    type));
+        };
+
+        log.info("Tariff zone report formed. Type {}", type);
 
         return resource;
     }
@@ -305,8 +323,106 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public Resource getAllTariffZonesReport() {
-        throw new NotImplementedException("Not implemented yet.");
+    public Resource getAllTZReport() {
+        Resource resource;
+
+        List<TariffZone> tzs = tzService.getAllTariffZones().stream()
+                .sorted(Comparator.comparing(TariffZone::getId))
+                .toList();
+
+        try (Workbook wb = new XSSFWorkbook()) {
+            Sheet sheet = wb.createSheet("TariffZones");
+            Font fontHeader = wb.createFont();
+            Font fontData = wb.createFont();
+
+            CellStyle headerStylePrimary = getPrimaryHeaderStyle(wb.createCellStyle(), fontHeader);
+            CellStyle stringStyle = getStringStyle(wb.createCellStyle(), fontData);
+            CellStyle integerStyle = getIntegerStyle(wb.createCellStyle(), fontData);
+
+            // set headers
+            Row headerRow = sheet.createRow(0);
+            IntStream.rangeClosed(0, allTariffZonesColumns.length - 1)
+                    .forEach(i -> createCell(headerRow, i, allTariffZonesColumns[i], headerStylePrimary));
+
+            // set data
+            for (int i = 0; i < tzs.size(); i++) {
+                Row row = sheet.createRow(i + 1);
+                TariffZone tz = tzs.get(i);
+
+                Cell cell = row.createCell(0, CellType.NUMERIC);
+                cell.setCellValue(i + 1);
+                cell.setCellStyle(integerStyle);
+
+                createCell(row, 1, tz.getZoneName(), stringStyle);
+            }
+
+            // autosize columns
+            IntStream.rangeClosed(0, allTariffZonesColumns.length - 1)
+                    .forEach(sheet::autoSizeColumn);
+
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+            wb.write(out);
+
+            resource = new ByteArrayResource(out.toByteArray());
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return resource;
+    }
+
+    @Override
+    public Resource getTZTemplateReport() {
+        Resource resource;
+
+        List<TariffZone> tzs = tzService.getAllTariffZones().stream()
+                .sorted(Comparator.comparing(TariffZone::getId))
+                .toList();
+
+        try (Workbook wb = new XSSFWorkbook()) {
+            Sheet sheet = wb.createSheet("TariffZones");
+            Font fontHeader = wb.createFont();
+            Font fontData = wb.createFont();
+
+            CellStyle headerStylePrimary = getPrimaryHeaderStyle(wb.createCellStyle(), fontHeader);
+            CellStyle stringStyle = getStringStyle(wb.createCellStyle(), fontData);
+            CellStyle integerStyle = getIntegerStyle(wb.createCellStyle(), fontData);
+
+            // set headers
+            Row headerRow = sheet.createRow(0);
+            IntStream.rangeClosed(0, tzTemplateColumns.length - 1)
+                    .forEach(i -> createCell(headerRow, i, tzTemplateColumns[i], headerStylePrimary));
+
+            // set data
+            for (int i = 0; i < tzs.size(); i++) {
+                Row row = sheet.createRow(i + 1);
+                TariffZone tz = tzs.get(i);
+
+                Cell cell = row.createCell(0, CellType.NUMERIC);
+                cell.setCellValue(i + 1);
+                cell.setCellStyle(integerStyle);
+
+                createCell(row, 1, tz.getZoneName(), stringStyle);
+                createCell(row, 2, "-", stringStyle);
+            }
+
+            // autosize columns
+            IntStream.rangeClosed(0, tzTemplateColumns.length - 1)
+                    .forEach(sheet::autoSizeColumn);
+
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+            wb.write(out);
+
+            resource = new ByteArrayResource(out.toByteArray());
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return resource;
     }
 
     @Override

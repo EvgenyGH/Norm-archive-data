@@ -4,20 +4,23 @@ import org.springframework.core.io.Resource;
 
 public interface ReportService {
     Resource getSourcesReport(String type);
-
     Resource getBranchesReport(String type);
 
-    Resource getAllSourcesReport();
+    Resource getTariffZonesReport(String type);
 
     Resource getSrcTemplateReport();
 
-    Resource getAllSsfcsReport();
-
-    Resource getAllSrcPropsReport();
-
-    Resource getAllTariffZonesReport();
+    Resource getAllSourcesReport();
 
     Resource getBranchTemplateReport();
 
     Resource getAllBranchesReport();
+
+    Resource getTZTemplateReport();
+
+    Resource getAllTZReport();
+
+    Resource getAllSsfcsReport();
+
+    Resource getAllSrcPropsReport();
 }
