@@ -5,6 +5,8 @@ import org.springframework.core.io.Resource;
 public interface ReportService {
     Resource getSourcesReport(String type);
 
+    Resource getBranchesReport(String type);
+
     Resource getAllSourcesReport();
 
     Resource getSrcTemplateReport();
@@ -14,6 +16,8 @@ public interface ReportService {
     Resource getAllSrcPropsReport();
 
     Resource getAllTariffZonesReport();
+
+    Resource getBranchTemplateReport();
 
     Resource getAllBranchesReport();
 }

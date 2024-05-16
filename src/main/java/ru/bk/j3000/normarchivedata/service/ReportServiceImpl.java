@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
+import ru.bk.j3000.normarchivedata.model.Branch;
 import ru.bk.j3000.normarchivedata.model.Source;
 
 import java.io.ByteArrayOutputStream;
@@ -32,10 +33,13 @@ public class ReportServiceImpl implements ReportService {
     private final String[] srcTemplateColumns = {"UUID", "Источник", "Адрес источника",
             "Тип источника", "Комментарии"};
 
+    private final String[] allBranchesColumns = {"№ п./п.", "Название филиала"};
     private final String[] brTemplateColumns = {"ID", "Название филиала", "Комментарии"};
 
+    private final String[] allTariffZonesColumns = {"№ п./п.", "Название тарифной зоны"};
     private final String[] tzTemplateColumns = {"ID", "Название тарифной зоны", "Комментарии"};
 
+    private final String[] allPropTemplateColumns = {"№ п./п.", "Источник", "Филиал", "Тарифная зона"};
     private final String[] srcPropTemplateColumns = {"ID источника", "ID Филиала",
             "ID тарифной зоны", "Комментарии"};
 
@@ -59,6 +63,7 @@ public class ReportServiceImpl implements ReportService {
 
     // services
     private final SourceService sourceService;
+    private final BranchService branchService;
 
 
     @Override
@@ -70,6 +75,19 @@ public class ReportServiceImpl implements ReportService {
         };
 
         log.info("Source report formed. Type {}", type);
+
+        return resource;
+    }
+
+    @Override
+    public Resource getBranchesReport(String type) {
+        Resource resource = switch (type) {
+            case "template" -> getBranchTemplateReport();
+            case "standard" -> getAllBranchesReport();
+            default -> throw new InvalidParameterException(String.format("Invalid branch report type <%s>", type));
+        };
+
+        log.info("Branch report formed. Type {}", type);
 
         return resource;
     }
@@ -91,7 +109,6 @@ public class ReportServiceImpl implements ReportService {
             CellStyle headerStylePrimary = getPrimaryHeaderStyle(wb.createCellStyle(), fontHeader);
             CellStyle headerStyleSecondary = getSecondaryHeaderStyle(wb.createCellStyle(), fontHeader);
             CellStyle stringStyle = getStringStyle(wb.createCellStyle(), fontData);
-            CellStyle integerStyle = getIntegerStyle(wb.createCellStyle(), fontData);
 
             // set headers
             Row headerRow = sheet.createRow(0);
@@ -104,19 +121,15 @@ public class ReportServiceImpl implements ReportService {
                 Row row = sheet.createRow(i + 1);
                 Source source = sources.get(i);
 
-                Cell cell = row.createCell(0, CellType.NUMERIC);
-                cell.setCellValue(i + 1);
-                cell.setCellStyle(integerStyle);
-
                 createCell(row, 0, source.getId().toString(), stringStyle);
                 createCell(row, 1, source.getName(), stringStyle);
                 createCell(row, 2, source.getAddress(), stringStyle);
                 createCell(row, 3, source.getSourceType().getName(), stringStyle);
-                createCell(row, 3, "-", stringStyle);
+                createCell(row, 4, "-", stringStyle);
             }
 
             // autosize columns
-            IntStream.rangeClosed(0, allSrcColumns.length - 1)
+            IntStream.rangeClosed(0, srcTemplateColumns.length - 1)
                     .forEach(sheet::autoSizeColumn);
 
             ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -189,8 +202,106 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
+    public Resource getBranchTemplateReport() {
+        Resource resource;
+
+        List<Branch> branches = branchService.getAllBranches().stream()
+                .sorted(Comparator.comparing(Branch::getId))
+                .toList();
+
+        try (Workbook wb = new XSSFWorkbook()) {
+            Sheet sheet = wb.createSheet("Branches");
+            Font fontHeader = wb.createFont();
+            Font fontData = wb.createFont();
+
+            CellStyle headerStylePrimary = getPrimaryHeaderStyle(wb.createCellStyle(), fontHeader);
+            CellStyle stringStyle = getStringStyle(wb.createCellStyle(), fontData);
+            CellStyle integerStyle = getIntegerStyle(wb.createCellStyle(), fontData);
+
+            // set headers
+            Row headerRow = sheet.createRow(0);
+            IntStream.rangeClosed(0, brTemplateColumns.length - 1)
+                    .forEach(i -> createCell(headerRow, i, brTemplateColumns[i], headerStylePrimary));
+
+            // set data
+            for (int i = 0; i < branches.size(); i++) {
+                Row row = sheet.createRow(i + 1);
+                Branch branch = branches.get(i);
+
+                Cell cell = row.createCell(0, CellType.NUMERIC);
+                cell.setCellValue(branch.getId());
+                cell.setCellStyle(integerStyle);
+
+                createCell(row, 1, branch.getBranchName(), stringStyle);
+                createCell(row, 2, "-", stringStyle);
+            }
+
+            // autosize columns
+            IntStream.rangeClosed(0, brTemplateColumns.length - 1)
+                    .forEach(sheet::autoSizeColumn);
+
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+            wb.write(out);
+
+            resource = new ByteArrayResource(out.toByteArray());
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return resource;
+    }
+
+    @Override
     public Resource getAllBranchesReport() {
-        throw new NotImplementedException("Not implemented yet.");
+        Resource resource;
+
+        List<Branch> branches = branchService.getAllBranches().stream()
+                .sorted(Comparator.comparing(Branch::getId))
+                .toList();
+
+        try (Workbook wb = new XSSFWorkbook()) {
+            Sheet sheet = wb.createSheet("Branches");
+            Font fontHeader = wb.createFont();
+            Font fontData = wb.createFont();
+
+            CellStyle headerStylePrimary = getPrimaryHeaderStyle(wb.createCellStyle(), fontHeader);
+            CellStyle stringStyle = getStringStyle(wb.createCellStyle(), fontData);
+            CellStyle integerStyle = getIntegerStyle(wb.createCellStyle(), fontData);
+
+            // set headers
+            Row headerRow = sheet.createRow(0);
+            IntStream.rangeClosed(0, allBranchesColumns.length - 1)
+                    .forEach(i -> createCell(headerRow, i, allBranchesColumns[i], headerStylePrimary));
+
+            // set data
+            for (int i = 0; i < branches.size(); i++) {
+                Row row = sheet.createRow(i + 1);
+                Branch branch = branches.get(i);
+
+                Cell cell = row.createCell(0, CellType.NUMERIC);
+                cell.setCellValue(branch.getId());
+                cell.setCellStyle(integerStyle);
+
+                createCell(row, 1, branch.getBranchName(), stringStyle);
+            }
+
+            // autosize columns
+            IntStream.rangeClosed(0, allBranchesColumns.length - 1)
+                    .forEach(sheet::autoSizeColumn);
+
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+            wb.write(out);
+
+            resource = new ByteArrayResource(out.toByteArray());
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return resource;
     }
 
     @Override
