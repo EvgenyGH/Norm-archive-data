@@ -61,11 +61,10 @@
             <legend>Свойства источников:</legend>
 
             <label for="year">Выбор отчетного года:</label>
-            <select id="year" name="year">
-                <option th:each="year : ${#numbers.sequence(2020, #dates.createNow().getYear() + 1905, 1)}"
-                        th:with="activeYear=${#dates.createNow().getYear() + 1905}"
-                        th:value="${year}" th:text="${year}"
-                        th:selected="${(#dates.createNow().getYear() + 1905) == year}">
+            <select id="year" name="year" th:with="activeYear=${#dates.createNow().getYear() + 1900}">
+                <option th:each="year : ${#numbers.sequence(2020, activeYear + 5, 1)}"
+                        th:value="${year}" th:text="${activeYear}"
+                        th:selected="${activeYear == year}">
                 </option>
             </select>
             <br>
@@ -88,10 +87,10 @@
             <legend>НУР:</legend>
 
             <label for="year">Выбор отчетного года:</label>
-            <select id="year" name="year">
-                <option th:each="year : ${#numbers.sequence(2020, #dates.createNow().getYear() + 1905, 1)}"
+            <select id="year" name="year" th:with="activeYear=${#dates.createNow().getYear() + 1900}">
+                <option th:each="year : ${#numbers.sequence(2020, activeYear + 5, 1)}"
                         th:value="${year}" th:text="${year}"
-                        th:selected="${year == (#dates.createNow().getYear() + 1905)}">
+                        th:selected="${year == activeYear}">
                 </option>
             </select>
             <br>
