@@ -65,26 +65,24 @@
 
         <!--/* Отчеты */-->
         <div th:if="${activeMenu.contains('report')}"
-             th:replace="~{report::source}"> Source report
+             th:insert="~{report::source}"> Source report
         </div>
         <div
                 th:if="${activeMenu.contains('report')}"
-                th:replace="~{report::branch}"> Branch report
+                th:insert="~{report::branch}"> Branch report
         </div>
         <div
                 th:if="${activeMenu.contains('report')}"
-                th:replace="~{report::tariffzone}"> Tariff zone report
+                th:insert="~{report::tariffzone}"> Tariff zone report
         </div>
         <div
                 th:if="${activeMenu.contains('report')}"
-                th:replace="~{report::sourceproperty}"> Source property report
+                th:insert="~{report::sourceproperty}"> Source property report
         </div>
         <div
                 th:if="${activeMenu.contains('report')}"
-                th:replace="~{report::ssfc}"> Ssfc report
+                th:insert="~{report::ssfc}"> Ssfc report
         </div>
-
-        <!--/* Ошибки */-->
 
     </div>
     <div th:if="${shadow}" class="shadow"></div>
