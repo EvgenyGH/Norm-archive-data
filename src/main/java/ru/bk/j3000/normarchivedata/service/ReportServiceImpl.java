@@ -14,6 +14,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import ru.bk.j3000.normarchivedata.model.Branch;
 import ru.bk.j3000.normarchivedata.model.Source;
+import ru.bk.j3000.normarchivedata.model.SourceProperty;
 import ru.bk.j3000.normarchivedata.model.TariffZone;
 
 import java.io.ByteArrayOutputStream;
@@ -40,7 +41,7 @@ public class ReportServiceImpl implements ReportService {
     private final String[] allTariffZonesColumns = {"№ п./п.", "Название тарифной зоны"};
     private final String[] tzTemplateColumns = {"ID", "Название тарифной зоны", "Комментарии"};
 
-    private final String[] allPropTemplateColumns = {"№ п./п.", "Источник", "Филиал", "Тарифная зона"};
+    private final String[] allSrcPropColumns = {"№ п./п.", "Источник", "Тарифная зона", "Филиал"};
     private final String[] srcPropTemplateColumns = {"ID источника", "ID Филиала",
             "ID тарифной зоны", "Комментарии"};
 
@@ -111,6 +112,20 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
+    public Resource getSrcPropertyReport(String type, Integer year) {
+        Resource resource = switch (type) {
+            case "template" -> getSrcPropTemplateReport(year);
+            case "standard" -> getAllSrcPropReport(year);
+            default -> throw new InvalidParameterException(String.format("Invalid source property report type <%s>",
+                    type));
+        };
+
+        log.info("Source property report formed. Type {}", type);
+
+        return resource;
+    }
+
+    @Override
     public Resource getSrcTemplateReport() {
         Resource resource;
 
@@ -132,7 +147,7 @@ public class ReportServiceImpl implements ReportService {
             Row headerRow = sheet.createRow(0);
             IntStream.rangeClosed(0, srcTemplateColumns.length - 1)
                     .forEach(i -> createCell(headerRow, i, srcTemplateColumns[i],
-                            i == 0 || i == 5 ? headerStyleSecondary : headerStylePrimary));
+                            i == 0 || i == 4 ? headerStyleSecondary : headerStylePrimary));
 
             // set data
             for (int i = 0; i < sources.size(); i++) {
@@ -233,13 +248,15 @@ public class ReportServiceImpl implements ReportService {
             Font fontData = wb.createFont();
 
             CellStyle headerStylePrimary = getPrimaryHeaderStyle(wb.createCellStyle(), fontHeader);
+            CellStyle headerStyleSecondary = getSecondaryHeaderStyle(wb.createCellStyle(), fontHeader);
             CellStyle stringStyle = getStringStyle(wb.createCellStyle(), fontData);
             CellStyle integerStyle = getIntegerStyle(wb.createCellStyle(), fontData);
 
             // set headers
             Row headerRow = sheet.createRow(0);
             IntStream.rangeClosed(0, brTemplateColumns.length - 1)
-                    .forEach(i -> createCell(headerRow, i, brTemplateColumns[i], headerStylePrimary));
+                    .forEach(i -> createCell(headerRow, i, brTemplateColumns[i],
+                            i == 2 ? headerStyleSecondary : headerStylePrimary));
 
             // set data
             for (int i = 0; i < branches.size(); i++) {
@@ -323,6 +340,60 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
+    public Resource getTZTemplateReport() {
+        Resource resource;
+
+        List<TariffZone> tzs = tzService.getAllTariffZones().stream()
+                .sorted(Comparator.comparing(TariffZone::getId))
+                .toList();
+
+        try (Workbook wb = new XSSFWorkbook()) {
+            Sheet sheet = wb.createSheet("TariffZones");
+            Font fontHeader = wb.createFont();
+            Font fontData = wb.createFont();
+
+            CellStyle headerStylePrimary = getPrimaryHeaderStyle(wb.createCellStyle(), fontHeader);
+            CellStyle headerStyleSecondary = getSecondaryHeaderStyle(wb.createCellStyle(), fontHeader);
+            CellStyle stringStyle = getStringStyle(wb.createCellStyle(), fontData);
+            CellStyle integerStyle = getIntegerStyle(wb.createCellStyle(), fontData);
+
+            // set headers
+            Row headerRow = sheet.createRow(0);
+            IntStream.rangeClosed(0, tzTemplateColumns.length - 1)
+                    .forEach(i -> createCell(headerRow, i, tzTemplateColumns[i],
+                            i == 2 ? headerStyleSecondary : headerStylePrimary));
+
+            // set data
+            for (int i = 0; i < tzs.size(); i++) {
+                Row row = sheet.createRow(i + 1);
+                TariffZone tz = tzs.get(i);
+
+                Cell cell = row.createCell(0, CellType.NUMERIC);
+                cell.setCellValue(i + 1);
+                cell.setCellStyle(integerStyle);
+
+                createCell(row, 1, tz.getZoneName(), stringStyle);
+                createCell(row, 2, "-", stringStyle);
+            }
+
+            // autosize columns
+            IntStream.rangeClosed(0, tzTemplateColumns.length - 1)
+                    .forEach(sheet::autoSizeColumn);
+
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+            wb.write(out);
+
+            resource = new ByteArrayResource(out.toByteArray());
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return resource;
+    }
+
+    @Override
     public Resource getAllTZReport() {
         Resource resource;
 
@@ -374,42 +445,59 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public Resource getTZTemplateReport() {
+    public Resource getSrcPropTemplateReport(Integer year) {
         Resource resource;
 
-        List<TariffZone> tzs = tzService.getAllTariffZones().stream()
-                .sorted(Comparator.comparing(TariffZone::getId))
+        List<SourceProperty> srcProps = srcPropService.findAllPropByYear(year).stream()
+                .sorted(Comparator.comparing(sp -> sp.getId().getSource().getName()))
+                .sorted(Comparator.comparing(sp -> sp.getId().getSource().getSourceType()))
+                .sorted(Comparator.comparing(sp -> sp.getBranch().getId()))
+                .sorted(Comparator.comparing(sp -> sp.getTariffZone().getId()))
                 .toList();
 
         try (Workbook wb = new XSSFWorkbook()) {
-            Sheet sheet = wb.createSheet("TariffZones");
+            Sheet sheet = wb.createSheet("SourceProperties");
             Font fontHeader = wb.createFont();
             Font fontData = wb.createFont();
+            Font fontTitle = wb.createFont();
 
             CellStyle headerStylePrimary = getPrimaryHeaderStyle(wb.createCellStyle(), fontHeader);
+            CellStyle headerStyleSecondary = getSecondaryHeaderStyle(wb.createCellStyle(), fontHeader);
             CellStyle stringStyle = getStringStyle(wb.createCellStyle(), fontData);
             CellStyle integerStyle = getIntegerStyle(wb.createCellStyle(), fontData);
+            CellStyle titleStyle = getTitleStyle(wb.createCellStyle(), fontTitle);
+
+            //set title
+            Row titleRow = sheet.createRow(0);
+            createCell(titleRow, 0, String.format("%s год", year), titleStyle);
 
             // set headers
-            Row headerRow = sheet.createRow(0);
-            IntStream.rangeClosed(0, tzTemplateColumns.length - 1)
-                    .forEach(i -> createCell(headerRow, i, tzTemplateColumns[i], headerStylePrimary));
+            Row headerRow = sheet.createRow(1);
+
+            IntStream.rangeClosed(0, srcPropTemplateColumns.length - 1)
+                    .forEach(i -> createCell(headerRow, i, srcPropTemplateColumns[i],
+                            i == 3 ? headerStyleSecondary : headerStylePrimary));
 
             // set data
-            for (int i = 0; i < tzs.size(); i++) {
-                Row row = sheet.createRow(i + 1);
-                TariffZone tz = tzs.get(i);
+            for (int i = 0; i < srcProps.size(); i++) {
+                Row row = sheet.createRow(i + 2);
+                SourceProperty srcProp = srcProps.get(i);
 
-                Cell cell = row.createCell(0, CellType.NUMERIC);
-                cell.setCellValue(i + 1);
+                createCell(row, 0, srcProp.getId().getSource().getId().toString(),
+                        stringStyle);
+                Cell cell = row.createCell(1, CellType.NUMERIC);
+                cell.setCellValue(srcProp.getBranch().getId());
                 cell.setCellStyle(integerStyle);
 
-                createCell(row, 1, tz.getZoneName(), stringStyle);
-                createCell(row, 2, "-", stringStyle);
+                cell = row.createCell(2, CellType.NUMERIC);
+                cell.setCellValue(srcProp.getTariffZone().getId());
+                cell.setCellStyle(integerStyle);
+
+                createCell(row, 3, "-", stringStyle);
             }
 
             // autosize columns
-            IntStream.rangeClosed(0, tzTemplateColumns.length - 1)
+            IntStream.rangeClosed(0, srcPropTemplateColumns.length - 1)
                     .forEach(sheet::autoSizeColumn);
 
             ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -426,8 +514,66 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public Resource getAllSrcPropsReport() {
-        throw new NotImplementedException("Not implemented yet.");
+    public Resource getAllSrcPropReport(Integer year) {
+        Resource resource;
+
+        List<SourceProperty> srcProps = srcPropService.findAllPropByYear(year).stream()
+                .sorted(Comparator.comparing(sp -> sp.getId().getSource().getName()))
+                .sorted(Comparator.comparing(sp -> sp.getId().getSource().getSourceType()))
+                .sorted(Comparator.comparing(sp -> sp.getBranch().getId()))
+                .sorted(Comparator.comparing(sp -> sp.getTariffZone().getId()))
+                .toList();
+
+        try (Workbook wb = new XSSFWorkbook()) {
+            Sheet sheet = wb.createSheet("SourceProperties");
+            Font fontHeader = wb.createFont();
+            Font fontData = wb.createFont();
+            Font fontTitle = wb.createFont();
+
+            CellStyle headerStylePrimary = getPrimaryHeaderStyle(wb.createCellStyle(), fontHeader);
+            CellStyle stringStyle = getStringStyle(wb.createCellStyle(), fontData);
+            CellStyle integerStyle = getIntegerStyle(wb.createCellStyle(), fontData);
+            CellStyle titleStyle = getTitleStyle(wb.createCellStyle(), fontTitle);
+
+            //set title
+            Row titleRow = sheet.createRow(0);
+            createCell(titleRow, 0, String.format("%s год", year), titleStyle);
+
+            // set headers
+            Row headerRow = sheet.createRow(1);
+
+            IntStream.rangeClosed(0, allSrcPropColumns.length - 1)
+                    .forEach(i -> createCell(headerRow, i, allSrcPropColumns[i], headerStylePrimary));
+
+            // set data
+            for (int i = 0; i < srcProps.size(); i++) {
+                Row row = sheet.createRow(i + 2);
+                SourceProperty srcProp = srcProps.get(i);
+
+                Cell cell = row.createCell(0, CellType.NUMERIC);
+                cell.setCellValue(i + 1);
+                cell.setCellStyle(integerStyle);
+
+                createCell(row, 1, srcProp.getId().getSource().getName(), stringStyle);
+                createCell(row, 2, srcProp.getTariffZone().getZoneName(), stringStyle);
+                createCell(row, 3, srcProp.getBranch().getBranchName(), stringStyle);
+            }
+
+            // autosize columns
+            IntStream.rangeClosed(0, allSrcPropColumns.length - 1)
+                    .forEach(sheet::autoSizeColumn);
+
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+            wb.write(out);
+
+            resource = new ByteArrayResource(out.toByteArray());
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return resource;
     }
 
     @Override
@@ -485,6 +631,14 @@ public class ReportServiceImpl implements ReportService {
         return cellStyle;
     }
 
+    private CellStyle getTitleStyle(CellStyle cellStyle, Font font) {
+        setBaseFont(font);
+        font.setBold(true);
+        cellStyle.setFont(font);
+
+        return cellStyle;
+    }
+
     private CellStyle getBaseStyle(CellStyle cellStyle, Font font) {
         //alignment
         cellStyle.setAlignment(HorizontalAlignment.CENTER);
@@ -501,11 +655,17 @@ public class ReportServiceImpl implements ReportService {
         cellStyle.setBottomBorderColor(IndexedColors.BLACK.getIndex());
 
         //font
-        font.setFontHeightInPoints((short) 12);
-        font.setFontName("Times New Roman");
-        font.setColor(IndexedColors.BLACK.getIndex());
+        setBaseFont(font);
         cellStyle.setFont(font);
 
         return cellStyle;
+    }
+
+    private Font setBaseFont(Font font) {
+        font.setFontName("Times New Roman");
+        font.setFontHeightInPoints((short) 16);
+        font.setColor(IndexedColors.BLACK.getIndex());
+
+        return font;
     }
 }

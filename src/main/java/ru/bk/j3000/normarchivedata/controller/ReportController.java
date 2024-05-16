@@ -59,13 +59,14 @@ public class ReportController {
     }
 
     @GetMapping("/report/sourceproperty")
-    public ResponseEntity<Resource> getSourcePropertyReport(Model model) {
+    public ResponseEntity<Resource> getSourcePropertyReport(@RequestParam(name = "type") String type,
+                                                            @RequestParam(name = "year") Integer year) {
 
         return ResponseEntity.ok()
                 .contentType(MediaType.asMediaType(MimeType.valueOf("application/vnd.ms-excel")))
                 .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=allSrcPropsReport.xlsm")
-                .body(reportService.getAllSrcPropsReport());
+                        "attachment; filename=srcPropReport.xlsx")
+                .body(reportService.getSrcPropertyReport(type, year));
     }
 
     @GetMapping("/report/ssfc")
@@ -74,7 +75,7 @@ public class ReportController {
         return ResponseEntity.ok()
                 .contentType(MediaType.asMediaType(MimeType.valueOf("application/vnd.ms-excel")))
                 .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=allSsfcsReport.xlsm")
+                        "attachment; filename=allSsfcsReport.xlsx")
                 .body(reportService.getAllSsfcsReport());
     }
 }

@@ -9,6 +9,8 @@ public interface ReportService {
 
     Resource getTariffZonesReport(String type);
 
+    Resource getSrcPropertyReport(String type, Integer year);
+
     Resource getSrcTemplateReport();
 
     Resource getAllSourcesReport();
@@ -21,7 +23,9 @@ public interface ReportService {
 
     Resource getAllTZReport();
 
-    Resource getAllSsfcsReport();
+    Resource getAllSrcPropReport(Integer year);
 
-    Resource getAllSrcPropsReport();
+    Resource getSrcPropTemplateReport(Integer year);
+
+    Resource getAllSsfcsReport();
 }
