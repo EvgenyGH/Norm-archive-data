@@ -77,11 +77,11 @@
         </div>
         <div
                 th:if="${activeMenu.contains('report')}"
-                th:insert="~{report::sourceproperty}"> Source property report
+                th:insert="~{report::sourceproperty(${reportYear})}"> Source property report
         </div>
         <div
                 th:if="${activeMenu.contains('report')}"
-                th:insert="~{report::ssfc}"> Ssfc report
+                th:insert="~{report::ssfc(${reportYear})}"> Ssfc report
         </div>
 
     </div>

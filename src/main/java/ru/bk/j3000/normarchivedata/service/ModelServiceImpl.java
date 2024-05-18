@@ -331,10 +331,11 @@ public class ModelServiceImpl implements ModelService {
     }
 
     @Override
-    public Map<String, Object> getReportsAttributes() {
+    public Map<String, Object> getReportsAttributes(Integer year) {
         Map<String, Object> attributes = new HashMap<>();
         attributes.put("title", "Отчеты");
         attributes.put("activeMenu", Set.of("report"));
+        attributes.put("reportYear", Objects.isNull(year) ? LocalDate.now().getYear() : year);
 
         return attributes;
     }

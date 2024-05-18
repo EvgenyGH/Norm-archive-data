@@ -56,16 +56,16 @@
 </div>
 
 
-<div class="report" th:fragment="sourceproperty">
+<div class="report" th:fragment="sourceproperty(reportYear)">
     <form method="get" th:action="@{/report/sourceproperty}">
         <fieldset>
             <legend>Свойства источников:</legend>
 
             <label for="year">Выбор отчетного года:</label>
-            <select id="year" name="year" th:with="activeYear=${#dates.createNow().getYear() + 1900}">
-                <option th:each="year : ${#numbers.sequence(2020, activeYear + 5, 1)}"
-                        th:value="${year}" th:text="${activeYear}"
-                        th:selected="${activeYear == year}">
+            <select id="year" name="year">
+                <option th:each="year : ${#numbers.sequence(2020, #dates.createNow().getYear() + 1905, 1)}"
+                        th:value="${year}" th:text="${year}"
+                        th:selected="${reportYear == year}">
                 </option>
             </select>
             <br>
@@ -82,16 +82,17 @@
     </form>
 </div>
 
-<div class="report" th:fragment="ssfc">
+<div class="report" th:fragment="ssfc(reportYear)">
     <form method="get" th:action="@{/report/ssfc}">
         <fieldset>
             <legend>НУР:</legend>
 
             <label for="year">Выбор отчетного года:</label>
-            <select id="year" name="year" th:with="activeYear=${#dates.createNow().getYear() + 1900}">
-                <option th:each="year : ${#numbers.sequence(2020, activeYear + 5, 1)}"
+            <select id="year" name="year"
+                    onchange="window.location.replace('/report?year=' + this.options[this.selectedIndex].value)">
+                <option th:each="year : ${#numbers.sequence(2020, #dates.createNow().getYear() + 1905, 1)}"
                         th:value="${year}" th:text="${year}"
-                        th:selected="${year == activeYear}">
+                        th:selected="${year == reportYear}">
                 </option>
             </select>
             <br>

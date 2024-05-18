@@ -21,8 +21,9 @@ public class ReportController {
     private final ReportService reportService;
 
     @GetMapping("/report")
-    public String reportsStartPage(Model model) {
-        model.addAllAttributes(modelService.getReportsAttributes());
+    public String reportsStartPage(Model model,
+                                   @RequestParam(name = "year", required = false) Integer year) {
+        model.addAllAttributes(modelService.getReportsAttributes(year));
 
         return "welcome";
     }
