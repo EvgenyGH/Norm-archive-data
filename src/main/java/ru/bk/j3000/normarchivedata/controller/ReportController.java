@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import ru.bk.j3000.normarchivedata.service.ModelService;
 import ru.bk.j3000.normarchivedata.service.ReportService;
 
+import java.util.List;
+import java.util.UUID;
+
 @Controller
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class ReportController {
@@ -72,12 +75,14 @@ public class ReportController {
 
     @GetMapping("/report/ssfc")
     public ResponseEntity<Resource> getSsfcReport(@RequestParam(name = "type") String type,
-                                                  @RequestParam(name = "year") Integer year) {
+                                                  @RequestParam(name = "selection") String selection,
+                                                  @RequestParam(name = "year") Integer year,
+                                                  @RequestParam(name = "sources", required = false) List<UUID> srcIds) {
 
         return ResponseEntity.ok()
                 .contentType(MediaType.asMediaType(MimeType.valueOf("application/vnd.ms-excel")))
                 .header(HttpHeaders.CONTENT_DISPOSITION,
                         "attachment; filename=ssfcReport.xlsx")
-                .body(reportService.getSsfcsReport(type, year));
+                .body(reportService.getSsfcsReport(type, selection, year, srcIds));
     }
 }

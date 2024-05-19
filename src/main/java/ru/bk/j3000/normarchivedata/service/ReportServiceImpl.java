@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.IntStream;
 
 import static org.apache.poi.ss.util.CellUtil.createCell;
@@ -126,7 +127,7 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public Resource getSsfcsReport(String type, Integer year) {
+    public Resource getSsfcsReport(String type, String selection, Integer year, List<UUID> srcIds) {
         Resource resource = switch (type) {
             case "template" -> getSsfcTemplateReport(year);
             case "standard" -> getAllSsfcReport(year);

@@ -2,6 +2,9 @@ package ru.bk.j3000.normarchivedata.service;
 
 import org.springframework.core.io.Resource;
 
+import java.util.List;
+import java.util.UUID;
+
 public interface ReportService {
     Resource getSourcesReport(String type);
 
@@ -11,7 +14,7 @@ public interface ReportService {
 
     Resource getSrcPropertyReport(String type, Integer year);
 
-    Resource getSsfcsReport(String type, Integer year);
+    Resource getSsfcsReport(String type, String selection, Integer year, List<UUID> srcIds);
 
     Resource getSrcTemplateReport();
 

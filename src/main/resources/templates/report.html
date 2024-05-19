@@ -114,7 +114,7 @@
                 </p>
                 <div class="select-sources">
                     <th:block th:each="source : ${reportSources}">
-                        <input type="checkbox" id="sources" th:name="sources"
+                        <input type="checkbox" id="sources" name="sources"
                                th:value="${source.sourceId}">
                         <label for="sources" th:text="${source.sourceName}"></label>
                     </th:block>
