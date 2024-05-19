@@ -14,9 +14,9 @@
 
             <input type="radio" id="source-template" name="type" value="template">
             <label for="source-template">В формате шаблона загрузки</label>
-            <br>
             <input type="radio" id="source-all" name="type" value="standard" checked>
             <label for="source-all">В стандартном формате</label>
+            <br>
             <br>
             <input type="submit" value="Выгрузить отчет">
         </fieldset>
@@ -30,9 +30,9 @@
 
             <input type="radio" id="branch-template" name="type" value="template">
             <label for="branch-template">В формате шаблона загрузки</label>
-            <br>
             <input type="radio" id="branch-all" name="type" value="standard" checked>
             <label for="branch-all">В стандартном формате</label>
+            <br>
             <br>
             <input type="submit" value="Выгрузить отчет">
         </fieldset>
@@ -46,9 +46,9 @@
 
             <input type="radio" id="tariffzone-template" name="type" value="template">
             <label for="tariffzone-template">В формате шаблона загрузки</label>
-            <br>
             <input type="radio" id="tariffzone-all" name="type" value="standard" checked>
             <label for="tariffzone-all">В стандартном формате</label>
+            <br>
             <br>
             <input type="submit" value="Выгрузить отчет">
         </fieldset>
@@ -69,20 +69,18 @@
                 </option>
             </select>
             <br>
-
             <input type="radio" id="sourceproperty-template" name="type" value="template">
             <label for="sourceproperty-template">В формате шаблона загрузки</label>
-            <br>
             <input type="radio" id="sourceproperty-all" name="type" value="standard" checked>
             <label for="sourceproperty-all">В стандартном формате</label>
             <br>
-
+            <br>
             <input type="submit" value="Выгрузить отчет">
         </fieldset>
     </form>
 </div>
 
-<div class="report" th:fragment="ssfc(reportYear)">
+<div class="report ssfc-report" th:fragment="ssfc(reportYear, reportSources)">
     <form method="get" th:action="@{/report/ssfc}">
         <fieldset>
             <legend>НУР:</legend>
@@ -96,12 +94,32 @@
                 </option>
             </select>
             <br>
-
             <input type="radio" id="ssfc-template" name="type" value="template">
             <label for="ssfc-template">В формате шаблона загрузки</label>
-            <br>
             <input type="radio" id="ssfc-all" name="type" value="standard" checked>
             <label for="ssfc-all">В стандартном формате</label>
+            <br>
+            <br>
+
+            <fieldset>
+                <legend>Выбор источников:</legend>
+                <input type="radio" id="select-all" name="selection" value="all" checked>
+                <label for="select-all">Все источники</label>
+                <input type="radio" id="select-particular" name="selection" value="particular">
+                <label for="select-particular">Выборочно</label>
+                <br>
+                <br>
+                <p th:if="${reportSources.isEmpty()}"
+                   th:text="'НУР на указанный период не заведены в систему'">
+                </p>
+                <div class="select-sources">
+                    <th:block th:each="source : ${reportSources}">
+                        <input type="checkbox" id="sources" th:name="sources"
+                               th:value="${source.sourceId}">
+                        <label for="sources" th:text="${source.sourceName}"></label>
+                    </th:block>
+                </div>
+            </fieldset>
             <br>
             <input type="submit" value="Выгрузить отчет">
         </fieldset>

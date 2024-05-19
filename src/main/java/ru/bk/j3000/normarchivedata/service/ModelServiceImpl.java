@@ -333,9 +333,15 @@ public class ModelServiceImpl implements ModelService {
     @Override
     public Map<String, Object> getReportsAttributes(Integer year) {
         Map<String, Object> attributes = new HashMap<>();
+        year = Objects.isNull(year) ? LocalDate.now().getYear() : year;
+
         attributes.put("title", "Отчеты");
         attributes.put("activeMenu", Set.of("report"));
-        attributes.put("reportYear", Objects.isNull(year) ? LocalDate.now().getYear() : year);
+        attributes.put("reportYear", year);
+        attributes.put("reportSources", srcPropService.findAllSourcesByYear(year)
+                .stream()
+                .map(SourceAlterDTO::new)
+                .toList());
 
         return attributes;
     }
