@@ -32,7 +32,7 @@ public interface ReportService {
 
     Resource getSrcPropTemplateReport(Integer year);
 
-    Resource getSsfcTemplateReport(Integer year);
+    Resource getSsfcTemplateReport(Integer year, String selection, List<UUID> srcIds);
 
-    Resource getAllSsfcReport(Integer year);
+    Resource getAllSsfcReport(Integer year, String selection, List<UUID> srcIds);
 }

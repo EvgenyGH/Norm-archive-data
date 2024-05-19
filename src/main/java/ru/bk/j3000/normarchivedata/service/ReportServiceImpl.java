@@ -12,10 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
-import ru.bk.j3000.normarchivedata.model.Branch;
-import ru.bk.j3000.normarchivedata.model.Source;
-import ru.bk.j3000.normarchivedata.model.SourceProperty;
-import ru.bk.j3000.normarchivedata.model.TariffZone;
+import ru.bk.j3000.normarchivedata.model.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -129,8 +126,8 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public Resource getSsfcsReport(String type, String selection, Integer year, List<UUID> srcIds) {
         Resource resource = switch (type) {
-            case "template" -> getSsfcTemplateReport(year);
-            case "standard" -> getAllSsfcReport(year);
+            case "template" -> getSsfcTemplateReport(year, selection, srcIds);
+            case "standard" -> getAllSsfcReport(year, selection, srcIds);
             default -> throw new InvalidParameterException(String.format("Invalid ssfc report type <%s>",
                     type));
         };
@@ -592,17 +589,89 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public Resource getSsfcTemplateReport(Integer year) {
-        //        CellStyle headerStylePrimary = getPrimaryHeaderStyle(wb.createCellStyle(), fontHeader);
-//        CellStyle headerStyleSecondary = getSecondaryHeaderStyle(wb.createCellStyle(), fontHeader);
-//        CellStyle stringStyle = getStringStyle(wb.createCellStyle(), fontData);
-//        CellStyle integerStyle = getIntegerStyle(wb.createCellStyle(), fontData);
-//        CellStyle decimalStyle = getDecimalStyle(wb.createCellStyle(), fontData, 3);
-        throw new NotImplementedException("Not implemented yet.");
+    public Resource getSsfcTemplateReport(Integer year, String selection, List<UUID> srcIds) {
+        Resource resource;
+
+        List<StandardSFC> ssfcs = switch (selection) {
+            case "all" -> ssfcService.findAllSsfcByYear(year);
+            case "particular" -> ssfcService.findAllSsfcByYearAndSrcIds(year, srcIds);
+            default -> throw new InvalidParameterException(String
+                    .format("Invalid ssfc report type <%s>", selection));
+        };
+
+
+//        List<SourceProperty> srcProps = srcPropService.findAllPropByYear(year).stream()
+//                .sorted(Comparator.comparing(sp -> sp.getId().getSource().getName()))
+//                .sorted(Comparator.comparing(sp -> sp.getId().getSource().getSourceType()))
+//                .sorted(Comparator.comparing(sp -> sp.getBranch().getId()))
+//                .sorted(Comparator.comparing(sp -> sp.getTariffZone().getId()))
+//                .toList();
+
+        try (Workbook wb = new XSSFWorkbook()) {
+            Sheet sheet = wb.createSheet("ssfcs");
+            Font fontHeader = wb.createFont();
+            Font fontData = wb.createFont();
+            Font fontTitle = wb.createFont();
+
+            CellStyle headerStylePrimary = getPrimaryHeaderStyle(wb.createCellStyle(), fontHeader);
+            CellStyle headerStyleSecondary = getStringStyle(wb.createCellStyle(), fontHeader);
+            CellStyle stringStyle = getStringStyle(wb.createCellStyle(), fontData);
+            CellStyle integerStyle = getIntegerStyle(wb.createCellStyle(), fontData);
+            CellStyle decimalStyle = getDecimalStyle(wb.createCellStyle(), fontData, 3);
+            CellStyle ssfcStyle = getDecimalStyle(wb.createCellStyle(), fontData, 2);
+            CellStyle titleStyle = getTitleStyle(wb.createCellStyle(), fontTitle);
+
+            //set title
+            Row titleRow = sheet.createRow(0);
+            createCell(titleRow, 0, String.format("%s год", year), titleStyle);
+
+            // set headers
+            Row headerRow = sheet.createRow(1);
+
+            IntStream.rangeClosed(0, allSrcPropColumns.length - 1)
+                    .forEach(i -> createCell(headerRow, i, allSrcPropColumns[i], headerStylePrimary));
+
+            // set data
+            for (int i = 0; i < srcProps.size(); i++) {
+                Row row = sheet.createRow(i + 2);
+                SourceProperty srcProp = srcProps.get(i);
+
+                Cell cell = row.createCell(0, CellType.NUMERIC);
+                cell.setCellValue(i + 1);
+                cell.setCellStyle(integerStyle);
+
+                createCell(row, 1, srcProp.getId().getSource().getName(), stringStyle);
+                createCell(row, 2, srcProp.getTariffZone().getZoneName(), stringStyle);
+                createCell(row, 3, srcProp.getBranch().getBranchName(), stringStyle);
+            }
+
+            // autosize columns
+            IntStream.rangeClosed(0, allSrcPropColumns.length - 1)
+                    .forEach(sheet::autoSizeColumn);
+
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+            wb.write(out);
+
+            resource = new ByteArrayResource(out.toByteArray());
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+            // todo detalize all IO exceptions in reports
+        }
+
+        return resource;
     }
 
     @Override
-    public Resource getAllSsfcReport(Integer year) {
+    public Resource getAllSsfcReport(Integer year, String selection, List<UUID> srcIds) {
+        List<StandardSFC> ssfcs = switch (selection) {
+            case "all" -> ssfcService.findAllSsfcByYear(year);
+            case "particular" -> ssfcService.findAllSsfcByYearAndSrcIds(year, srcIds);
+            default -> throw new InvalidParameterException(String
+                    .format("Invalid ssfc report type <%s>", selection));
+        };
+
         throw new NotImplementedException("Not implemented yet.");
     }
 

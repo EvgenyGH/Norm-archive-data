@@ -36,4 +36,6 @@ public interface StandardSFCService {
     List<Source> findAllDefinedSourcesByYear(Integer year);
 
     List<StandardSFC> findAllSsfcByYearAndSrcIdAndFuelType(Integer year, UUID srcId, FUEL_TYPE fuelType);
+
+    List<StandardSFC> findAllSsfcByYearAndSrcIds(Integer year, List<UUID> srcIds);
 }

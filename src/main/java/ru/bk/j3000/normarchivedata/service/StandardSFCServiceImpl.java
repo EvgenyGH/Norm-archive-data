@@ -76,7 +76,7 @@ public class StandardSFCServiceImpl implements StandardSFCService {
         List<StandardSFC> ssfcs = this.toStandartSFCs(ssfcsDTO);
 
         if (!originalFuelType.equals(ssfcsDTO.getFuelType())) {
-            chechSsfcExists(ssfcsDTO.getSrcId(),
+            checkSsfcExists(ssfcsDTO.getSrcId(),
                     FUEL_TYPE.getByName(ssfcsDTO.getFuelType()), year);
         }
 
@@ -114,7 +114,7 @@ public class StandardSFCServiceImpl implements StandardSFCService {
 
     @Override
     public void addSsfc(SsfcsDTO ssfcsDTO, Integer year) {
-        chechSsfcExists(ssfcsDTO.getSrcId(),
+        checkSsfcExists(ssfcsDTO.getSrcId(),
                 FUEL_TYPE.getByName(ssfcsDTO.getFuelType()), year);
 
         List<StandardSFC> ssfcs = this.toStandartSFCs(ssfcsDTO);
@@ -127,7 +127,7 @@ public class StandardSFCServiceImpl implements StandardSFCService {
                 , year);
     }
 
-    private void chechSsfcExists(UUID srcId, FUEL_TYPE fuelType, Integer year) {
+    private void checkSsfcExists(UUID srcId, FUEL_TYPE fuelType, Integer year) {
         List<StandardSFC> ssfcs = ssfcRepository.findAllBySrcIdAndFuelTypeAndYear(srcId, fuelType, year);
 
         if (!ssfcs.isEmpty()) {
@@ -291,6 +291,15 @@ public class StandardSFCServiceImpl implements StandardSFCService {
         List<StandardSFC> ssfcs = ssfcRepository.findAllBySrcIdAndFuelTypeAndYear(srcId, fuelType, year);
 
         log.info("Found {} ssfcs for {} year and fuel type {}.", ssfcs.size(), year, fuelType.getName());
+
+        return ssfcs;
+    }
+
+    @Override
+    public List<StandardSFC> findAllSsfcByYearAndSrcIds(Integer year, List<UUID> srcIds) {
+        List<StandardSFC> ssfcs = ssfcRepository.findAllSsfcByYearAndSrcIds(year, srcIds);
+
+        log.info("Found {} ssfcs for {} year and {} sources.", ssfcs.size(), year, srcIds.size());
 
         return ssfcs;
     }

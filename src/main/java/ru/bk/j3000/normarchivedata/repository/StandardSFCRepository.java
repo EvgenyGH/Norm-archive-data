@@ -58,4 +58,10 @@ public interface StandardSFCRepository extends JpaRepository<StandardSFC, UUID> 
     List<StandardSFC> findAllBySrcIdAndFuelTypeAndYear(@Param("srcId") UUID srcId,
                                                        @Param("fuelType") FUEL_TYPE fuelType,
                                                        @Param("year") Integer year);
+
+    @Query("SELECT ssfc FROM StandardSFC ssfc " +
+            "WHERE ssfc.properties.id.year = :year " +
+            "AND ssfc.properties.id.source.id IN :ids")
+    List<StandardSFC> findAllSsfcByYearAndSrcIds(@Param("year") Integer year,
+                                                 @Param("ids") List<UUID> srcIds);
 }
