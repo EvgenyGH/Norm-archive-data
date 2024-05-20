@@ -316,8 +316,7 @@ select:invalid {
 }
 
 .report label:hover {
-    font-style: italic;
-    letter-spacing: -0.011em;
+    color: royalblue;
 }
 
 .report legend {

@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -13,6 +14,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import ru.bk.j3000.normarchivedata.model.*;
+import ru.bk.j3000.normarchivedata.model.dto.SsfcsDTO;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -20,6 +22,7 @@ import java.security.InvalidParameterException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.apache.poi.ss.util.CellUtil.createCell;
@@ -52,14 +55,14 @@ public class ReportServiceImpl implements ReportService {
             "Август", "Сентябрь", "Октябрь", "Ноябрь",
             "Декабрь", "2024 год", "Комментарии"};
 
-    private final String[] ssfcRows = {"Выработка тепловой энергии, Гкал",
-            "Тепловая энергия на собственные нужды, Гкал",
-            "Тепловая энергия на собственные нужды, %",
-            "Отпуск тепловой энергии с коллекторов источников, Гкал",
-            "УРУТ на выработу тепловой энергии, кг у.т./Гкал",
-            "УРУТ на отпуск тепловой энергии, кг у.т./Гкал"};
+    private final String[] ssfcRows = {"Выработка тепловой энергии",
+            "Тепловая энергия на собственные нужды",
+            "Тепловая энергия на собственные нужды",
+            "Отпуск тепловой энергии с коллекторов источников",
+            "УРУТ на выработу тепловой энергии",
+            "УРУТ на отпуск тепловой энергии"};
 
-    private final String[] units = {"Гкал", "Гкал", "%", "тыс. Гкал", "кг у.т./Гкал", "кг у.т./Гкал"};
+    private final String[] ssfcUnits = {"Гкал", "Гкал", "%", "тыс. Гкал", "кг у.т./Гкал", "кг у.т./Гкал"};
 
     // services
     private final SourceService sourceService;
@@ -599,27 +602,34 @@ public class ReportServiceImpl implements ReportService {
                     .format("Invalid ssfc report type <%s>", selection));
         };
 
+        List<SsfcsDTO> ssfcDTOs = ssfcs.stream()
+                .sorted(Comparator.comparing(StandardSFC::getFuelType))
+                .sorted(Comparator.comparing(ssfc -> ssfc.getProperties().getId().getSource().getName()))
+                .sorted(Comparator.comparing(ssfc -> ssfc.getProperties().getId().getSource().getSourceType()))
+                .sorted(Comparator.comparing(ssfc -> ssfc.getProperties().getBranch().getId()))
+                .sorted(Comparator.comparing(ssfc -> ssfc.getProperties().getTariffZone().getId()))
+                .collect(Collectors.groupingBy(ssfc ->
+                        new SrcIdAndFuelType(ssfc.getProperties().getId().getSource().getId(),
+                                ssfc.getFuelType())))
+                .values()
+                .stream().map(SsfcsDTO::new)
+                .toList();
 
-//        List<SourceProperty> srcProps = srcPropService.findAllPropByYear(year).stream()
-//                .sorted(Comparator.comparing(sp -> sp.getId().getSource().getName()))
-//                .sorted(Comparator.comparing(sp -> sp.getId().getSource().getSourceType()))
-//                .sorted(Comparator.comparing(sp -> sp.getBranch().getId()))
-//                .sorted(Comparator.comparing(sp -> sp.getTariffZone().getId()))
-//                .toList();
 
         try (Workbook wb = new XSSFWorkbook()) {
-            Sheet sheet = wb.createSheet("ssfcs");
+            Sheet sheet = wb.createSheet("Ssfcs");
+
             Font fontHeader = wb.createFont();
             Font fontData = wb.createFont();
             Font fontTitle = wb.createFont();
 
+            CellStyle titleStyle = getTitleStyle(wb.createCellStyle(), fontTitle);
             CellStyle headerStylePrimary = getPrimaryHeaderStyle(wb.createCellStyle(), fontHeader);
-            CellStyle headerStyleSecondary = getStringStyle(wb.createCellStyle(), fontHeader);
+            CellStyle headerStyleSecondary = getSecondaryHeaderStyle(wb.createCellStyle(), fontHeader);
             CellStyle stringStyle = getStringStyle(wb.createCellStyle(), fontData);
             CellStyle integerStyle = getIntegerStyle(wb.createCellStyle(), fontData);
             CellStyle decimalStyle = getDecimalStyle(wb.createCellStyle(), fontData, 3);
             CellStyle ssfcStyle = getDecimalStyle(wb.createCellStyle(), fontData, 2);
-            CellStyle titleStyle = getTitleStyle(wb.createCellStyle(), fontTitle);
 
             //set title
             Row titleRow = sheet.createRow(0);
@@ -628,25 +638,59 @@ public class ReportServiceImpl implements ReportService {
             // set headers
             Row headerRow = sheet.createRow(1);
 
-            IntStream.rangeClosed(0, allSrcPropColumns.length - 1)
-                    .forEach(i -> createCell(headerRow, i, allSrcPropColumns[i], headerStylePrimary));
+            IntStream.rangeClosed(0, ssfcsTemplateColumns.length - 1)
+                    .forEach(i -> createCell(headerRow, i, ssfcsTemplateColumns[i],
+                            i <= 4 ? headerStyleSecondary : headerStylePrimary));
 
             // set data
-            for (int i = 0; i < srcProps.size(); i++) {
-                Row row = sheet.createRow(i + 2);
-                SourceProperty srcProp = srcProps.get(i);
+            for (int i = 0; i < ssfcDTOs.size(); i++) {
+                IntStream.rangeClosed(ssfcRows.length * i + 2, ssfcRows.length * (i + 1) + 1)
+                        .forEach(sheet::createRow);
 
-                Cell cell = row.createCell(0, CellType.NUMERIC);
+                for (int col : new int[]{0, 1, 2, 5, 6, 20}) {
+                    var range = new CellRangeAddress(ssfcRows.length * i + 2,
+                            ssfcRows.length * (i + 1) + 1, col, col);
+                    sheet.addMergedRegion(range);
+                }
+
+                for (int k = 0; k < ssfcRows.length; k++) {
+                    createCell(sheet.getRow(ssfcRows.length * i + 2 + k), 3, ssfcRows[k], ssfcStyle);
+                    createCell(sheet.getRow(ssfcUnits.length * i + 2 + k), 4, ssfcUnits[k], ssfcStyle);
+                }
+
+
+                SsfcsDTO dto = ssfcDTOs.get(i);
+                Row firstRow = sheet.getRow(i);
+
+                Cell cell = firstRow.createCell(0, CellType.NUMERIC);
                 cell.setCellValue(i + 1);
                 cell.setCellStyle(integerStyle);
 
-                createCell(row, 1, srcProp.getId().getSource().getName(), stringStyle);
-                createCell(row, 2, srcProp.getTariffZone().getZoneName(), stringStyle);
-                createCell(row, 3, srcProp.getBranch().getBranchName(), stringStyle);
+                createCell(firstRow, 1, dto.getSrcName(), stringStyle);
+                createCell(firstRow, 2, dto.getFuelType(), stringStyle);
+                createCell(firstRow, 5, dto.getSrcId().toString(), stringStyle);
+
+                cell = firstRow.createCell(0, CellType.NUMERIC);
+                cell.setCellValue(FUEL_TYPE.getByName(dto.getFuelType()).ordinal());
+                cell.setCellStyle(integerStyle);
             }
 
+
+//            for (int i = 0; i < srcProps.size(); i++) {
+//                Row row = sheet.createRow(i + 2);
+//                SourceProperty srcProp = srcProps.get(i);
+//
+//                Cell cell = row.createCell(0, CellType.NUMERIC);
+//                cell.setCellValue(i + 1);
+//                cell.setCellStyle(integerStyle);
+//
+//                createCell(row, 1, srcProp.getId().getSource().getName(), stringStyle);
+//                createCell(row, 2, srcProp.getTariffZone().getZoneName(), stringStyle);
+//                createCell(row, 3, srcProp.getBranch().getBranchName(), stringStyle);
+//            }
+
             // autosize columns
-            IntStream.rangeClosed(0, allSrcPropColumns.length - 1)
+            IntStream.rangeClosed(0, ssfcsTemplateColumns.length - 1)
                     .forEach(sheet::autoSizeColumn);
 
             ByteArrayOutputStream out = new ByteArrayOutputStream();
