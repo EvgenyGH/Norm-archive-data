@@ -6,6 +6,7 @@ import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.RegionUtil;
 import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -14,6 +15,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import ru.bk.j3000.normarchivedata.model.*;
+import ru.bk.j3000.normarchivedata.model.dto.SsfcShortDTO;
 import ru.bk.j3000.normarchivedata.model.dto.SsfcsDTO;
 
 import java.io.ByteArrayOutputStream;
@@ -557,8 +559,8 @@ public class ReportServiceImpl implements ReportService {
             // set headers
             Row headerRow = sheet.createRow(1);
 
-            IntStream.rangeClosed(0, allSrcPropColumns.length - 1)
-                    .forEach(i -> createCell(headerRow, i, allSrcPropColumns[i], headerStylePrimary));
+            IntStream.rangeClosed(0, ssfcsTemplateColumns.length - 1)
+                    .forEach(i -> createCell(headerRow, i, ssfcsTemplateColumns[i], headerStylePrimary));
 
             // set data
             for (int i = 0; i < srcProps.size(); i++) {
@@ -603,16 +605,20 @@ public class ReportServiceImpl implements ReportService {
         };
 
         List<SsfcsDTO> ssfcDTOs = ssfcs.stream()
-                .sorted(Comparator.comparing(StandardSFC::getFuelType))
-                .sorted(Comparator.comparing(ssfc -> ssfc.getProperties().getId().getSource().getName()))
-                .sorted(Comparator.comparing(ssfc -> ssfc.getProperties().getId().getSource().getSourceType()))
-                .sorted(Comparator.comparing(ssfc -> ssfc.getProperties().getBranch().getId()))
-                .sorted(Comparator.comparing(ssfc -> ssfc.getProperties().getTariffZone().getId()))
                 .collect(Collectors.groupingBy(ssfc ->
                         new SrcIdAndFuelType(ssfc.getProperties().getId().getSource().getId(),
                                 ssfc.getFuelType())))
                 .values()
-                .stream().map(SsfcsDTO::new)
+                .stream()
+                .sorted(Comparator.comparing(e -> e.getFirst()
+                        .getFuelType().ordinal()))
+                .sorted(Comparator.comparing(e -> e.getFirst()
+                        .getProperties().getId().getSource().getName()))
+                .sorted(Comparator.comparingInt(e -> e.getFirst()
+                        .getProperties().getId().getSource().getSourceType().ordinal()))
+                .sorted(Comparator.comparing(e -> e.getFirst().getProperties().getBranch().getId()))
+                .sorted(Comparator.comparing(e -> e.getFirst().getProperties().getTariffZone().getId()))
+                .map(SsfcsDTO::new)
                 .toList();
 
 
@@ -647,20 +653,24 @@ public class ReportServiceImpl implements ReportService {
                 IntStream.rangeClosed(ssfcRows.length * i + 2, ssfcRows.length * (i + 1) + 1)
                         .forEach(sheet::createRow);
 
+                // merge cells
                 for (int col : new int[]{0, 1, 2, 5, 6, 20}) {
                     var range = new CellRangeAddress(ssfcRows.length * i + 2,
                             ssfcRows.length * (i + 1) + 1, col, col);
                     sheet.addMergedRegion(range);
+                    RegionUtil.setBorderLeft(BorderStyle.THIN, range, sheet);
+                    RegionUtil.setBorderRight(BorderStyle.THIN, range, sheet);
                 }
 
+                // set data row names and units
                 for (int k = 0; k < ssfcRows.length; k++) {
-                    createCell(sheet.getRow(ssfcRows.length * i + 2 + k), 3, ssfcRows[k], ssfcStyle);
-                    createCell(sheet.getRow(ssfcUnits.length * i + 2 + k), 4, ssfcUnits[k], ssfcStyle);
+                    createCell(sheet.getRow(ssfcRows.length * i + 2 + k), 3, ssfcRows[k], stringStyle);
+                    createCell(sheet.getRow(ssfcUnits.length * i + 2 + k), 4, ssfcUnits[k], stringStyle);
                 }
 
-
+                // set data to merged cells
                 SsfcsDTO dto = ssfcDTOs.get(i);
-                Row firstRow = sheet.getRow(i);
+                Row firstRow = sheet.getRow(ssfcUnits.length * i + 2);
 
                 Cell cell = firstRow.createCell(0, CellType.NUMERIC);
                 cell.setCellValue(i + 1);
@@ -670,24 +680,54 @@ public class ReportServiceImpl implements ReportService {
                 createCell(firstRow, 2, dto.getFuelType(), stringStyle);
                 createCell(firstRow, 5, dto.getSrcId().toString(), stringStyle);
 
-                cell = firstRow.createCell(0, CellType.NUMERIC);
+                cell = firstRow.createCell(6, CellType.NUMERIC);
                 cell.setCellValue(FUEL_TYPE.getByName(dto.getFuelType()).ordinal());
                 cell.setCellStyle(integerStyle);
+
+                createCell(firstRow, 20, "-", stringStyle);
+
+                // set ssfc data
+                for (int k = 7; k < 19; k++) {
+                    SsfcShortDTO ssfcMonth = dto.getSsfcs().get(k - 7);
+
+                    Row row = sheet.getRow(ssfcRows.length * i + 2);
+                    Cell cellSsfc = row.createCell(k, CellType.NUMERIC);
+                    cellSsfc.setCellValue(ssfcMonth.getGeneration());
+                    cellSsfc.setCellStyle(decimalStyle);
+
+                    row = sheet.getRow(ssfcRows.length * i + 2 + 1);
+                    cellSsfc = row.createCell(k, CellType.NUMERIC);
+                    cellSsfc.setCellValue(ssfcMonth.getOwnNeeds());
+                    cellSsfc.setCellStyle(decimalStyle);
+
+                    row = sheet.getRow(ssfcRows.length * i + 2 + 2);
+                    cellSsfc = row.createCell(k, CellType.NUMERIC);
+                    cellSsfc.setCellValue(ssfcMonth.getPercentOwnNeeds());
+                    cellSsfc.setCellStyle(decimalStyle);
+
+                    row = sheet.getRow(ssfcRows.length * i + 2 + 3);
+                    cellSsfc = row.createCell(k, CellType.NUMERIC);
+                    cellSsfc.setCellValue(ssfcMonth.getProduction());
+                    cellSsfc.setCellStyle(decimalStyle);
+
+                    row = sheet.getRow(ssfcRows.length * i + 2 + 4);
+                    cellSsfc = row.createCell(k, CellType.NUMERIC);
+                    cellSsfc.setCellValue(ssfcMonth.getSsfcg());
+                    cellSsfc.setCellStyle(decimalStyle);
+
+                    row = sheet.getRow(ssfcRows.length * i + 2 + 5);
+                    cellSsfc = row.createCell(k, CellType.NUMERIC);
+                    cellSsfc.setCellValue(ssfcMonth.getSsfc());
+                    cellSsfc.setCellStyle(decimalStyle);
+                }
+
+                //set solid borders
+                var range = new CellRangeAddress(ssfcRows.length * i + 2,
+                        ssfcRows.length * (i + 1) + 1,
+                        0, ssfcsTemplateColumns.length - 1);
+                RegionUtil.setBorderBottom(BorderStyle.DOUBLE, range, sheet);
             }
 
-
-//            for (int i = 0; i < srcProps.size(); i++) {
-//                Row row = sheet.createRow(i + 2);
-//                SourceProperty srcProp = srcProps.get(i);
-//
-//                Cell cell = row.createCell(0, CellType.NUMERIC);
-//                cell.setCellValue(i + 1);
-//                cell.setCellStyle(integerStyle);
-//
-//                createCell(row, 1, srcProp.getId().getSource().getName(), stringStyle);
-//                createCell(row, 2, srcProp.getTariffZone().getZoneName(), stringStyle);
-//                createCell(row, 3, srcProp.getBranch().getBranchName(), stringStyle);
-//            }
 
             // autosize columns
             IntStream.rangeClosed(0, ssfcsTemplateColumns.length - 1)
@@ -796,7 +836,7 @@ public class ReportServiceImpl implements ReportService {
 
     private Font setBaseFont(Font font) {
         font.setFontName("Times New Roman");
-        font.setFontHeightInPoints((short) 16);
+        font.setFontHeightInPoints((short) 12);
         font.setColor(IndexedColors.BLACK.getIndex());
 
         return font;
