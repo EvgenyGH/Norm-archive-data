@@ -211,7 +211,7 @@ public class ReportServiceImpl implements ReportService {
 
             CellStyle headerStylePrimary = getPrimaryHeaderStyle(wb.createCellStyle(), fontHeader);
             CellStyle stringStyle = getStringStyle(wb.createCellStyle(), fontData);
-            CellStyle integerStyle = getIntegerStyle(wb.createCellStyle(), fontData);
+            CellStyle integerStyle = getIntegerStyle(wb.createCellStyle(), wb.createDataFormat(), fontData);
 
             // set headers
             Row headerRow = sheet.createRow(0);
@@ -223,7 +223,7 @@ public class ReportServiceImpl implements ReportService {
                 Row row = sheet.createRow(i + 1);
                 Source source = sources.get(i);
 
-                Cell cell = row.createCell(0, CellType.NUMERIC);
+                Cell cell = row.createCell(0);
                 cell.setCellValue(i + 1);
                 cell.setCellStyle(integerStyle);
                 createCell(row, 1, source.getSourceType().getName(), stringStyle);
@@ -267,7 +267,7 @@ public class ReportServiceImpl implements ReportService {
             CellStyle headerStylePrimary = getPrimaryHeaderStyle(wb.createCellStyle(), fontHeader);
             CellStyle headerStyleSecondary = getSecondaryHeaderStyle(wb.createCellStyle(), fontHeader);
             CellStyle stringStyle = getStringStyle(wb.createCellStyle(), fontData);
-            CellStyle integerStyle = getIntegerStyle(wb.createCellStyle(), fontData);
+            CellStyle integerStyle = getIntegerStyle(wb.createCellStyle(), wb.createDataFormat(), fontData);
 
             // set headers
             Row headerRow = sheet.createRow(0);
@@ -280,7 +280,7 @@ public class ReportServiceImpl implements ReportService {
                 Row row = sheet.createRow(i + 1);
                 Branch branch = branches.get(i);
 
-                Cell cell = row.createCell(0, CellType.NUMERIC);
+                Cell cell = row.createCell(0);
                 cell.setCellValue(branch.getId());
                 cell.setCellStyle(integerStyle);
 
@@ -320,7 +320,7 @@ public class ReportServiceImpl implements ReportService {
 
             CellStyle headerStylePrimary = getPrimaryHeaderStyle(wb.createCellStyle(), fontHeader);
             CellStyle stringStyle = getStringStyle(wb.createCellStyle(), fontData);
-            CellStyle integerStyle = getIntegerStyle(wb.createCellStyle(), fontData);
+            CellStyle integerStyle = getIntegerStyle(wb.createCellStyle(), wb.createDataFormat(), fontData);
 
             // set headers
             Row headerRow = sheet.createRow(0);
@@ -332,7 +332,7 @@ public class ReportServiceImpl implements ReportService {
                 Row row = sheet.createRow(i + 1);
                 Branch branch = branches.get(i);
 
-                Cell cell = row.createCell(0, CellType.NUMERIC);
+                Cell cell = row.createCell(0);
                 cell.setCellValue(branch.getId());
                 cell.setCellStyle(integerStyle);
 
@@ -372,7 +372,7 @@ public class ReportServiceImpl implements ReportService {
             CellStyle headerStylePrimary = getPrimaryHeaderStyle(wb.createCellStyle(), fontHeader);
             CellStyle headerStyleSecondary = getSecondaryHeaderStyle(wb.createCellStyle(), fontHeader);
             CellStyle stringStyle = getStringStyle(wb.createCellStyle(), fontData);
-            CellStyle integerStyle = getIntegerStyle(wb.createCellStyle(), fontData);
+            CellStyle integerStyle = getIntegerStyle(wb.createCellStyle(), wb.createDataFormat(), fontData);
 
             // set headers
             Row headerRow = sheet.createRow(0);
@@ -385,7 +385,7 @@ public class ReportServiceImpl implements ReportService {
                 Row row = sheet.createRow(i + 1);
                 TariffZone tz = tzs.get(i);
 
-                Cell cell = row.createCell(0, CellType.NUMERIC);
+                Cell cell = row.createCell(0);
                 cell.setCellValue(i + 1);
                 cell.setCellStyle(integerStyle);
 
@@ -425,7 +425,7 @@ public class ReportServiceImpl implements ReportService {
 
             CellStyle headerStylePrimary = getPrimaryHeaderStyle(wb.createCellStyle(), fontHeader);
             CellStyle stringStyle = getStringStyle(wb.createCellStyle(), fontData);
-            CellStyle integerStyle = getIntegerStyle(wb.createCellStyle(), fontData);
+            CellStyle integerStyle = getIntegerStyle(wb.createCellStyle(), wb.createDataFormat(), fontData);
 
             // set headers
             Row headerRow = sheet.createRow(0);
@@ -437,7 +437,7 @@ public class ReportServiceImpl implements ReportService {
                 Row row = sheet.createRow(i + 1);
                 TariffZone tz = tzs.get(i);
 
-                Cell cell = row.createCell(0, CellType.NUMERIC);
+                Cell cell = row.createCell(0);
                 cell.setCellValue(i + 1);
                 cell.setCellStyle(integerStyle);
 
@@ -481,7 +481,7 @@ public class ReportServiceImpl implements ReportService {
             CellStyle headerStylePrimary = getPrimaryHeaderStyle(wb.createCellStyle(), fontHeader);
             CellStyle headerStyleSecondary = getSecondaryHeaderStyle(wb.createCellStyle(), fontHeader);
             CellStyle stringStyle = getStringStyle(wb.createCellStyle(), fontData);
-            CellStyle integerStyle = getIntegerStyle(wb.createCellStyle(), fontData);
+            CellStyle integerStyle = getIntegerStyle(wb.createCellStyle(), wb.createDataFormat(), fontData);
             CellStyle titleStyle = getTitleStyle(wb.createCellStyle(), fontTitle);
 
             //set title
@@ -502,11 +502,11 @@ public class ReportServiceImpl implements ReportService {
 
                 createCell(row, 0, srcProp.getId().getSource().getId().toString(),
                         stringStyle);
-                Cell cell = row.createCell(1, CellType.NUMERIC);
+                Cell cell = row.createCell(1);
                 cell.setCellValue(srcProp.getBranch().getId());
                 cell.setCellStyle(integerStyle);
 
-                cell = row.createCell(2, CellType.NUMERIC);
+                cell = row.createCell(2);
                 cell.setCellValue(srcProp.getTariffZone().getId());
                 cell.setCellStyle(integerStyle);
 
@@ -549,7 +549,7 @@ public class ReportServiceImpl implements ReportService {
 
             CellStyle headerStylePrimary = getPrimaryHeaderStyle(wb.createCellStyle(), fontHeader);
             CellStyle stringStyle = getStringStyle(wb.createCellStyle(), fontData);
-            CellStyle integerStyle = getIntegerStyle(wb.createCellStyle(), fontData);
+            CellStyle integerStyle = getIntegerStyle(wb.createCellStyle(), wb.createDataFormat(), fontData);
             CellStyle titleStyle = getTitleStyle(wb.createCellStyle(), fontTitle);
 
             //set title
@@ -567,7 +567,7 @@ public class ReportServiceImpl implements ReportService {
                 Row row = sheet.createRow(i + 2);
                 SourceProperty srcProp = srcProps.get(i);
 
-                Cell cell = row.createCell(0, CellType.NUMERIC);
+                Cell cell = row.createCell(0);
                 cell.setCellValue(i + 1);
                 cell.setCellStyle(integerStyle);
 
@@ -633,9 +633,9 @@ public class ReportServiceImpl implements ReportService {
             CellStyle headerStylePrimary = getPrimaryHeaderStyle(wb.createCellStyle(), fontHeader);
             CellStyle headerStyleSecondary = getSecondaryHeaderStyle(wb.createCellStyle(), fontHeader);
             CellStyle stringStyle = getStringStyle(wb.createCellStyle(), fontData);
-            CellStyle integerStyle = getIntegerStyle(wb.createCellStyle(), fontData);
-            CellStyle decimalStyle = getDecimalStyle(wb.createCellStyle(), fontData, 3);
-            CellStyle ssfcStyle = getDecimalStyle(wb.createCellStyle(), fontData, 2);
+            CellStyle integerStyle = getIntegerStyle(wb.createCellStyle(), wb.createDataFormat(), fontData);
+            CellStyle decimalStyle = getDecimalStyle(wb.createCellStyle(), wb.createDataFormat(), fontData, 3);
+            CellStyle ssfcStyle = getDecimalStyle(wb.createCellStyle(), wb.createDataFormat(), fontData, 2);
 
             //set title
             Row titleRow = sheet.createRow(0);
@@ -672,7 +672,7 @@ public class ReportServiceImpl implements ReportService {
                 SsfcsDTO dto = ssfcDTOs.get(i);
                 Row firstRow = sheet.getRow(ssfcUnits.length * i + 2);
 
-                Cell cell = firstRow.createCell(0, CellType.NUMERIC);
+                Cell cell = firstRow.createCell(0);
                 cell.setCellValue(i + 1);
                 cell.setCellStyle(integerStyle);
 
@@ -680,7 +680,7 @@ public class ReportServiceImpl implements ReportService {
                 createCell(firstRow, 2, dto.getFuelType(), stringStyle);
                 createCell(firstRow, 5, dto.getSrcId().toString(), stringStyle);
 
-                cell = firstRow.createCell(6, CellType.NUMERIC);
+                cell = firstRow.createCell(6);
                 cell.setCellValue(FUEL_TYPE.getByName(dto.getFuelType()).ordinal());
                 cell.setCellStyle(integerStyle);
 
@@ -691,34 +691,34 @@ public class ReportServiceImpl implements ReportService {
                     SsfcShortDTO ssfcMonth = dto.getSsfcs().get(k - 7);
 
                     Row row = sheet.getRow(ssfcRows.length * i + 2);
-                    Cell cellSsfc = row.createCell(k, CellType.NUMERIC);
+                    Cell cellSsfc = row.createCell(k);
                     cellSsfc.setCellValue(ssfcMonth.getGeneration());
                     cellSsfc.setCellStyle(decimalStyle);
 
                     row = sheet.getRow(ssfcRows.length * i + 2 + 1);
-                    cellSsfc = row.createCell(k, CellType.NUMERIC);
+                    cellSsfc = row.createCell(k);
                     cellSsfc.setCellValue(ssfcMonth.getOwnNeeds());
                     cellSsfc.setCellStyle(decimalStyle);
 
                     row = sheet.getRow(ssfcRows.length * i + 2 + 2);
-                    cellSsfc = row.createCell(k, CellType.NUMERIC);
+                    cellSsfc = row.createCell(k);
                     cellSsfc.setCellValue(ssfcMonth.getPercentOwnNeeds());
                     cellSsfc.setCellStyle(decimalStyle);
 
                     row = sheet.getRow(ssfcRows.length * i + 2 + 3);
-                    cellSsfc = row.createCell(k, CellType.NUMERIC);
+                    cellSsfc = row.createCell(k);
                     cellSsfc.setCellValue(ssfcMonth.getProduction());
                     cellSsfc.setCellStyle(decimalStyle);
 
                     row = sheet.getRow(ssfcRows.length * i + 2 + 4);
-                    cellSsfc = row.createCell(k, CellType.NUMERIC);
+                    cellSsfc = row.createCell(k);
                     cellSsfc.setCellValue(ssfcMonth.getSsfcg());
-                    cellSsfc.setCellStyle(decimalStyle);
+                    cellSsfc.setCellStyle(ssfcStyle);
 
                     row = sheet.getRow(ssfcRows.length * i + 2 + 5);
-                    cellSsfc = row.createCell(k, CellType.NUMERIC);
+                    cellSsfc = row.createCell(k);
                     cellSsfc.setCellValue(ssfcMonth.getSsfc());
-                    cellSsfc.setCellStyle(decimalStyle);
+                    cellSsfc.setCellStyle(ssfcStyle);
                 }
 
                 //set solid borders
@@ -759,18 +759,16 @@ public class ReportServiceImpl implements ReportService {
         throw new NotImplementedException("Not implemented yet.");
     }
 
-    private CellStyle getIntegerStyle(CellStyle cellStyle, Font font) {
+    private CellStyle getIntegerStyle(CellStyle cellStyle, DataFormat dataFormat, Font font) {
         getBaseStyle(cellStyle, font)
-                .setDataFormat((short) BuiltinFormats.getBuiltinFormat("# ##0"));
+                .setDataFormat(dataFormat.getFormat("# ##0"));
 
         return cellStyle;
     }
 
-    private CellStyle getDecimalStyle(CellStyle cellStyle, Font font, Integer digits) {
+    private CellStyle getDecimalStyle(CellStyle cellStyle, DataFormat dataFormat, Font font, Integer digits) {
         getBaseStyle(cellStyle, font)
-                .setDataFormat((short) BuiltinFormats
-                        .getBuiltinFormat(String.format("# ##0.%s", Strings.repeat("0", digits)))
-                );
+                .setDataFormat(dataFormat.getFormat(String.format("# ##0.%s", Strings.repeat("0", digits))));
 
         return cellStyle;
     }
