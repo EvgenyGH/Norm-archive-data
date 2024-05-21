@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
+import ru.bk.j3000.normarchivedata.exception.ReportIOException;
 import ru.bk.j3000.normarchivedata.model.*;
 import ru.bk.j3000.normarchivedata.model.dto.SsfcShortDTO;
 import ru.bk.j3000.normarchivedata.model.dto.SsfcsDTO;
@@ -189,7 +190,8 @@ public class ReportServiceImpl implements ReportService {
             resource = new ByteArrayResource(out.toByteArray());
 
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new ReportIOException("Ошибка формирования отчета",
+                    "Источники в формате шаблона");
         }
 
         return resource;
@@ -243,7 +245,8 @@ public class ReportServiceImpl implements ReportService {
 
         } catch (
                 IOException e) {
-            throw new RuntimeException(e);
+            throw new ReportIOException("Ошибка формирования отчета",
+                    "Источники в стандартном формате");
         }
 
         log.info("Sources report type standard created.");
@@ -299,7 +302,8 @@ public class ReportServiceImpl implements ReportService {
             resource = new ByteArrayResource(out.toByteArray());
 
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new ReportIOException("Ошибка формирования отчета",
+                    "Филиал в формате шаблона");
         }
 
         return resource;
@@ -350,7 +354,8 @@ public class ReportServiceImpl implements ReportService {
             resource = new ByteArrayResource(out.toByteArray());
 
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new ReportIOException("Ошибка формирования отчета",
+                    "Филиал в стандартном формате");
         }
 
         return resource;
@@ -404,7 +409,8 @@ public class ReportServiceImpl implements ReportService {
             resource = new ByteArrayResource(out.toByteArray());
 
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new ReportIOException("Ошибка формирования отчета",
+                    "Тарифная зона в формате шаблона");
         }
 
         return resource;
@@ -455,7 +461,8 @@ public class ReportServiceImpl implements ReportService {
             resource = new ByteArrayResource(out.toByteArray());
 
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new ReportIOException("Ошибка формирования отчета",
+                    "Тарифная зона в стандартном формате");
         }
 
         return resource;
@@ -524,7 +531,8 @@ public class ReportServiceImpl implements ReportService {
             resource = new ByteArrayResource(out.toByteArray());
 
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new ReportIOException("Ошибка формирования отчета",
+                    "Свойства источника в формате шаблона");
         }
 
         return resource;
@@ -587,7 +595,8 @@ public class ReportServiceImpl implements ReportService {
             resource = new ByteArrayResource(out.toByteArray());
 
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new ReportIOException("Ошибка формирования отчета",
+                    "Свойства источника в стандартном формате");
         }
 
         return resource;
@@ -731,8 +740,8 @@ public class ReportServiceImpl implements ReportService {
 
         } catch (
                 IOException e) {
-            throw new RuntimeException(e);
-            // todo detalize all IO exceptions in reports
+            throw new ReportIOException("Ошибка формирования отчета",
+                    "НУР в формате шаблона");
         }
 
         return resource;

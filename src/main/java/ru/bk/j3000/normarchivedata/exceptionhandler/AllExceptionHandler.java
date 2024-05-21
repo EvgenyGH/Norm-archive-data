@@ -10,6 +10,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import ru.bk.j3000.normarchivedata.exception.ReportIOException;
 import ru.bk.j3000.normarchivedata.exception.StandardException;
 import ru.bk.j3000.normarchivedata.service.ModelService;
 
@@ -24,7 +25,7 @@ public class AllExceptionHandler {
     private final ModelService modelService;
 
     @ExceptionHandler({EntityNotFoundException.class})
-    public String EntityNotFoundExceptionHandler(Exception e, Model model, HttpServletRequest request) {
+    public String entityNotFoundExceptionHandler(Exception e, Model model, HttpServletRequest request) {
         model.addAllAttributes(modelService.getErrorAttributes(e,
                 request.getRequestURI(),
                 "Объект не найден (не существует).")
@@ -36,7 +37,7 @@ public class AllExceptionHandler {
     }
 
     @ExceptionHandler({EntityExistsException.class})
-    public String EntityExistsExceptionHandler(Exception e, Model model, HttpServletRequest request) {
+    public String entityExistsExceptionHandler(Exception e, Model model, HttpServletRequest request) {
         model.addAllAttributes(modelService.getErrorAttributes(e,
                 request.getRequestURI(),
                 "Объект уже существует."));
@@ -47,7 +48,7 @@ public class AllExceptionHandler {
     }
 
     @ExceptionHandler({DataIntegrityViolationException.class})
-    public String DataIntegrityViolationExceptionHandler(Exception e, Model model,
+    public String dataIntegrityViolationExceptionHandler(Exception e, Model model,
                                                          HttpServletRequest request) {
         model.addAllAttributes(modelService.getErrorAttributes(e,
                 request.getRequestURI(),
@@ -59,7 +60,7 @@ public class AllExceptionHandler {
     }
 
     @ExceptionHandler({PersistenceException.class})
-    public String PersistenceExceptionHandler(Exception e, Model model,
+    public String persistenceExceptionHandler(Exception e, Model model,
                                               HttpServletRequest request) {
         model.addAllAttributes(modelService.getErrorAttributes(e,
                 request.getRequestURI(),
@@ -72,8 +73,20 @@ public class AllExceptionHandler {
         return "errorview";
     }
 
+    @ExceptionHandler({ReportIOException.class})
+    public String reportIOExceptionHandler(Exception e, Model model,
+                                           HttpServletRequest request) {
+        model.addAllAttributes(modelService.getErrorAttributes(e,
+                request.getRequestURI(),
+                "Ошибка формирования отчета."));
+
+        log.warn(e.getMessage());
+
+        return "errorview";
+    }
+
     @ExceptionHandler({StandardException.class})
-    public String StandardExceptionHandler(Exception e, Model model,
+    public String standardExceptionHandler(Exception e, Model model,
                                            HttpServletRequest request) {
         model.addAllAttributes(modelService.getErrorAttributes(e,
                 request.getRequestURI(),
@@ -85,7 +98,7 @@ public class AllExceptionHandler {
     }
 
     @ExceptionHandler({IOException.class})
-    public String IOExceptionHandler(Exception e, Model model,
+    public String iOExceptionHandler(Exception e, Model model,
                                      HttpServletRequest request) {
         model.addAllAttributes(modelService.getErrorAttributes(e,
                 request.getRequestURI(),
