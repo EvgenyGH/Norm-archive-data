@@ -3,7 +3,6 @@ package ru.bk.j3000.normarchivedata.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
-import org.apache.poi.ss.formula.eval.NotImplementedException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.RegionUtil;
@@ -35,19 +34,19 @@ import static org.apache.poi.ss.util.CellUtil.createCell;
 @Slf4j
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class ReportServiceImpl implements ReportService {
-    private final String[] allSrcColumns = {"№ п/п", "Тип источника", "Источник", "Адрес источника"};
     private final String[] srcTemplateColumns = {"UUID", "Источник", "Адрес источника",
             "Тип источника", "Комментарии"};
+    private final String[] allSrcColumns = {"№ п/п", "Тип источника", "Источник", "Адрес источника"};
 
-    private final String[] allBranchesColumns = {"№ п./п.", "Название филиала"};
     private final String[] brTemplateColumns = {"ID", "Название филиала", "Комментарии"};
+    private final String[] allBranchesColumns = {"№ п./п.", "Название филиала"};
 
-    private final String[] allTariffZonesColumns = {"№ п./п.", "Название тарифной зоны"};
     private final String[] tzTemplateColumns = {"ID", "Название тарифной зоны", "Комментарии"};
+    private final String[] allTariffZonesColumns = {"№ п./п.", "Название тарифной зоны"};
 
-    private final String[] allSrcPropColumns = {"№ п./п.", "Источник", "Тарифная зона", "Филиал"};
     private final String[] srcPropTemplateColumns = {"ID источника", "ID Филиала",
             "ID тарифной зоны", "Комментарии"};
+    private final String[] allSrcPropColumns = {"№ п./п.", "Источник", "Тарифная зона", "Филиал"};
 
     private final String[] ssfcsTemplateColumns = {"№ п/п",
             "Наименование источника тепловой энергии",
@@ -57,6 +56,13 @@ public class ReportServiceImpl implements ReportService {
             "Март", "Апрель", "Май", "Июнь", "Июль",
             "Август", "Сентябрь", "Октябрь", "Ноябрь",
             "Декабрь", "2024 год", "Комментарии"};
+    private final String[] allSsfcsColumns = {"№ п/п",
+            "Наименование источника тепловой энергии",
+            "Вид топлива", "Наименование показателя",
+            "Единицы измерения", "2024 год",
+            "Январь", "Февраль", "Март", "Апрель",
+            "Май", "Июнь", "Июль", "Август", "Сентябрь",
+            "Октябрь", "Ноябрь", "Декабрь"};
 
     private final String[] ssfcRows = {"Выработка тепловой энергии",
             "Тепловая энергия на собственные нужды",
@@ -65,7 +71,7 @@ public class ReportServiceImpl implements ReportService {
             "УРУТ на выработу тепловой энергии",
             "УРУТ на отпуск тепловой энергии"};
 
-    private final String[] ssfcUnits = {"Гкал", "Гкал", "%", "тыс. Гкал", "кг у.т./Гкал", "кг у.т./Гкал"};
+    private final String[] ssfcUnits = {"тыс. Гкал", "тыс. Гкал", "%", "тыс. Гкал", "кг у.т./Гкал", "кг у.т./Гкал"};
 
     // services
     private final SourceService sourceService;
@@ -747,6 +753,151 @@ public class ReportServiceImpl implements ReportService {
         return resource;
     }
 
+    @Override
+    public Resource getAllSsfcReport(Integer year, String selection, List<UUID> srcIds) {
+        Resource resource;
+
+        List<StandardSFC> ssfcs = switch (selection) {
+            case "all" -> ssfcService.findAllSsfcByYear(year);
+            case "particular" -> ssfcService.findAllSsfcByYearAndSrcIds(year, srcIds);
+            default -> throw new InvalidParameterException(String
+                    .format("Invalid ssfc report type <%s>", selection));
+        };
+
+        List<SsfcsDTO> ssfcDTOs = ssfcs.stream()
+                .collect(Collectors.groupingBy(ssfc ->
+                        new SrcIdAndFuelType(ssfc.getProperties().getId().getSource().getId(),
+                                ssfc.getFuelType())))
+                .values()
+                .stream()
+                .sorted(Comparator.comparing(e -> e.getFirst()
+                        .getFuelType().ordinal()))
+                .sorted(Comparator.comparing(e -> e.getFirst()
+                        .getProperties().getId().getSource().getName()))
+                .sorted(Comparator.comparingInt(e -> e.getFirst()
+                        .getProperties().getId().getSource().getSourceType().ordinal()))
+                .sorted(Comparator.comparing(e -> e.getFirst().getProperties().getBranch().getId()))
+                .sorted(Comparator.comparing(e -> e.getFirst().getProperties().getTariffZone().getId()))
+                .map(SsfcsDTO::new)
+                .toList();
+
+
+        try (Workbook wb = new XSSFWorkbook()) {
+            Sheet sheet = wb.createSheet("Ssfcs");
+
+            Font fontHeader = wb.createFont();
+            Font fontData = wb.createFont();
+            Font fontTitle = wb.createFont();
+
+            CellStyle titleStyle = getTitleStyle(wb.createCellStyle(), fontTitle);
+            CellStyle headerStylePrimary = getPrimaryHeaderStyle(wb.createCellStyle(), fontHeader);
+            CellStyle headerStyleSecondary = getSecondaryHeaderStyle(wb.createCellStyle(), fontHeader);
+            CellStyle stringStyle = getStringStyle(wb.createCellStyle(), fontData);
+            CellStyle integerStyle = getIntegerStyle(wb.createCellStyle(), wb.createDataFormat(), fontData);
+            CellStyle threeDigitsStyle = getDecimalStyle(wb.createCellStyle(),
+                    wb.createDataFormat(), fontData, 3);
+            CellStyle twoDigitsStyle = getDecimalStyle(wb.createCellStyle(),
+                    wb.createDataFormat(), fontData, 2);
+
+            // set title
+            Row titleRow = sheet.createRow(0);
+            createCell(titleRow, 0, String.format("%s год", year), titleStyle);
+
+            // set headers
+            Row headerRow = sheet.createRow(1);
+
+            IntStream.rangeClosed(0, ssfcsTemplateColumns.length - 1)
+                    .forEach(i -> createCell(headerRow, i, ssfcsTemplateColumns[i],
+                            i <= 4 || i > 18 ? headerStyleSecondary : headerStylePrimary));
+
+            // set data and merge cells
+            for (int i = 0; i < ssfcDTOs.size(); i++) {
+                SsfcsDTO srcSsfcsDTO = ssfcDTOs.get(i);
+
+                IntStream.rangeClosed(ssfcRows.length * i + 2, ssfcRows.length * (i + 1) + 1)
+                        .forEach(sheet::createRow);
+
+                // merge cells
+                for (int col : new int[]{0, 1, 2, 5, 6, 20}) {
+                    var range = new CellRangeAddress(ssfcRows.length * i + 2,
+                            ssfcRows.length * (i + 1) + 1, col, col);
+                    sheet.addMergedRegion(range);
+                    RegionUtil.setBorderLeft(BorderStyle.THIN, range, sheet);
+                    RegionUtil.setBorderRight(BorderStyle.THIN, range, sheet);
+                }
+
+                // set data to merged cells
+                Row currentRow = sheet.getRow(ssfcUnits.length * i + 2);
+                Cell cell = currentRow.createCell(0);
+                cell.setCellValue(i + 1);
+                cell.setCellStyle(integerStyle);
+
+                createCell(currentRow, 1, srcSsfcsDTO.getSrcName(), stringStyle);
+                createCell(currentRow, 2, srcSsfcsDTO.getFuelType(), stringStyle);
+                createCell(currentRow, 5, srcSsfcsDTO.getSrcId().toString(), stringStyle);
+
+                cell = currentRow.createCell(6);
+                cell.setCellValue(FUEL_TYPE.getByName(srcSsfcsDTO.getFuelType()).ordinal());
+                cell.setCellStyle(integerStyle);
+
+                createCell(currentRow, 20, "-", stringStyle);
+
+                // set ssfc data row names and units
+                for (int k = 0; k < ssfcRows.length; k++) {
+                    createCell(sheet.getRow(ssfcRows.length * i + 2 + k), 3, ssfcRows[k], stringStyle);
+                    createCell(sheet.getRow(ssfcUnits.length * i + 2 + k), 4, ssfcUnits[k], stringStyle);
+                }
+
+                // set ssfc data
+                for (int k = 7; k < 19; k++) {
+                    SsfcShortDTO ssfcMonth = srcSsfcsDTO.getSsfcs().get(k - 7);
+                    setSsfcMonthDataCells(sheet, i, k,
+                            ssfcMonth.getGeneration(),
+                            ssfcMonth.getOwnNeeds(),
+                            ssfcMonth.getPercentOwnNeeds(),
+                            ssfcMonth.getProduction(),
+                            ssfcMonth.getSsfcg(),
+                            ssfcMonth.getSsfc(),
+                            threeDigitsStyle,
+                            twoDigitsStyle);
+                }
+
+                // set source summary data
+                setSsfcMonthDataCells(sheet, i, 19,
+                        srcSsfcsDTO.avgGeneration(),
+                        srcSsfcsDTO.avgOwnNeeds(),
+                        srcSsfcsDTO.avgPercentOwnNeeds(),
+                        srcSsfcsDTO.avgProduction(),
+                        srcSsfcsDTO.avgSsfcg(),
+                        srcSsfcsDTO.avgSsfc(),
+                        threeDigitsStyle, twoDigitsStyle);
+
+                //set solid borders
+                var range = new CellRangeAddress(ssfcRows.length * i + 2,
+                        ssfcRows.length * (i + 1) + 1,
+                        0, ssfcsTemplateColumns.length - 1);
+                RegionUtil.setBorderBottom(BorderStyle.DOUBLE, range, sheet);
+            }
+
+            // autosize columns
+            IntStream.rangeClosed(0, ssfcsTemplateColumns.length - 1)
+                    .forEach(sheet::autoSizeColumn);
+
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+            wb.write(out);
+
+            resource = new ByteArrayResource(out.toByteArray());
+
+        } catch (
+                IOException e) {
+            throw new ReportIOException("Ошибка формирования отчета",
+                    "НУР в формате шаблона");
+        }
+
+        return resource;
+    }
+
     private void setSsfcMonthDataCells(Sheet sheet, int elementNumber, int columnNumber,
                                        Double generation, Double ownNeeds, Double percentOwnNeeds,
                                        Double production, Double ssfcg, Double ssfc,
@@ -783,18 +934,6 @@ public class ReportServiceImpl implements ReportService {
         cellSsfc.setCellStyle(twoDigitsStyle);
 
         log.debug("Ssfc one month data for one source set to report file");
-    }
-
-    @Override
-    public Resource getAllSsfcReport(Integer year, String selection, List<UUID> srcIds) {
-        List<StandardSFC> ssfcs = switch (selection) {
-            case "all" -> ssfcService.findAllSsfcByYear(year);
-            case "particular" -> ssfcService.findAllSsfcByYearAndSrcIds(year, srcIds);
-            default -> throw new InvalidParameterException(String
-                    .format("Invalid ssfc report type <%s>", selection));
-        };
-
-        throw new NotImplementedException("Not implemented yet.");
     }
 
     private CellStyle getIntegerStyle(CellStyle cellStyle, DataFormat dataFormat, Font font) {
