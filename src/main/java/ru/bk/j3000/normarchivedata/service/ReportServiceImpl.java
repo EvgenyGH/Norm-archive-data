@@ -559,8 +559,8 @@ public class ReportServiceImpl implements ReportService {
             // set headers
             Row headerRow = sheet.createRow(1);
 
-            IntStream.rangeClosed(0, ssfcsTemplateColumns.length - 1)
-                    .forEach(i -> createCell(headerRow, i, ssfcsTemplateColumns[i], headerStylePrimary));
+            IntStream.rangeClosed(0, allSrcPropColumns.length - 1)
+                    .forEach(i -> createCell(headerRow, i, allSrcPropColumns[i], headerStylePrimary));
 
             // set data
             for (int i = 0; i < srcProps.size(); i++) {
@@ -634,8 +634,10 @@ public class ReportServiceImpl implements ReportService {
             CellStyle headerStyleSecondary = getSecondaryHeaderStyle(wb.createCellStyle(), fontHeader);
             CellStyle stringStyle = getStringStyle(wb.createCellStyle(), fontData);
             CellStyle integerStyle = getIntegerStyle(wb.createCellStyle(), wb.createDataFormat(), fontData);
-            CellStyle decimalStyle = getDecimalStyle(wb.createCellStyle(), wb.createDataFormat(), fontData, 3);
-            CellStyle ssfcStyle = getDecimalStyle(wb.createCellStyle(), wb.createDataFormat(), fontData, 2);
+            CellStyle threeDigitsStyle = getDecimalStyle(wb.createCellStyle(),
+                    wb.createDataFormat(), fontData, 3);
+            CellStyle twoDigitsStyle = getDecimalStyle(wb.createCellStyle(),
+                    wb.createDataFormat(), fontData, 2);
 
             //set title
             Row titleRow = sheet.createRow(0);
@@ -646,7 +648,7 @@ public class ReportServiceImpl implements ReportService {
 
             IntStream.rangeClosed(0, ssfcsTemplateColumns.length - 1)
                     .forEach(i -> createCell(headerRow, i, ssfcsTemplateColumns[i],
-                            i <= 4 ? headerStyleSecondary : headerStylePrimary));
+                            i <= 4 || i > 18 ? headerStyleSecondary : headerStylePrimary));
 
             // set data
             for (int i = 0; i < ssfcDTOs.size(); i++) {
@@ -693,33 +695,69 @@ public class ReportServiceImpl implements ReportService {
                     Row row = sheet.getRow(ssfcRows.length * i + 2);
                     Cell cellSsfc = row.createCell(k);
                     cellSsfc.setCellValue(ssfcMonth.getGeneration());
-                    cellSsfc.setCellStyle(decimalStyle);
+                    cellSsfc.setCellStyle(threeDigitsStyle);
 
                     row = sheet.getRow(ssfcRows.length * i + 2 + 1);
                     cellSsfc = row.createCell(k);
                     cellSsfc.setCellValue(ssfcMonth.getOwnNeeds());
-                    cellSsfc.setCellStyle(decimalStyle);
+                    cellSsfc.setCellStyle(threeDigitsStyle);
 
                     row = sheet.getRow(ssfcRows.length * i + 2 + 2);
                     cellSsfc = row.createCell(k);
                     cellSsfc.setCellValue(ssfcMonth.getPercentOwnNeeds());
-                    cellSsfc.setCellStyle(decimalStyle);
+                    cellSsfc.setCellStyle(twoDigitsStyle);
 
                     row = sheet.getRow(ssfcRows.length * i + 2 + 3);
                     cellSsfc = row.createCell(k);
                     cellSsfc.setCellValue(ssfcMonth.getProduction());
-                    cellSsfc.setCellStyle(decimalStyle);
+                    cellSsfc.setCellStyle(threeDigitsStyle);
 
                     row = sheet.getRow(ssfcRows.length * i + 2 + 4);
                     cellSsfc = row.createCell(k);
                     cellSsfc.setCellValue(ssfcMonth.getSsfcg());
-                    cellSsfc.setCellStyle(ssfcStyle);
+                    cellSsfc.setCellStyle(twoDigitsStyle);
 
                     row = sheet.getRow(ssfcRows.length * i + 2 + 5);
                     cellSsfc = row.createCell(k);
                     cellSsfc.setCellValue(ssfcMonth.getSsfc());
-                    cellSsfc.setCellStyle(ssfcStyle);
+                    cellSsfc.setCellStyle(twoDigitsStyle);
+
+                    if (k == 18) {
+                        k = 19;
+                        SsfcsDTO ssfcsDto = ssfcDTOs.get(i);
+
+                        row = sheet.getRow(ssfcRows.length * i + 2);
+                        cellSsfc = row.createCell(k);
+                        cellSsfc.setCellValue(ssfcsDto.avgGeneration());
+                        cellSsfc.setCellStyle(threeDigitsStyle);
+
+                        row = sheet.getRow(ssfcRows.length * i + 2 + 1);
+                        cellSsfc = row.createCell(k);
+                        cellSsfc.setCellValue(ssfcsDto.avgOwnNeeds());
+                        cellSsfc.setCellStyle(threeDigitsStyle);
+
+                        row = sheet.getRow(ssfcRows.length * i + 2 + 2);
+                        cellSsfc = row.createCell(k);
+                        cellSsfc.setCellValue(ssfcsDto.avgPercentOwnNeeds());
+                        cellSsfc.setCellStyle(twoDigitsStyle);
+
+                        row = sheet.getRow(ssfcRows.length * i + 2 + 3);
+                        cellSsfc = row.createCell(k);
+                        cellSsfc.setCellValue(ssfcsDto.avgProduction());
+                        cellSsfc.setCellStyle(threeDigitsStyle);
+
+                        row = sheet.getRow(ssfcRows.length * i + 2 + 4);
+                        cellSsfc = row.createCell(k);
+                        cellSsfc.setCellValue(ssfcsDto.avgSsfcg());
+                        cellSsfc.setCellStyle(twoDigitsStyle);
+
+                        row = sheet.getRow(ssfcRows.length * i + 2 + 5);
+                        cellSsfc = row.createCell(k);
+                        cellSsfc.setCellValue(ssfcsDto.avgSsfc());
+                        cellSsfc.setCellStyle(twoDigitsStyle);
+                    }
                 }
+
 
                 //set solid borders
                 var range = new CellRangeAddress(ssfcRows.length * i + 2,
