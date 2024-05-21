@@ -639,7 +639,7 @@ public class ReportServiceImpl implements ReportService {
             CellStyle twoDigitsStyle = getDecimalStyle(wb.createCellStyle(),
                     wb.createDataFormat(), fontData, 2);
 
-            //set title
+            // set title
             Row titleRow = sheet.createRow(0);
             createCell(titleRow, 0, String.format("%s год", year), titleStyle);
 
@@ -650,8 +650,10 @@ public class ReportServiceImpl implements ReportService {
                     .forEach(i -> createCell(headerRow, i, ssfcsTemplateColumns[i],
                             i <= 4 || i > 18 ? headerStyleSecondary : headerStylePrimary));
 
-            // set data
+            // set data and merge cells
             for (int i = 0; i < ssfcDTOs.size(); i++) {
+                SsfcsDTO srcSsfcsDTO = ssfcDTOs.get(i);
+
                 IntStream.rangeClosed(ssfcRows.length * i + 2, ssfcRows.length * (i + 1) + 1)
                         .forEach(sheet::createRow);
 
@@ -664,100 +666,51 @@ public class ReportServiceImpl implements ReportService {
                     RegionUtil.setBorderRight(BorderStyle.THIN, range, sheet);
                 }
 
-                // set data row names and units
+                // set data to merged cells
+                Row currentRow = sheet.getRow(ssfcUnits.length * i + 2);
+                Cell cell = currentRow.createCell(0);
+                cell.setCellValue(i + 1);
+                cell.setCellStyle(integerStyle);
+
+                createCell(currentRow, 1, srcSsfcsDTO.getSrcName(), stringStyle);
+                createCell(currentRow, 2, srcSsfcsDTO.getFuelType(), stringStyle);
+                createCell(currentRow, 5, srcSsfcsDTO.getSrcId().toString(), stringStyle);
+
+                cell = currentRow.createCell(6);
+                cell.setCellValue(FUEL_TYPE.getByName(srcSsfcsDTO.getFuelType()).ordinal());
+                cell.setCellStyle(integerStyle);
+
+                createCell(currentRow, 20, "-", stringStyle);
+
+                // set ssfc data row names and units
                 for (int k = 0; k < ssfcRows.length; k++) {
                     createCell(sheet.getRow(ssfcRows.length * i + 2 + k), 3, ssfcRows[k], stringStyle);
                     createCell(sheet.getRow(ssfcUnits.length * i + 2 + k), 4, ssfcUnits[k], stringStyle);
                 }
 
-                // set data to merged cells
-                SsfcsDTO dto = ssfcDTOs.get(i);
-                Row firstRow = sheet.getRow(ssfcUnits.length * i + 2);
-
-                Cell cell = firstRow.createCell(0);
-                cell.setCellValue(i + 1);
-                cell.setCellStyle(integerStyle);
-
-                createCell(firstRow, 1, dto.getSrcName(), stringStyle);
-                createCell(firstRow, 2, dto.getFuelType(), stringStyle);
-                createCell(firstRow, 5, dto.getSrcId().toString(), stringStyle);
-
-                cell = firstRow.createCell(6);
-                cell.setCellValue(FUEL_TYPE.getByName(dto.getFuelType()).ordinal());
-                cell.setCellStyle(integerStyle);
-
-                createCell(firstRow, 20, "-", stringStyle);
-
                 // set ssfc data
                 for (int k = 7; k < 19; k++) {
-                    SsfcShortDTO ssfcMonth = dto.getSsfcs().get(k - 7);
-
-                    Row row = sheet.getRow(ssfcRows.length * i + 2);
-                    Cell cellSsfc = row.createCell(k);
-                    cellSsfc.setCellValue(ssfcMonth.getGeneration());
-                    cellSsfc.setCellStyle(threeDigitsStyle);
-
-                    row = sheet.getRow(ssfcRows.length * i + 2 + 1);
-                    cellSsfc = row.createCell(k);
-                    cellSsfc.setCellValue(ssfcMonth.getOwnNeeds());
-                    cellSsfc.setCellStyle(threeDigitsStyle);
-
-                    row = sheet.getRow(ssfcRows.length * i + 2 + 2);
-                    cellSsfc = row.createCell(k);
-                    cellSsfc.setCellValue(ssfcMonth.getPercentOwnNeeds());
-                    cellSsfc.setCellStyle(twoDigitsStyle);
-
-                    row = sheet.getRow(ssfcRows.length * i + 2 + 3);
-                    cellSsfc = row.createCell(k);
-                    cellSsfc.setCellValue(ssfcMonth.getProduction());
-                    cellSsfc.setCellStyle(threeDigitsStyle);
-
-                    row = sheet.getRow(ssfcRows.length * i + 2 + 4);
-                    cellSsfc = row.createCell(k);
-                    cellSsfc.setCellValue(ssfcMonth.getSsfcg());
-                    cellSsfc.setCellStyle(twoDigitsStyle);
-
-                    row = sheet.getRow(ssfcRows.length * i + 2 + 5);
-                    cellSsfc = row.createCell(k);
-                    cellSsfc.setCellValue(ssfcMonth.getSsfc());
-                    cellSsfc.setCellStyle(twoDigitsStyle);
-
-                    if (k == 18) {
-                        k = 19;
-                        SsfcsDTO ssfcsDto = ssfcDTOs.get(i);
-
-                        row = sheet.getRow(ssfcRows.length * i + 2);
-                        cellSsfc = row.createCell(k);
-                        cellSsfc.setCellValue(ssfcsDto.avgGeneration());
-                        cellSsfc.setCellStyle(threeDigitsStyle);
-
-                        row = sheet.getRow(ssfcRows.length * i + 2 + 1);
-                        cellSsfc = row.createCell(k);
-                        cellSsfc.setCellValue(ssfcsDto.avgOwnNeeds());
-                        cellSsfc.setCellStyle(threeDigitsStyle);
-
-                        row = sheet.getRow(ssfcRows.length * i + 2 + 2);
-                        cellSsfc = row.createCell(k);
-                        cellSsfc.setCellValue(ssfcsDto.avgPercentOwnNeeds());
-                        cellSsfc.setCellStyle(twoDigitsStyle);
-
-                        row = sheet.getRow(ssfcRows.length * i + 2 + 3);
-                        cellSsfc = row.createCell(k);
-                        cellSsfc.setCellValue(ssfcsDto.avgProduction());
-                        cellSsfc.setCellStyle(threeDigitsStyle);
-
-                        row = sheet.getRow(ssfcRows.length * i + 2 + 4);
-                        cellSsfc = row.createCell(k);
-                        cellSsfc.setCellValue(ssfcsDto.avgSsfcg());
-                        cellSsfc.setCellStyle(twoDigitsStyle);
-
-                        row = sheet.getRow(ssfcRows.length * i + 2 + 5);
-                        cellSsfc = row.createCell(k);
-                        cellSsfc.setCellValue(ssfcsDto.avgSsfc());
-                        cellSsfc.setCellStyle(twoDigitsStyle);
-                    }
+                    SsfcShortDTO ssfcMonth = srcSsfcsDTO.getSsfcs().get(k - 7);
+                    setSsfcMonthDataCells(sheet, i, k,
+                            ssfcMonth.getGeneration(),
+                            ssfcMonth.getOwnNeeds(),
+                            ssfcMonth.getPercentOwnNeeds(),
+                            ssfcMonth.getProduction(),
+                            ssfcMonth.getSsfcg(),
+                            ssfcMonth.getSsfc(),
+                            threeDigitsStyle,
+                            twoDigitsStyle);
                 }
 
+                // set source summary data
+                setSsfcMonthDataCells(sheet, i, 19,
+                        srcSsfcsDTO.avgGeneration(),
+                        srcSsfcsDTO.avgOwnNeeds(),
+                        srcSsfcsDTO.avgPercentOwnNeeds(),
+                        srcSsfcsDTO.avgProduction(),
+                        srcSsfcsDTO.avgSsfcg(),
+                        srcSsfcsDTO.avgSsfc(),
+                        threeDigitsStyle, twoDigitsStyle);
 
                 //set solid borders
                 var range = new CellRangeAddress(ssfcRows.length * i + 2,
@@ -765,7 +718,6 @@ public class ReportServiceImpl implements ReportService {
                         0, ssfcsTemplateColumns.length - 1);
                 RegionUtil.setBorderBottom(BorderStyle.DOUBLE, range, sheet);
             }
-
 
             // autosize columns
             IntStream.rangeClosed(0, ssfcsTemplateColumns.length - 1)
@@ -777,12 +729,51 @@ public class ReportServiceImpl implements ReportService {
 
             resource = new ByteArrayResource(out.toByteArray());
 
-        } catch (IOException e) {
+        } catch (
+                IOException e) {
             throw new RuntimeException(e);
             // todo detalize all IO exceptions in reports
         }
 
         return resource;
+    }
+
+    private void setSsfcMonthDataCells(Sheet sheet, int elementNumber, int columnNumber,
+                                       Double generation, Double ownNeeds, Double percentOwnNeeds,
+                                       Double production, Double ssfcg, Double ssfc,
+                                       CellStyle threeDigitsStyle, CellStyle twoDigitsStyle) {
+
+        Row row = sheet.getRow(ssfcRows.length * elementNumber + 2);
+        Cell cellSsfc = row.createCell(columnNumber);
+        cellSsfc.setCellValue(generation);
+        cellSsfc.setCellStyle(threeDigitsStyle);
+
+        row = sheet.getRow(ssfcRows.length * elementNumber + 2 + 1);
+        cellSsfc = row.createCell(columnNumber);
+        cellSsfc.setCellValue(ownNeeds);
+        cellSsfc.setCellStyle(threeDigitsStyle);
+
+        row = sheet.getRow(ssfcRows.length * elementNumber + 2 + 2);
+        cellSsfc = row.createCell(columnNumber);
+        cellSsfc.setCellValue(percentOwnNeeds);
+        cellSsfc.setCellStyle(twoDigitsStyle);
+
+        row = sheet.getRow(ssfcRows.length * elementNumber + 2 + 3);
+        cellSsfc = row.createCell(columnNumber);
+        cellSsfc.setCellValue(production);
+        cellSsfc.setCellStyle(threeDigitsStyle);
+
+        row = sheet.getRow(ssfcRows.length * elementNumber + 2 + 4);
+        cellSsfc = row.createCell(columnNumber);
+        cellSsfc.setCellValue(ssfcg);
+        cellSsfc.setCellStyle(twoDigitsStyle);
+
+        row = sheet.getRow(ssfcRows.length * elementNumber + 2 + 5);
+        cellSsfc = row.createCell(columnNumber);
+        cellSsfc.setCellValue(ssfc);
+        cellSsfc.setCellStyle(twoDigitsStyle);
+
+        log.debug("Ssfc one month data for one source set to report file");
     }
 
     @Override
