@@ -329,6 +329,7 @@ select:invalid {
     max-height: 8em;
     overflow: scroll;
     border: thin;
+    transition: max-height 1s;
 }
 
 .ssfc-report {
@@ -337,5 +338,5 @@ select:invalid {
 }
 
 .ssfc-report #select-all:checked ~ .select-sources {
-    display: none;
+    max-height: 0;
 }
