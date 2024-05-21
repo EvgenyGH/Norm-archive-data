@@ -755,6 +755,8 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public Resource getAllSsfcReport(Integer year, String selection, List<UUID> srcIds) {
+        //todo set fixed view for excel
+        //todo add branch summary amd tariff zone summary
         Resource resource;
 
         List<StandardSFC> ssfcs = switch (selection) {
@@ -791,7 +793,6 @@ public class ReportServiceImpl implements ReportService {
 
             CellStyle titleStyle = getTitleStyle(wb.createCellStyle(), fontTitle);
             CellStyle headerStylePrimary = getPrimaryHeaderStyle(wb.createCellStyle(), fontHeader);
-            CellStyle headerStyleSecondary = getSecondaryHeaderStyle(wb.createCellStyle(), fontHeader);
             CellStyle stringStyle = getStringStyle(wb.createCellStyle(), fontData);
             CellStyle integerStyle = getIntegerStyle(wb.createCellStyle(), wb.createDataFormat(), fontData);
             CellStyle threeDigitsStyle = getDecimalStyle(wb.createCellStyle(),
@@ -799,18 +800,16 @@ public class ReportServiceImpl implements ReportService {
             CellStyle twoDigitsStyle = getDecimalStyle(wb.createCellStyle(),
                     wb.createDataFormat(), fontData, 2);
 
-            // set title
-            Row titleRow = sheet.createRow(0);
-            createCell(titleRow, 0, String.format("%s год", year), titleStyle);
-
             // set headers
             Row headerRow = sheet.createRow(1);
-
-            IntStream.rangeClosed(0, ssfcsTemplateColumns.length - 1)
-                    .forEach(i -> createCell(headerRow, i, ssfcsTemplateColumns[i],
-                            i <= 4 || i > 18 ? headerStyleSecondary : headerStylePrimary));
+            IntStream.rangeClosed(0, allSsfcsColumns.length - 1)
+                    .forEach(i -> createCell(headerRow, i, allSsfcsColumns[i], headerStylePrimary));
 
             // set data and merge cells
+            SsfcsDTO branch = new SsfcsDTO();
+            SsfcsDTO tariffZone = new SsfcsDTO();
+            int extraRows = 0;
+
             for (int i = 0; i < ssfcDTOs.size(); i++) {
                 SsfcsDTO srcSsfcsDTO = ssfcDTOs.get(i);
 
@@ -818,7 +817,7 @@ public class ReportServiceImpl implements ReportService {
                         .forEach(sheet::createRow);
 
                 // merge cells
-                for (int col : new int[]{0, 1, 2, 5, 6, 20}) {
+                for (int col : new int[]{0, 1, 2}) {
                     var range = new CellRangeAddress(ssfcRows.length * i + 2,
                             ssfcRows.length * (i + 1) + 1, col, col);
                     sheet.addMergedRegion(range);
@@ -834,13 +833,6 @@ public class ReportServiceImpl implements ReportService {
 
                 createCell(currentRow, 1, srcSsfcsDTO.getSrcName(), stringStyle);
                 createCell(currentRow, 2, srcSsfcsDTO.getFuelType(), stringStyle);
-                createCell(currentRow, 5, srcSsfcsDTO.getSrcId().toString(), stringStyle);
-
-                cell = currentRow.createCell(6);
-                cell.setCellValue(FUEL_TYPE.getByName(srcSsfcsDTO.getFuelType()).ordinal());
-                cell.setCellStyle(integerStyle);
-
-                createCell(currentRow, 20, "-", stringStyle);
 
                 // set ssfc data row names and units
                 for (int k = 0; k < ssfcRows.length; k++) {
@@ -848,9 +840,19 @@ public class ReportServiceImpl implements ReportService {
                     createCell(sheet.getRow(ssfcUnits.length * i + 2 + k), 4, ssfcUnits[k], stringStyle);
                 }
 
+                // set source summary data
+                setSsfcMonthDataCells(sheet, i, 5,
+                        srcSsfcsDTO.avgGeneration(),
+                        srcSsfcsDTO.avgOwnNeeds(),
+                        srcSsfcsDTO.avgPercentOwnNeeds(),
+                        srcSsfcsDTO.avgProduction(),
+                        srcSsfcsDTO.avgSsfcg(),
+                        srcSsfcsDTO.avgSsfc(),
+                        threeDigitsStyle, twoDigitsStyle);
+
                 // set ssfc data
-                for (int k = 7; k < 19; k++) {
-                    SsfcShortDTO ssfcMonth = srcSsfcsDTO.getSsfcs().get(k - 7);
+                for (int k = 6; k <= 17; k++) {
+                    SsfcShortDTO ssfcMonth = srcSsfcsDTO.getSsfcs().get(k - 6);
                     setSsfcMonthDataCells(sheet, i, k,
                             ssfcMonth.getGeneration(),
                             ssfcMonth.getOwnNeeds(),
@@ -862,26 +864,21 @@ public class ReportServiceImpl implements ReportService {
                             twoDigitsStyle);
                 }
 
-                // set source summary data
-                setSsfcMonthDataCells(sheet, i, 19,
-                        srcSsfcsDTO.avgGeneration(),
-                        srcSsfcsDTO.avgOwnNeeds(),
-                        srcSsfcsDTO.avgPercentOwnNeeds(),
-                        srcSsfcsDTO.avgProduction(),
-                        srcSsfcsDTO.avgSsfcg(),
-                        srcSsfcsDTO.avgSsfc(),
-                        threeDigitsStyle, twoDigitsStyle);
-
                 //set solid borders
                 var range = new CellRangeAddress(ssfcRows.length * i + 2,
                         ssfcRows.length * (i + 1) + 1,
-                        0, ssfcsTemplateColumns.length - 1);
+                        0, allSsfcsColumns.length - 1);
                 RegionUtil.setBorderBottom(BorderStyle.DOUBLE, range, sheet);
             }
 
             // autosize columns
-            IntStream.rangeClosed(0, ssfcsTemplateColumns.length - 1)
+            IntStream.rangeClosed(0, allSsfcsColumns.length - 1)
                     .forEach(sheet::autoSizeColumn);
+
+            // set title (first cell is too wide if before)
+            Row titleRow = sheet.createRow(0);
+            createCell(titleRow, 0, String.format("Нормативные удельные расходы топлива на единицу " +
+                    "отпущенной тепловой энергии источников ПАО \"МОЭК\" на %s год", year), titleStyle);
 
             ByteArrayOutputStream out = new ByteArrayOutputStream();
 
@@ -892,7 +889,7 @@ public class ReportServiceImpl implements ReportService {
         } catch (
                 IOException e) {
             throw new ReportIOException("Ошибка формирования отчета",
-                    "НУР в формате шаблона");
+                    "НУР в стандартном формате");
         }
 
         return resource;
