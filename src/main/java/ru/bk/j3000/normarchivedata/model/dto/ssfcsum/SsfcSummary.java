@@ -321,9 +321,9 @@ public class SsfcSummary {
             avgData[14][12] = avgData[2][12] == 0 ? 0 : avgData[17][12] / avgData[2][12];
 
             // total ssfc
-            avgData[5][12] = avgData[0][12] == 0 ? 0 : avgData[15][12] / avgData[9][12];
-            avgData[5][12] = avgData[1][12] == 0 ? 0 : avgData[16][12] / avgData[10][12];
-            avgData[5][12] = avgData[2][12] == 0 ? 0 : avgData[17][12] / avgData[11][12];
+            avgData[15][12] = avgData[0][12] == 0 ? 0 : avgData[15][12] / avgData[9][12];
+            avgData[16][12] = avgData[1][12] == 0 ? 0 : avgData[16][12] / avgData[10][12];
+            avgData[17][12] = avgData[2][12] == 0 ? 0 : avgData[17][12] / avgData[11][12];
         }
 
         return avgData;
