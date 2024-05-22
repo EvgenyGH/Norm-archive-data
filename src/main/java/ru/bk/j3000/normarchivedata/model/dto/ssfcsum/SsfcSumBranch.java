@@ -1,6 +1,5 @@
 package ru.bk.j3000.normarchivedata.model.dto.ssfcsum;
 
-import lombok.Data;
 import lombok.EqualsAndHashCode;
 import ru.bk.j3000.normarchivedata.model.StandardSFC;
 
@@ -9,7 +8,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Data
 @EqualsAndHashCode(callSuper = true)
 public class SsfcSumBranch extends SsfcSummary {
 
