@@ -816,7 +816,6 @@ public class ReportServiceImpl implements ReportService {
                                         .getId().getSource().getSourceType()))
                                 .sorted(Comparator.comparing(ssfcs -> ssfcs.getFirst().getFuelType()))
                                 .forEach(ssfcs -> {
-                                    //counter.increment(1);
                                     ssfcs = ssfcs.stream()
                                             .sorted(Comparator.comparing(StandardSFC::getMonth))
                                             .sorted(Comparator.comparing(ssfc -> ssfc.getProperties()
@@ -830,43 +829,40 @@ public class ReportServiceImpl implements ReportService {
                                     // merge cells
                                     IntStream.of(0, 1, 2).forEach(col -> {
                                         var range = new CellRangeAddress(counter.getCounter(),
-                                                counter.getCounter() + ssfcRows.length,
+                                                counter.getCounter() + ssfcRows.length - 1,
                                                 col, col);
                                         sheet.addMergedRegion(range);
                                         RegionUtil.setBorderLeft(BorderStyle.THIN, range, sheet);
                                         RegionUtil.setBorderRight(BorderStyle.THIN, range, sheet);
                                     });
 
+                                    // set data to merged cells
+                                    Row currentRow = sheet.getRow(counter.getCounter());
+                                    Cell cell = currentRow.createCell(0);
+                                    //todo finish numbers
+                                    cell.setCellValue(1);
+                                    cell.setCellStyle(integerStyle);
+                                    createCell(currentRow, 1,
+                                            ssfcs.getFirst().getProperties().getId().getSource().getName(),
+                                            stringStyle);
+                                    createCell(currentRow, 2, ssfcs.getFirst().getFuelType().getName(),
+                                            stringStyle);
 
-                                    counter.increment(ssfcRows.length + 1);
+                                    // set ssfc data row names and units
+                                    IntStream.range(0, ssfcRows.length).forEach(k -> {
+                                        createCell(sheet.getRow(counter.getCounter() + k), 3,
+                                                ssfcRows[k], stringStyle);
+                                        createCell(sheet.getRow(counter.getCounter() + k), 4,
+                                                ssfcUnits[k], stringStyle);
+                                    });
+
+
+                                    counter.increment(ssfcRows.length);
                                 });
 
                     }
 
 
-//                            // merge cells
-//                            for (int col : new int[]{0, 1, 2}) {
-//                                var range = new CellRangeAddress(ssfcRows.length * i + 2,
-//                                        ssfcRows.length * (i + 1) + 1, col, col);
-//                                sheet.addMergedRegion(range);
-//                                RegionUtil.setBorderLeft(BorderStyle.THIN, range, sheet);
-//                                RegionUtil.setBorderRight(BorderStyle.THIN, range, sheet);
-//                            }
-//
-//                            // set data to merged cells
-//                            Row currentRow = sheet.getRow(ssfcUnits.length * i + 2);
-//                            Cell cell = currentRow.createCell(0);
-//                            cell.setCellValue(i + 1);
-//                            cell.setCellStyle(integerStyle);
-//
-//                            createCell(currentRow, 1, srcSsfcsDTO.getSrcName(), stringStyle);
-//                            createCell(currentRow, 2, srcSsfcsDTO.getFuelType(), stringStyle);
-//
-//                            // set ssfc data row names and units
-//                            for (int k = 0; k < ssfcRows.length; k++) {
-//                                createCell(sheet.getRow(ssfcRows.length * i + 2 + k), 3, ssfcRows[k], stringStyle);
-//                                createCell(sheet.getRow(ssfcUnits.length * i + 2 + k), 4, ssfcUnits[k], stringStyle);
-//                            }
 //
 //                            // set source summary data
 //                            setSsfcMonthDataCells(sheet, i, 5,
@@ -909,9 +905,10 @@ public class ReportServiceImpl implements ReportService {
 
             Counter counter = new Counter(2);
 
-            summary.getSubSsfcs().
+            summary.getSubSsfcs().forEach(sum -> consumer.accept(sum, counter));
 
-                    forEach(sum -> consumer.accept(sum, counter));
+            Row row = sheet.createRow(counter.getAndIncrement());
+            row.createCell(0).setCellValue("TOTAL SECTION");
 
 
             // autosize columns
