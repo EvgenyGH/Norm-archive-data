@@ -31,7 +31,7 @@ public class SsfcSummary {
     /*
      *  avgData structure
      *
-     *              X            | months (0 - 11) | year (12)
+     *              X              | months (0 - 11) | year (12)
      * -------------------------------------------------------
      *   0 generation total        |                 |
      *   1 generation gas          |                 |
@@ -72,41 +72,47 @@ public class SsfcSummary {
                                         .forEach(k -> {
                                             total[16][k] = total[16][k] * total[10][k];
                                             total[17][k] = total[17][k] * total[11][k];
-                                            total[15][k] = total[16][k] * total[17][k];
+                                            total[15][k] = total[15][k] * total[9][k];
                                         });
 
                                 IntStream.range(0, total.length)
                                         .forEach(i -> {
                                             if (i >= 15) {
+                                                //ssfc
                                                 IntStream.range(0, total[i].length)
                                                         .forEach(j -> {
-                                                            double productionSum = total[i - 6][j]
-                                                                    + data[i - 6][j];
+                                                            double productionSum = total[i - 6][j];
                                                             double fuelConsumption = total[i][j]
                                                                     + data[i - 6][j] * data[i][j];
                                                             total[i][j] = productionSum == 0 ? 0
-                                                                    : fuelConsumption / productionSum * 100d;
+                                                                    : fuelConsumption / productionSum;
+
+
+                                                            log.warn("From fuel consumption {} + {} * {} = {}",
+                                                                    total[i][j],
+                                                                    data[i - 6][j],
+                                                                    data[i][j],
+                                                                    fuelConsumption);
                                                         });
                                             } else if (i >= 12) {
+                                                // ssfcg
                                                 IntStream.range(0, total[i].length)
                                                         .forEach(j -> {
-                                                            double generationSum = total[i - 12][j]
-                                                                    + data[i - 12][j];
-                                                            double fuelConsumption = total[i][j]
+                                                            double generationSum = total[i - 12][j];
+                                                            double fuelConsumption = total[i + 3][j]
                                                                     + data[i - 3][j] * data[i + 3][j];
                                                             total[i][j] = generationSum == 0 ? 0
-                                                                    : fuelConsumption / generationSum * 100d;
+                                                                    : fuelConsumption / generationSum;
                                                         });
                                             } else if (i >= 6 && i <= 8) {
+                                                // own needs %
                                                 IntStream.range(0, total[i].length)
-                                                        .forEach(j ->
-                                                                total[i][j] = total[i - 6][j] == 0 ? 0
-                                                                        : total[i - 3][i] / total[i - 6][i] * 100d);
+                                                        .forEach(j -> total[i][j] = total[i - 6][j] == 0 ? 0
+                                                                : total[i - 3][j] / total[i - 6][j] * 100d);
                                             } else {
+                                                // generation, own needs, production
                                                 IntStream.range(0, total[i].length)
-                                                        .forEach(j -> {
-                                                            total[i][j] += data[i][j];
-                                                        });
+                                                        .forEach(j -> total[i][j] += data[i][j]);
                                             }
                                         });
                                 return total;
@@ -183,13 +189,13 @@ public class SsfcSummary {
                                 (result, next) -> {
                                     result.mult += next.getSsfcg() * next.getGeneration();
                                     result.gen += next.getGeneration();
-                                    result.total = result.mult / result.gen;
+                                    result.total = result.gen == 0 ? 0 : result.mult / result.gen;
                                     return result;
                                 },
                                 (r1, r2) -> {
                                     r1.gen += r2.gen;
                                     r1.mult += r2.mult;
-                                    r1.total = r1.mult / r1.gen;
+                                    r1.total = r1.gen == 0 ? 0 : r1.mult / r1.gen;
                                     return r1;
                                 })
                         .total;
@@ -204,13 +210,13 @@ public class SsfcSummary {
                                 (result, next) -> {
                                     result.mult += next.getSsfcg() * next.getGeneration();
                                     result.gen += next.getGeneration();
-                                    result.total = result.mult / result.gen;
+                                    result.total = result.gen == 0 ? 0 : result.mult / result.gen;
                                     return result;
                                 },
                                 (r1, r2) -> {
                                     r1.gen += r2.gen;
                                     r1.mult += r2.mult;
-                                    r1.total = r1.mult / r1.gen;
+                                    r1.total = r1.gen == 0 ? 0 : r1.mult / r1.gen;
                                     return r1;
                                 })
                         .total;
@@ -225,13 +231,13 @@ public class SsfcSummary {
                                 (result, next) -> {
                                     result.mult += next.getSsfcg() * next.getGeneration();
                                     result.gen += next.getGeneration();
-                                    result.total = result.mult / result.gen;
+                                    result.total = result.gen == 0 ? 0 : result.mult / result.gen;
                                     return result;
                                 },
                                 (r1, r2) -> {
                                     r1.gen += r2.gen;
                                     r1.mult += r2.mult;
-                                    r1.total = r1.mult / r1.gen;
+                                    r1.total = r1.gen == 0 ? 0 : r1.mult / r1.gen;
                                     return r1;
                                 })
                         .total;
@@ -247,13 +253,13 @@ public class SsfcSummary {
                                 (result, next) -> {
                                     result.mult += next.getSsfc() * next.getProduction();
                                     result.prod += next.getProduction();
-                                    result.total = result.mult / result.prod;
+                                    result.total = result.prod == 0 ? 0 : result.mult / result.prod;
                                     return result;
                                 },
                                 (r1, r2) -> {
                                     r1.prod += r2.prod;
                                     r1.mult += r2.mult;
-                                    r1.total = r1.mult / r1.prod;
+                                    r1.total = r1.prod == 0 ? 0 : r1.mult / r1.prod;
                                     return r1;
                                 })
                         .total;
@@ -268,13 +274,13 @@ public class SsfcSummary {
                                 (result, next) -> {
                                     result.mult += next.getSsfc() * next.getProduction();
                                     result.prod += next.getProduction();
-                                    result.total = result.mult / result.prod;
+                                    result.total = result.prod == 0 ? 0 : result.mult / result.prod;
                                     return result;
                                 },
                                 (r1, r2) -> {
                                     r1.prod += r2.prod;
                                     r1.mult += r2.mult;
-                                    r1.total = r1.mult / r1.prod;
+                                    r1.total = r1.prod == 0 ? 0 : r1.mult / r1.prod;
                                     return r1;
                                 })
                         .total;
@@ -289,13 +295,13 @@ public class SsfcSummary {
                                 (result, next) -> {
                                     result.mult += next.getSsfc() * next.getProduction();
                                     result.prod += next.getProduction();
-                                    result.total = result.mult / result.prod;
+                                    result.total = result.prod == 0 ? 0 : result.mult / result.prod;
                                     return result;
                                 },
                                 (r1, r2) -> {
                                     r1.prod += r2.prod;
                                     r1.mult += r2.mult;
-                                    r1.total = r1.mult / r1.prod;
+                                    r1.total = r1.prod == 0 ? 0 : r1.mult / r1.prod;
                                     return r1;
                                 })
                         .total;
@@ -327,9 +333,5 @@ public class SsfcSummary {
         }
 
         return avgData;
-    }
-
-    private double[][] getDefaultArray(int length) {
-        return new double[6][length];
     }
 }
