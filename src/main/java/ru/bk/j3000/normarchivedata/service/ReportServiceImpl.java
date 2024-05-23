@@ -17,6 +17,9 @@ import ru.bk.j3000.normarchivedata.exception.ReportIOException;
 import ru.bk.j3000.normarchivedata.model.*;
 import ru.bk.j3000.normarchivedata.model.dto.SsfcShortDTO;
 import ru.bk.j3000.normarchivedata.model.dto.SsfcsDTO;
+import ru.bk.j3000.normarchivedata.model.dto.ssfcsum.SsfcSumTZBranch;
+import ru.bk.j3000.normarchivedata.model.dto.ssfcsum.SsfcSummary;
+import ru.bk.j3000.normarchivedata.util.Counter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -24,6 +27,7 @@ import java.security.InvalidParameterException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -766,23 +770,7 @@ public class ReportServiceImpl implements ReportService {
                     .format("Invalid ssfc report type <%s>", selection));
         };
 
-        List<SsfcsDTO> ssfcDTOs = ssfcs.stream()
-                .collect(Collectors.groupingBy(ssfc ->
-                        new SrcIdAndFuelType(ssfc.getProperties().getId().getSource().getId(),
-                                ssfc.getFuelType())))
-                .values()
-                .stream()
-                .sorted(Comparator.comparing(e -> e.getFirst()
-                        .getFuelType().ordinal()))
-                .sorted(Comparator.comparing(e -> e.getFirst()
-                        .getProperties().getId().getSource().getName()))
-                .sorted(Comparator.comparingInt(e -> e.getFirst()
-                        .getProperties().getId().getSource().getSourceType().ordinal()))
-                .sorted(Comparator.comparing(e -> e.getFirst().getProperties().getBranch().getId()))
-                .sorted(Comparator.comparing(e -> e.getFirst().getProperties().getTariffZone().getId()))
-                .map(SsfcsDTO::new)
-                .toList();
-
+        SsfcSummary summary = new SsfcSumTZBranch(ssfcs);
 
         try (Workbook wb = new XSSFWorkbook()) {
             Sheet sheet = wb.createSheet("Ssfcs");
@@ -806,70 +794,115 @@ public class ReportServiceImpl implements ReportService {
                     .forEach(i -> createCell(headerRow, i, allSsfcsColumns[i], headerStylePrimary));
 
             // set data and merge cells
-            SsfcsDTO branch = new SsfcsDTO();
-            SsfcsDTO tariffZone = new SsfcsDTO();
-            int extraRows = 0;
 
-            for (int i = 0; i < ssfcDTOs.size(); i++) {
-                SsfcsDTO srcSsfcsDTO = ssfcDTOs.get(i);
+            BiConsumer<SsfcSummary, Counter> consumer = new BiConsumer<>() {
+                @Override
+                public void accept(SsfcSummary summary, Counter counter) {
+                    Row row = sheet.createRow(counter.getAndIncrement());
+                    row.createCell(0).setCellValue("start section" + summary.getName());
 
-                IntStream.rangeClosed(ssfcRows.length * i + 2, ssfcRows.length * (i + 1) + 1)
-                        .forEach(sheet::createRow);
+                    if (summary.hasSub()) {
+                        summary.getSubSsfcs().forEach(sum -> this.accept(sum, counter));
+                    } else {
+                        summary.getAllSsfcs()
+                                .stream()
+                                .collect(Collectors.groupingBy(ssfc ->
+                                        new SrcIdAndFuelType(ssfc.getProperties().getId().getSource().getId(),
+                                                ssfc.getFuelType())))
+                                .values().stream()
+                                .sorted(Comparator.comparing(ssfcs -> ssfcs.getFirst().getProperties()
+                                        .getId().getSource().getName()))
+                                .sorted(Comparator.comparing(ssfcs -> ssfcs.getFirst().getProperties()
+                                        .getId().getSource().getSourceType()))
+                                .sorted(Comparator.comparing(ssfcs -> ssfcs.getFirst().getFuelType()))
+                                .forEach(ssfcs -> {
+                                    ssfcs = ssfcs.stream()
+                                            .sorted(Comparator.comparing(StandardSFC::getMonth))
+                                            .sorted(Comparator.comparing(ssfc -> ssfc.getProperties()
+                                                    .getId().getYear()))
+                                            .toList();
 
-                // merge cells
-                for (int col : new int[]{0, 1, 2}) {
-                    var range = new CellRangeAddress(ssfcRows.length * i + 2,
-                            ssfcRows.length * (i + 1) + 1, col, col);
-                    sheet.addMergedRegion(range);
-                    RegionUtil.setBorderLeft(BorderStyle.THIN, range, sheet);
-                    RegionUtil.setBorderRight(BorderStyle.THIN, range, sheet);
+                                    Row rowSrc = sheet.createRow(counter.getAndIncrement());
+                                    rowSrc.createCell(0).setCellValue("source" + ssfcs.getFirst()
+                                            .getProperties().getId().getSource().getName());
+
+                                    ssfcs.forEach(ssfc -> {
+
+                                    });
+                                });
+                    }
+//
+//                        for (int i = 0; i < ssfcDTOs.size(); i++) {
+//                            SsfcsDTO srcSsfcsDTO = ssfcDTOs.get(i);
+//
+//                            IntStream.rangeClosed(ssfcRows.length * i + 2, ssfcRows.length * (i + 1) + 1)
+//                                    .forEach(sheet::createRow);
+//
+//                            // merge cells
+//                            for (int col : new int[]{0, 1, 2}) {
+//                                var range = new CellRangeAddress(ssfcRows.length * i + 2,
+//                                        ssfcRows.length * (i + 1) + 1, col, col);
+//                                sheet.addMergedRegion(range);
+//                                RegionUtil.setBorderLeft(BorderStyle.THIN, range, sheet);
+//                                RegionUtil.setBorderRight(BorderStyle.THIN, range, sheet);
+//                            }
+//
+//                            // set data to merged cells
+//                            Row currentRow = sheet.getRow(ssfcUnits.length * i + 2);
+//                            Cell cell = currentRow.createCell(0);
+//                            cell.setCellValue(i + 1);
+//                            cell.setCellStyle(integerStyle);
+//
+//                            createCell(currentRow, 1, srcSsfcsDTO.getSrcName(), stringStyle);
+//                            createCell(currentRow, 2, srcSsfcsDTO.getFuelType(), stringStyle);
+//
+//                            // set ssfc data row names and units
+//                            for (int k = 0; k < ssfcRows.length; k++) {
+//                                createCell(sheet.getRow(ssfcRows.length * i + 2 + k), 3, ssfcRows[k], stringStyle);
+//                                createCell(sheet.getRow(ssfcUnits.length * i + 2 + k), 4, ssfcUnits[k], stringStyle);
+//                            }
+//
+//                            // set source summary data
+//                            setSsfcMonthDataCells(sheet, i, 5,
+//                                    srcSsfcsDTO.avgGeneration(),
+//                                    srcSsfcsDTO.avgOwnNeeds(),
+//                                    srcSsfcsDTO.avgPercentOwnNeeds(),
+//                                    srcSsfcsDTO.avgProduction(),
+//                                    srcSsfcsDTO.avgSsfcg(),
+//                                    srcSsfcsDTO.avgSsfc(),
+//                                    threeDigitsStyle, twoDigitsStyle);
+//
+//                            // set ssfc data
+//                            for (int k = 6; k <= 17; k++) {
+//                                SsfcShortDTO ssfcMonth = srcSsfcsDTO.getSsfcs().get(k - 6);
+//                                setSsfcMonthDataCells(sheet, i, k,
+//                                        ssfcMonth.getGeneration(),
+//                                        ssfcMonth.getOwnNeeds(),
+//                                        ssfcMonth.getPercentOwnNeeds(),
+//                                        ssfcMonth.getProduction(),
+//                                        ssfcMonth.getSsfcg(),
+//                                        ssfcMonth.getSsfc(),
+//                                        threeDigitsStyle,
+//                                        twoDigitsStyle);
+//                            }
+//
+//                            //set solid borders
+//                            var range = new CellRangeAddress(ssfcRows.length * i + 2,
+//                                    ssfcRows.length * (i + 1) + 1,
+//                                    0, allSsfcsColumns.length - 1);
+//                            RegionUtil.setBorderBottom(BorderStyle.DOUBLE, range, sheet);
+//                        }
+//                    });
+//                }
+                    row = sheet.createRow(counter.getAndIncrement());
+                    row.createCell(0).setCellValue("end section" + summary.getName());
                 }
+            };
 
-                // set data to merged cells
-                Row currentRow = sheet.getRow(ssfcUnits.length * i + 2);
-                Cell cell = currentRow.createCell(0);
-                cell.setCellValue(i + 1);
-                cell.setCellStyle(integerStyle);
+            Counter counter = new Counter(1);
 
-                createCell(currentRow, 1, srcSsfcsDTO.getSrcName(), stringStyle);
-                createCell(currentRow, 2, srcSsfcsDTO.getFuelType(), stringStyle);
+            summary.getSubSsfcs().forEach(sum -> consumer.accept(sum, counter));
 
-                // set ssfc data row names and units
-                for (int k = 0; k < ssfcRows.length; k++) {
-                    createCell(sheet.getRow(ssfcRows.length * i + 2 + k), 3, ssfcRows[k], stringStyle);
-                    createCell(sheet.getRow(ssfcUnits.length * i + 2 + k), 4, ssfcUnits[k], stringStyle);
-                }
-
-                // set source summary data
-                setSsfcMonthDataCells(sheet, i, 5,
-                        srcSsfcsDTO.avgGeneration(),
-                        srcSsfcsDTO.avgOwnNeeds(),
-                        srcSsfcsDTO.avgPercentOwnNeeds(),
-                        srcSsfcsDTO.avgProduction(),
-                        srcSsfcsDTO.avgSsfcg(),
-                        srcSsfcsDTO.avgSsfc(),
-                        threeDigitsStyle, twoDigitsStyle);
-
-                // set ssfc data
-                for (int k = 6; k <= 17; k++) {
-                    SsfcShortDTO ssfcMonth = srcSsfcsDTO.getSsfcs().get(k - 6);
-                    setSsfcMonthDataCells(sheet, i, k,
-                            ssfcMonth.getGeneration(),
-                            ssfcMonth.getOwnNeeds(),
-                            ssfcMonth.getPercentOwnNeeds(),
-                            ssfcMonth.getProduction(),
-                            ssfcMonth.getSsfcg(),
-                            ssfcMonth.getSsfc(),
-                            threeDigitsStyle,
-                            twoDigitsStyle);
-                }
-
-                //set solid borders
-                var range = new CellRangeAddress(ssfcRows.length * i + 2,
-                        ssfcRows.length * (i + 1) + 1,
-                        0, allSsfcsColumns.length - 1);
-                RegionUtil.setBorderBottom(BorderStyle.DOUBLE, range, sheet);
-            }
 
             // autosize columns
             IntStream.rangeClosed(0, allSsfcsColumns.length - 1)
