@@ -14,7 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import ru.bk.j3000.normarchivedata.model.StandardSFC;
-import ru.bk.j3000.normarchivedata.model.dto.ssfcsum.SsfcSumTZBranch;
+import ru.bk.j3000.normarchivedata.model.dto.ssfcsum.SsfcSumTZ;
 import ru.bk.j3000.normarchivedata.model.dto.ssfcsum.SsfcSummary;
 
 import java.io.FileOutputStream;
@@ -36,7 +36,7 @@ public class ReportServiceImplTest {
     public void test1() {
         List<StandardSFC> allSsfcs = ssfcService.findAllSsfcByYear(2024);
 
-        SsfcSummary tzBrSrcSum = new SsfcSumTZBranch(allSsfcs, "base", "base");
+        SsfcSummary tzBrSrcSum = new SsfcSumTZ(allSsfcs, "base", "base");
 
         double[][] data = tzBrSrcSum.avgData();
 //

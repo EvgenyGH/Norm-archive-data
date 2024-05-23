@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import ru.bk.j3000.normarchivedata.model.FUEL_TYPE;
 import ru.bk.j3000.normarchivedata.model.StandardSFC;
 
+import java.security.InvalidParameterException;
 import java.util.List;
 import java.util.Objects;
 import java.util.TreeMap;
@@ -32,31 +33,32 @@ public class SsfcSummary {
      *  avgData structure
      *
      *              X              | months (0 - 11) | year (12)
-     * -------------------------------------------------------
+     *  ---------------------------------------------------------
      *   0 generation total        |                 |
      *   1 generation gas          |                 |
      *   2 generation diesel       |                 |
-     * -------------------------------------------------------
+     *  ---------------------------------------------------------
      *   3 own needs total         |                 |
      *   4 own needs gas           |                 |
      *   5 own needs diesel        |                 |
-     * -------------------------------------------------------
+     *  ---------------------------------------------------------
      *   6 own needs, % total      |                 |
      *   7 own needs, % gas        |                 |
      *   8 own needs, % diesel     |                 |
-     * -------------------------------------------------------
+     *  ---------------------------------------------------------
      *   9 production total        |                 |
      *   10 production gas         |                 |
      *   11 production diesel      |                 |
-     * -------------------------------------------------------
+     *  ---------------------------------------------------------
      *   12 ssfcg total            |                 |
      *   13 ssfcg gas              |                 |
      *   14 ssfcg diesel           |                 |
-     * -------------------------------------------------------
+     *  ---------------------------------------------------------
      *   15 ssfc total             |                 |
      *   16 ssfc gas               |                 |
      *   17 ssfc diesel            |                 |
-     * -------------------------------------------------------
+     *  ---------------------------------------------------------
+     *
      * */
 
     public double[][] avgData() {
@@ -86,13 +88,6 @@ public class SsfcSummary {
                                                                     + data[i - 6][j] * data[i][j];
                                                             total[i][j] = productionSum == 0 ? 0
                                                                     : fuelConsumption / productionSum;
-
-
-                                                            log.warn("From fuel consumption {} + {} * {} = {}",
-                                                                    total[i][j],
-                                                                    data[i - 6][j],
-                                                                    data[i][j],
-                                                                    fuelConsumption);
                                                         });
                                             } else if (i >= 12) {
                                                 // ssfcg
@@ -101,7 +96,7 @@ public class SsfcSummary {
                                                             double generationSum = total[i - 12][j];
                                                             double fuelConsumption = total[i + 3][j]
                                                                     + data[i - 3][j] * data[i + 3][j];
-                                                            total[i][j] = generationSum == 0 ? 0
+                                                            total[i][j] = total[i - 12][j] == 0 ? 0
                                                                     : fuelConsumption / generationSum;
                                                         });
                                             } else if (i >= 6 && i <= 8) {
@@ -127,34 +122,18 @@ public class SsfcSummary {
                 List<StandardSFC> month = months.get(i);
 
                 // generation
-                avgData[1][i] = month.stream()
-                        .filter(ssfc -> ssfc.getFuelType().equals(FUEL_TYPE.GAS))
-                        .mapToDouble(StandardSFC::getGeneration)
-                        .sum();
-                avgData[1][12] += avgData[1][i];
-
-                avgData[2][i] = month.stream()
-                        .filter(ssfc -> ssfc.getFuelType().equals(FUEL_TYPE.DIESEL))
-                        .mapToDouble(StandardSFC::getGeneration)
-                        .sum();
-                avgData[2][12] += avgData[2][i];
-
+                avgData[1][i] = sumMonthData(avgData, month, 1, i,
+                        FUEL_TYPE.GAS, "generation");
+                avgData[2][i] = sumMonthData(avgData, month, 2, i,
+                        FUEL_TYPE.DIESEL, "generation");
                 avgData[0][i] = avgData[1][i] + avgData[2][i];
                 avgData[0][12] += avgData[0][i];
 
                 // own needs
-                avgData[4][i] = month.stream()
-                        .filter(ssfc -> ssfc.getFuelType().equals(FUEL_TYPE.GAS))
-                        .mapToDouble(StandardSFC::getOwnNeeds)
-                        .sum();
-                avgData[4][12] += avgData[4][i];
-
-                avgData[5][i] = month.stream()
-                        .filter(ssfc -> ssfc.getFuelType().equals(FUEL_TYPE.DIESEL))
-                        .mapToDouble(StandardSFC::getOwnNeeds)
-                        .sum();
-                avgData[5][12] += avgData[5][i];
-
+                avgData[4][i] = sumMonthData(avgData, month, 4, i,
+                        FUEL_TYPE.GAS, "ownNeeds");
+                avgData[5][i] = sumMonthData(avgData, month, 5, i,
+                        FUEL_TYPE.DIESEL, "ownNeeds");
                 avgData[3][i] = avgData[4][i] + avgData[5][i];
                 avgData[3][12] += avgData[3][i];
 
@@ -164,147 +143,22 @@ public class SsfcSummary {
                 avgData[8][i] = avgData[2][i] == 0 ? 0 : avgData[5][i] / avgData[2][i] * 100d;
 
                 // production
-                avgData[10][i] = month.stream()
-                        .filter(ssfc -> ssfc.getFuelType().equals(FUEL_TYPE.GAS))
-                        .mapToDouble(StandardSFC::getProduction)
-                        .sum();
-                avgData[10][12] += avgData[10][i];
-
-                avgData[11][i] = month.stream()
-                        .filter(ssfc -> ssfc.getFuelType().equals(FUEL_TYPE.DIESEL))
-                        .mapToDouble(StandardSFC::getProduction)
-                        .sum();
-                avgData[11][12] += avgData[11][i];
-
+                avgData[10][i] = sumMonthData(avgData, month, 10, i,
+                        FUEL_TYPE.GAS, "production");
+                avgData[11][i] = sumMonthData(avgData, month, 11, i,
+                        FUEL_TYPE.DIESEL, "production");
                 avgData[9][i] = avgData[10][i] + avgData[11][i];
                 avgData[9][12] += avgData[9][i];
 
                 // ssfcg
-                avgData[12][i] = month.stream()
-                        .reduce(new Object() {
-                                    double mult = 0d;
-                                    double gen = 0d;
-                                    double total = 0d;
-                                },
-                                (result, next) -> {
-                                    result.mult += next.getSsfcg() * next.getGeneration();
-                                    result.gen += next.getGeneration();
-                                    result.total = result.gen == 0 ? 0 : result.mult / result.gen;
-                                    return result;
-                                },
-                                (r1, r2) -> {
-                                    r1.gen += r2.gen;
-                                    r1.mult += r2.mult;
-                                    r1.total = r1.gen == 0 ? 0 : r1.mult / r1.gen;
-                                    return r1;
-                                })
-                        .total;
-
-                avgData[13][i] = month.stream()
-                        .filter(ssfc -> ssfc.getFuelType().equals(FUEL_TYPE.GAS))
-                        .reduce(new Object() {
-                                    double mult = 0d;
-                                    double gen = 0d;
-                                    double total = 0d;
-                                },
-                                (result, next) -> {
-                                    result.mult += next.getSsfcg() * next.getGeneration();
-                                    result.gen += next.getGeneration();
-                                    result.total = result.gen == 0 ? 0 : result.mult / result.gen;
-                                    return result;
-                                },
-                                (r1, r2) -> {
-                                    r1.gen += r2.gen;
-                                    r1.mult += r2.mult;
-                                    r1.total = r1.gen == 0 ? 0 : r1.mult / r1.gen;
-                                    return r1;
-                                })
-                        .total;
-
-                avgData[14][i] = month.stream()
-                        .filter(ssfc -> ssfc.getFuelType().equals(FUEL_TYPE.DIESEL))
-                        .reduce(new Object() {
-                                    double mult = 0d;
-                                    double gen = 0d;
-                                    double total = 0d;
-                                },
-                                (result, next) -> {
-                                    result.mult += next.getSsfcg() * next.getGeneration();
-                                    result.gen += next.getGeneration();
-                                    result.total = result.gen == 0 ? 0 : result.mult / result.gen;
-                                    return result;
-                                },
-                                (r1, r2) -> {
-                                    r1.gen += r2.gen;
-                                    r1.mult += r2.mult;
-                                    r1.total = r1.gen == 0 ? 0 : r1.mult / r1.gen;
-                                    return r1;
-                                })
-                        .total;
-
+                avgData[12][i] = collectSsfc(month, null, "ssfcg");
+                avgData[13][i] = collectSsfc(month, FUEL_TYPE.GAS, "ssfcg");
+                avgData[14][i] = collectSsfc(month, FUEL_TYPE.DIESEL, "ssfcg");
 
                 // ssfc
-                avgData[15][i] = month.stream()
-                        .reduce(new Object() {
-                                    double mult = 0d;
-                                    double prod = 0d;
-                                    double total = 0d;
-                                },
-                                (result, next) -> {
-                                    result.mult += next.getSsfc() * next.getProduction();
-                                    result.prod += next.getProduction();
-                                    result.total = result.prod == 0 ? 0 : result.mult / result.prod;
-                                    return result;
-                                },
-                                (r1, r2) -> {
-                                    r1.prod += r2.prod;
-                                    r1.mult += r2.mult;
-                                    r1.total = r1.prod == 0 ? 0 : r1.mult / r1.prod;
-                                    return r1;
-                                })
-                        .total;
-
-                avgData[16][i] = month.stream()
-                        .filter(ssfc -> ssfc.getFuelType().equals(FUEL_TYPE.GAS))
-                        .reduce(new Object() {
-                                    double mult = 0d;
-                                    double prod = 0d;
-                                    double total = 0d;
-                                },
-                                (result, next) -> {
-                                    result.mult += next.getSsfc() * next.getProduction();
-                                    result.prod += next.getProduction();
-                                    result.total = result.prod == 0 ? 0 : result.mult / result.prod;
-                                    return result;
-                                },
-                                (r1, r2) -> {
-                                    r1.prod += r2.prod;
-                                    r1.mult += r2.mult;
-                                    r1.total = r1.prod == 0 ? 0 : r1.mult / r1.prod;
-                                    return r1;
-                                })
-                        .total;
-
-                avgData[17][i] = month.stream()
-                        .filter(ssfc -> ssfc.getFuelType().equals(FUEL_TYPE.DIESEL))
-                        .reduce(new Object() {
-                                    double mult = 0d;
-                                    double prod = 0d;
-                                    double total = 0d;
-                                },
-                                (result, next) -> {
-                                    result.mult += next.getSsfc() * next.getProduction();
-                                    result.prod += next.getProduction();
-                                    result.total = result.prod == 0 ? 0 : result.mult / result.prod;
-                                    return result;
-                                },
-                                (r1, r2) -> {
-                                    r1.prod += r2.prod;
-                                    r1.mult += r2.mult;
-                                    r1.total = r1.prod == 0 ? 0 : r1.mult / r1.prod;
-                                    return r1;
-                                })
-                        .total;
+                avgData[15][i] = collectSsfc(month, null, "ssfc");
+                avgData[16][i] = collectSsfc(month, FUEL_TYPE.GAS, "ssfc");
+                avgData[17][i] = collectSsfc(month, FUEL_TYPE.DIESEL, "ssfc");
 
                  /*
                  avgData[15][12] - temporary collecting fuel consumption total
@@ -333,5 +187,69 @@ public class SsfcSummary {
         }
 
         return avgData;
+    }
+
+    private double sumMonthData(double[][] avgData, List<StandardSFC> month,
+                                int line, int monthNumber,
+                                FUEL_TYPE fuelType, String parameter) {
+
+        double sum = avgData[line][monthNumber] =
+                month.stream()
+                        .filter(ssfc -> ssfc.getFuelType().equals(fuelType))
+                        .mapToDouble(ssfc -> switch (parameter) {
+                            case "generation" -> ssfc.getGeneration();
+                            case "production" -> ssfc.getProduction();
+                            case "ownNeeds" -> ssfc.getOwnNeeds();
+                            default -> throw new InvalidParameterException(String.format(
+                                    "SsfcSummary.sumMonthData() No such parameter 'parameter'=<%s>.",
+                                    parameter)
+                            );
+                        })
+                        .sum();
+
+        avgData[line][12] += avgData[line][monthNumber];
+
+        return sum;
+    }
+
+    private double collectSsfc(List<StandardSFC> month, FUEL_TYPE fuelType, String parameter) {
+        double avgSsfc = month.stream()
+                .filter(ssfc -> switch (fuelType) {
+                    case null -> true;
+                    default -> ssfc.getFuelType().equals(fuelType);
+                })
+                .reduce(new Object() {
+                            double mult = 0d;
+                            double heat = 0d;
+                            double total = 0d;
+                        },
+                        (result, next) -> {
+                            switch (parameter) {
+                                case "ssfcg" -> {
+                                    result.mult += next.getSsfcg() * next.getGeneration();
+                                    result.heat += next.getGeneration();
+                                }
+                                case "ssfc" -> {
+                                    result.mult += next.getSsfc() * next.getProduction();
+                                    result.heat += next.getProduction();
+                                }
+                                default -> throw new InvalidParameterException(String.format(
+                                        "SsfcSummary.collectSsfc() No such parameter 'parameter'=<%s>.",
+                                        parameter));
+                            }
+
+                            result.total = result.heat == 0 ? 0 : result.mult / result.heat;
+
+                            return result;
+                        },
+                        (r1, r2) -> {
+                            r1.heat += r2.heat;
+                            r1.mult += r2.mult;
+                            r1.total = r1.heat == 0 ? 0 : r1.mult / r1.heat;
+                            return r1;
+                        })
+                .total;
+
+        return avgSsfc;
     }
 }
