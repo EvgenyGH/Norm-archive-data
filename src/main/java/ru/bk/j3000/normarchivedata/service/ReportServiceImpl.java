@@ -816,28 +816,34 @@ public class ReportServiceImpl implements ReportService {
                                         .getId().getSource().getSourceType()))
                                 .sorted(Comparator.comparing(ssfcs -> ssfcs.getFirst().getFuelType()))
                                 .forEach(ssfcs -> {
+                                    //counter.increment(1);
                                     ssfcs = ssfcs.stream()
                                             .sorted(Comparator.comparing(StandardSFC::getMonth))
                                             .sorted(Comparator.comparing(ssfc -> ssfc.getProperties()
-                                                    .getId().getYear()))
-                                            .toList();
+                                                    .getId().getYear())).toList();
 
-                                    Row rowSrc = sheet.createRow(counter.getAndIncrement());
-                                    rowSrc.createCell(0).setCellValue("source" + ssfcs.getFirst()
-                                            .getProperties().getId().getSource().getName());
+                                    // create rows
+                                    IntStream.rangeClosed(counter.getCounter(),
+                                                    counter.getCounter() + ssfcRows.length)
+                                            .forEach(sheet::createRow);
 
-                                    ssfcs.forEach(ssfc -> {
-
+                                    // merge cells
+                                    IntStream.of(0, 1, 2).forEach(col -> {
+                                        var range = new CellRangeAddress(counter.getCounter(),
+                                                counter.getCounter() + ssfcRows.length,
+                                                col, col);
+                                        sheet.addMergedRegion(range);
+                                        RegionUtil.setBorderLeft(BorderStyle.THIN, range, sheet);
+                                        RegionUtil.setBorderRight(BorderStyle.THIN, range, sheet);
                                     });
+
+
+                                    counter.increment(ssfcRows.length + 1);
                                 });
+
                     }
-//
-//                        for (int i = 0; i < ssfcDTOs.size(); i++) {
-//                            SsfcsDTO srcSsfcsDTO = ssfcDTOs.get(i);
-//
-//                            IntStream.rangeClosed(ssfcRows.length * i + 2, ssfcRows.length * (i + 1) + 1)
-//                                    .forEach(sheet::createRow);
-//
+
+
 //                            // merge cells
 //                            for (int col : new int[]{0, 1, 2}) {
 //                                var range = new CellRangeAddress(ssfcRows.length * i + 2,
@@ -895,21 +901,28 @@ public class ReportServiceImpl implements ReportService {
 //                    });
 //                }
                     row = sheet.createRow(counter.getAndIncrement());
-                    row.createCell(0).setCellValue("end section" + summary.getName());
+                    row.createCell(0).
+
+                            setCellValue("end section" + summary.getName());
                 }
             };
 
-            Counter counter = new Counter(1);
+            Counter counter = new Counter(2);
 
-            summary.getSubSsfcs().forEach(sum -> consumer.accept(sum, counter));
+            summary.getSubSsfcs().
+
+                    forEach(sum -> consumer.accept(sum, counter));
 
 
             // autosize columns
             IntStream.rangeClosed(0, allSsfcsColumns.length - 1)
-                    .forEach(sheet::autoSizeColumn);
+                            .
+
+                    forEach(sheet::autoSizeColumn);
 
             // set title (first cell is too wide if before)
             Row titleRow = sheet.createRow(0);
+
             createCell(titleRow, 0, String.format("Нормативные удельные расходы топлива на единицу " +
                     "отпущенной тепловой энергии источников ПАО \"МОЭК\" на %s год", year), titleStyle);
 
@@ -917,7 +930,9 @@ public class ReportServiceImpl implements ReportService {
 
             wb.write(out);
 
-            resource = new ByteArrayResource(out.toByteArray());
+            resource = new
+
+                    ByteArrayResource(out.toByteArray());
 
         } catch (
                 IOException e) {

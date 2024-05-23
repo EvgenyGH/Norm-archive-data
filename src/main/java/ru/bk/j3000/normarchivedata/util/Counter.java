@@ -9,12 +9,18 @@ public class Counter {
     private int counter = 0;
 
     public int getAndIncrement() {
-        return ++counter;
+        return counter++;
     }
 
-    public int increment(int number) {
-        counter += number;
+    public int getAndIncrement(int increment) {
+        int oldCounter = counter;
+        counter += increment;
+
         return counter;
+    }
+
+    public void increment(int number) {
+        counter += number;
     }
 
     public int getCounter() {
