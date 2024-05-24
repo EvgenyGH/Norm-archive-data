@@ -6,6 +6,7 @@ import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -55,13 +56,16 @@ public class SecurityConfiguration {
         http.csrf(Customizer.withDefaults());
         http.cors(Customizer.withDefaults());
 
-        http.httpBasic(Customizer.withDefaults());
+        http.httpBasic(AbstractHttpConfigurer::disable);
 
         http.formLogin(conf -> conf
+                .loginPage("/login")
                 .defaultSuccessUrl("/report", true));
 
         http.authorizeHttpRequests(conf ->
                 conf
+                        .requestMatchers("/login")
+                        .permitAll()
                         .requestMatchers("/source/**",
                                 "/sourceproperty/**",
                                 "/tariffzone/**",
