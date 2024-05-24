@@ -758,7 +758,6 @@ public class ReportServiceImpl implements ReportService {
         //todo set fixed view for excel
         //todo add branch summary amd tariff zone summary
         //todo may be util class for operating with avgData
-        //todo move summary to util
 
         Resource resource;
 

@@ -20,7 +20,7 @@ import ru.bk.j3000.normarchivedata.model.SourceProperty;
 import ru.bk.j3000.normarchivedata.model.SrcPropertyId;
 import ru.bk.j3000.normarchivedata.model.dto.SourcePropertyDTO;
 import ru.bk.j3000.normarchivedata.repository.SourcePropertyRepository;
-import ru.bk.j3000.normarchivedata.util.SourcePropertiesMapper;
+import ru.bk.j3000.normarchivedata.util.mapper.SourcePropertiesMapper;
 
 import java.io.IOException;
 import java.util.List;

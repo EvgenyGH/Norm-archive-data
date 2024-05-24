@@ -14,8 +14,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import ru.bk.j3000.normarchivedata.model.StandardSFC;
-import ru.bk.j3000.normarchivedata.model.dto.ssfcsum.SsfcSumTZ;
-import ru.bk.j3000.normarchivedata.model.dto.ssfcsum.SsfcSummary;
+import ru.bk.j3000.normarchivedata.util.ssfcsum.SsfcSumTZ;
+import ru.bk.j3000.normarchivedata.util.ssfcsum.SsfcSummary;
 
 import java.io.FileOutputStream;
 import java.io.IOException;

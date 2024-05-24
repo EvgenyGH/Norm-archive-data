@@ -1,4 +1,4 @@
-package ru.bk.j3000.normarchivedata.util;
+package ru.bk.j3000.normarchivedata.util.mapper;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

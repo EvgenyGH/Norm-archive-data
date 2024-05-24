@@ -1,4 +1,4 @@
-package ru.bk.j3000.normarchivedata.model.dto.ssfcsum;
+package ru.bk.j3000.normarchivedata.util.ssfcsum;
 
 import lombok.EqualsAndHashCode;
 import ru.bk.j3000.normarchivedata.model.StandardSFC;

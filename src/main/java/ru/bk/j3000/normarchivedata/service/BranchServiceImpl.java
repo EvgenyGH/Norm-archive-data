@@ -18,7 +18,7 @@ import ru.bk.j3000.normarchivedata.exception.FileReadException;
 import ru.bk.j3000.normarchivedata.model.Branch;
 import ru.bk.j3000.normarchivedata.model.dto.BranchDTO;
 import ru.bk.j3000.normarchivedata.repository.BranchRepository;
-import ru.bk.j3000.normarchivedata.util.BranchMapper;
+import ru.bk.j3000.normarchivedata.util.mapper.BranchMapper;
 
 import java.io.IOException;
 import java.util.List;

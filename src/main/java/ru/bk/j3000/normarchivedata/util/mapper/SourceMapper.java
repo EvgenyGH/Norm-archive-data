@@ -1,4 +1,4 @@
-package ru.bk.j3000.normarchivedata.util;
+package ru.bk.j3000.normarchivedata.util.mapper;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
