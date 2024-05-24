@@ -856,15 +856,22 @@ public class ReportServiceImpl implements ReportService {
                                                 ssfcUnits[k], stringStyle);
                                     });
 
+                                    // set ssfc data
+                                    ssfcs.forEach(ssfc -> {
+                                        setSsfcMonthDataCellsStd(sheet, counter.getCounter(),
+                                                5 + ssfc.getMonth(), // data set in 6 - 17 cells
+                                                ssfc.getGeneration(),
+                                                ssfc.getOwnNeeds(),
+                                                ssfc.getGeneration() == 0 ? 0
+                                                        : ssfc.getOwnNeeds() / ssfc.getGeneration() * 100d,
+                                                ssfc.getProduction(),
+                                                ssfc.getSsfcg(),
+                                                ssfc.getSsfc(),
+                                                threeDigitsStyle,
+                                                twoDigitsStyle);
+                                    });
 
-                                    counter.increment(ssfcRows.length);
-                                });
-
-                    }
-
-
-//
-//                            // set source summary data
+                                    // set source summary data
 //                            setSsfcMonthDataCells(sheet, i, 5,
 //                                    srcSsfcsDTO.avgGeneration(),
 //                                    srcSsfcsDTO.avgOwnNeeds(),
@@ -873,39 +880,29 @@ public class ReportServiceImpl implements ReportService {
 //                                    srcSsfcsDTO.avgSsfcg(),
 //                                    srcSsfcsDTO.avgSsfc(),
 //                                    threeDigitsStyle, twoDigitsStyle);
-//
-//                            // set ssfc data
-//                            for (int k = 6; k <= 17; k++) {
-//                                SsfcShortDTO ssfcMonth = srcSsfcsDTO.getSsfcs().get(k - 6);
-//                                setSsfcMonthDataCells(sheet, i, k,
-//                                        ssfcMonth.getGeneration(),
-//                                        ssfcMonth.getOwnNeeds(),
-//                                        ssfcMonth.getPercentOwnNeeds(),
-//                                        ssfcMonth.getProduction(),
-//                                        ssfcMonth.getSsfcg(),
-//                                        ssfcMonth.getSsfc(),
-//                                        threeDigitsStyle,
-//                                        twoDigitsStyle);
-//                            }
-//
-//                            //set solid borders
-//                            var range = new CellRangeAddress(ssfcRows.length * i + 2,
-//                                    ssfcRows.length * (i + 1) + 1,
-//                                    0, allSsfcsColumns.length - 1);
-//                            RegionUtil.setBorderBottom(BorderStyle.DOUBLE, range, sheet);
-//                        }
-//                    });
-//                }
-                    row = sheet.createRow(counter.getAndIncrement());
-                    row.createCell(0).
 
-                            setCellValue("end section" + summary.getName());
+                                    //set solid borders
+                                    var range = new CellRangeAddress(counter.getCounter(),
+                                            counter.getCounter() + ssfcRows.length - 1,
+                                            0, allSsfcsColumns.length - 1);
+                                    RegionUtil.setBorderBottom(BorderStyle.DOUBLE, range, sheet);
+
+
+                                    counter.increment(ssfcRows.length);
+                                });
+
+                        row = sheet.createRow(counter.getAndIncrement());
+                        row.createCell(0).
+
+                                setCellValue("end section" + summary.getName());
+                    }
                 }
             };
 
             Counter counter = new Counter(2);
 
-            summary.getSubSsfcs().forEach(sum -> consumer.accept(sum, counter));
+            summary.getSubSsfcs().
+                    forEach(sum -> consumer.accept(sum, counter));
 
             Row row = sheet.createRow(counter.getAndIncrement());
             row.createCell(0).setCellValue("TOTAL SECTION");
@@ -913,9 +910,7 @@ public class ReportServiceImpl implements ReportService {
 
             // autosize columns
             IntStream.rangeClosed(0, allSsfcsColumns.length - 1)
-                            .
-
-                    forEach(sheet::autoSizeColumn);
+                    .forEach(sheet::autoSizeColumn);
 
             // set title (first cell is too wide if before)
             Row titleRow = sheet.createRow(0);
@@ -945,32 +940,44 @@ public class ReportServiceImpl implements ReportService {
                                        Double production, Double ssfcg, Double ssfc,
                                        CellStyle threeDigitsStyle, CellStyle twoDigitsStyle) {
 
-        Row row = sheet.getRow(ssfcRows.length * elementNumber + 2);
+        setSsfcMonthDataCellsStd(sheet, ssfcRows.length * elementNumber + 2,
+                columnNumber, generation, ownNeeds, percentOwnNeeds, production,
+                ssfcg, ssfc, threeDigitsStyle, twoDigitsStyle);
+    }
+
+    private void setSsfcMonthDataCellsStd(Sheet sheet, int rowNumber, int columnNumber,
+                                          Double generation, Double ownNeeds, Double percentOwnNeeds,
+                                          Double production, Double ssfcg, Double ssfc,
+                                          CellStyle threeDigitsStyle, CellStyle twoDigitsStyle) {
+
+        log.warn("rowNumber {}", rowNumber);
+
+        Row row = sheet.getRow(rowNumber);
         Cell cellSsfc = row.createCell(columnNumber);
         cellSsfc.setCellValue(generation);
         cellSsfc.setCellStyle(threeDigitsStyle);
 
-        row = sheet.getRow(ssfcRows.length * elementNumber + 2 + 1);
+        row = sheet.getRow(rowNumber + 1);
         cellSsfc = row.createCell(columnNumber);
         cellSsfc.setCellValue(ownNeeds);
         cellSsfc.setCellStyle(threeDigitsStyle);
 
-        row = sheet.getRow(ssfcRows.length * elementNumber + 2 + 2);
+        row = sheet.getRow(rowNumber + 2);
         cellSsfc = row.createCell(columnNumber);
         cellSsfc.setCellValue(percentOwnNeeds);
         cellSsfc.setCellStyle(twoDigitsStyle);
 
-        row = sheet.getRow(ssfcRows.length * elementNumber + 2 + 3);
+        row = sheet.getRow(rowNumber + 3);
         cellSsfc = row.createCell(columnNumber);
         cellSsfc.setCellValue(production);
         cellSsfc.setCellStyle(threeDigitsStyle);
 
-        row = sheet.getRow(ssfcRows.length * elementNumber + 2 + 4);
+        row = sheet.getRow(rowNumber + 4);
         cellSsfc = row.createCell(columnNumber);
         cellSsfc.setCellValue(ssfcg);
         cellSsfc.setCellStyle(twoDigitsStyle);
 
-        row = sheet.getRow(ssfcRows.length * elementNumber + 2 + 5);
+        row = sheet.getRow(rowNumber + 5);
         cellSsfc = row.createCell(columnNumber);
         cellSsfc.setCellValue(ssfc);
         cellSsfc.setCellStyle(twoDigitsStyle);
