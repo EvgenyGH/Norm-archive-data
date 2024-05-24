@@ -1,24 +1,30 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
 <head>
-    <title>Please Log In</title>
+    <title>Авторизация</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" media="all"
+          href="../static/css/login.css" th:href="@{/css/login.css}">
 </head>
+
 <body>
-<h1>Please Log In</h1>
-<div th:if="${param.error}">
-    Invalid username and password.
+<h1>Нормативные удельные расходы топлива на отпуск тепловой энергии</h1>
+<h1>(Архив данных)</h1>
+<h2>Пожалуйста, введите имя пользователя и проль</h2>
+<div th:if="${param.error}" class="error">
+    Имя пользователя и пароль неверны.
 </div>
-<div th:if="${param.logout}">
-    You have been logged out.
+<div th:if="${param.logout}" class="logout">
+    Вы вышли из системы.
 </div>
 <form th:action="@{/login}" method="post">
     <div>
-        <input type="text" name="username" placeholder="Username"/>
+        <input type="text" name="username" placeholder="Имя пользователя"/>
     </div>
     <div>
-        <input type="password" name="password" placeholder="Password"/>
+        <input type="password" name="password" placeholder="Пароль"/>
     </div>
-    <input type="submit" value="Log in"/>
+    <input type="submit" value="Войти" class="button"/>
 </form>
 </body>
 </html>

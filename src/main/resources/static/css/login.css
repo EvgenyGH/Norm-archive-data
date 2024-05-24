@@ -1,0 +1,41 @@
+body {
+    background: cornsilk;
+    color: #000000;
+    text-align: center;
+}
+
+h1 {
+
+}
+
+h2 {
+
+}
+
+.error, .logout {
+    padding-left: 30%;
+    width: 12.5em;
+    margin-top: 0.08em;
+}
+
+.error {
+    color: red;
+    background-color: rgba(255, 0, 0, 0.51);;
+}
+
+.logout {
+    color: green;
+    background-color: rgba(106, 255, 31, 0.51);
+}
+
+input {
+    width: 12.5em;
+    margin-top: 0.08em;
+}
+
+.button {
+    width: 13em;
+    margin-top: 0.2em;
+
+}
+
