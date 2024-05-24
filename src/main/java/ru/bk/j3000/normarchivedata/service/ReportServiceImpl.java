@@ -763,7 +763,6 @@ public class ReportServiceImpl implements ReportService {
     public Resource getAllSsfcReport(Integer year, String selection, List<UUID> srcIds) {
         //todo set fixed view for excel
         //todo add branch summary amd tariff zone summary
-        //todo may be util class for operating with avgData
 
         Resource resource;
 
@@ -802,6 +801,10 @@ public class ReportServiceImpl implements ReportService {
                 @Override
                 public void accept(SsfcSummary summary, Counter counter, Counter number) {
                     Row row = sheet.createRow(counter.getAndIncrement());
+//                    Cell cellSum = row.createCell(0);
+//                    cellSum.setCellValue("start section" + summary.getName());
+                    styleBranchSum(sheet, row.getRowNum(), row.getRowNum(),
+                            0, allSsfcsColumns.length - 1);
                     row.createCell(0).setCellValue("start section" + summary.getName());
 
                     if (summary.hasSub()) {
@@ -1008,11 +1011,23 @@ public class ReportServiceImpl implements ReportService {
         IntStream.rangeClosed(firstRow, lastRow)
                 .forEach(row -> IntStream.rangeClosed(firstColumn, lastColumn)
                         .forEach(col -> {
-                            Cell cell = sheet.getRow(row).getCell(col);
-                            CellUtil.setCellStyleProperty(cell, CellUtil.BORDER_BOTTOM, IndexedColors.BLACK);
-                            CellUtil.setCellStyleProperty(cell, CellUtil.BORDER_LEFT, IndexedColors.BLACK);
-                            CellUtil.setCellStyleProperty(cell, CellUtil.BORDER_RIGHT, IndexedColors.BLACK);
-                            CellUtil.setCellStyleProperty(cell, CellUtil.BORDER_TOP, IndexedColors.BLACK);
+                            Cell cell = sheet.getRow(row).createCell(col);
+                            CellUtil.setCellStyleProperty(cell, CellUtil.BORDER_BOTTOM,
+                                    BorderStyle.MEDIUM);
+                            CellUtil.setCellStyleProperty(cell, CellUtil.BORDER_TOP,
+                                    BorderStyle.MEDIUM);
+                            CellUtil.setCellStyleProperty(cell, CellUtil.BORDER_RIGHT,
+                                    BorderStyle.MEDIUM);
+                            CellUtil.setCellStyleProperty(cell, CellUtil.BORDER_LEFT,
+                                    BorderStyle.MEDIUM);
+                            CellUtil.setCellStyleProperty(cell, CellUtil.BOTTOM_BORDER_COLOR,
+                                    IndexedColors.BLACK);
+                            CellUtil.setCellStyleProperty(cell, CellUtil.TOP_BORDER_COLOR,
+                                    IndexedColors.BLACK);
+                            CellUtil.setCellStyleProperty(cell, CellUtil.RIGHT_BORDER_COLOR,
+                                    IndexedColors.BLACK);
+                            CellUtil.setCellStyleProperty(cell, CellUtil.LEFT_BORDER_COLOR,
+                                    IndexedColors.BLACK);
                             CellUtil.setCellStyleProperty(cell, CellUtil.FILL_FOREGROUND_COLOR, color);
                             CellUtil.setCellStyleProperty(cell, CellUtil.FILL_PATTERN,
                                     FillPatternType.SOLID_FOREGROUND);
