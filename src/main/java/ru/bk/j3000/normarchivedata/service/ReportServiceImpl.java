@@ -17,9 +17,10 @@ import ru.bk.j3000.normarchivedata.exception.ReportIOException;
 import ru.bk.j3000.normarchivedata.model.*;
 import ru.bk.j3000.normarchivedata.model.dto.SsfcShortDTO;
 import ru.bk.j3000.normarchivedata.model.dto.SsfcsDTO;
-import ru.bk.j3000.normarchivedata.model.dto.ssfcsum.SsfcSumTZBranch;
-import ru.bk.j3000.normarchivedata.model.dto.ssfcsum.SsfcSummary;
 import ru.bk.j3000.normarchivedata.util.Counter;
+import ru.bk.j3000.normarchivedata.util.TripleConsumer;
+import ru.bk.j3000.normarchivedata.util.ssfcsum.SsfcSumTZBranch;
+import ru.bk.j3000.normarchivedata.util.ssfcsum.SsfcSummary;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -27,7 +28,6 @@ import java.security.InvalidParameterException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
-import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -796,15 +796,14 @@ public class ReportServiceImpl implements ReportService {
                     .forEach(i -> createCell(headerRow, i, allSsfcsColumns[i], headerStylePrimary));
 
             // set data and merge cells
-
-            BiConsumer<SsfcSummary, Counter> consumer = new BiConsumer<>() {
+            TripleConsumer<SsfcSummary, Counter, Counter> consumer = new TripleConsumer<>() {
                 @Override
-                public void accept(SsfcSummary summary, Counter counter) {
+                public void accept(SsfcSummary summary, Counter counter, Counter number) {
                     Row row = sheet.createRow(counter.getAndIncrement());
                     row.createCell(0).setCellValue("start section" + summary.getName());
 
                     if (summary.hasSub()) {
-                        summary.getSubSsfcs().forEach(sum -> this.accept(sum, counter));
+                        summary.getSubSsfcs().forEach(sum -> this.accept(sum, counter, number));
                     } else {
                         summary.getAllSsfcs()
                                 .stream()
@@ -841,8 +840,7 @@ public class ReportServiceImpl implements ReportService {
                                     // set data to merged cells
                                     Row currentRow = sheet.getRow(counter.getCounter());
                                     Cell cell = currentRow.createCell(0);
-                                    //todo finish numbers
-                                    cell.setCellValue(1);
+                                    cell.setCellValue(number.getAndIncrement());
                                     cell.setCellStyle(integerStyle);
                                     createCell(currentRow, 1,
                                             ssfcs.getFirst().getProperties().getId().getSource().getName(),
@@ -859,19 +857,17 @@ public class ReportServiceImpl implements ReportService {
                                     });
 
                                     // set ssfc data
-                                    ssfcs.forEach(ssfc -> {
-                                        setSsfcMonthDataCellsStd(sheet, counter.getCounter(),
-                                                5 + ssfc.getMonth(), // data set in 6 - 17 cells
-                                                ssfc.getGeneration(),
-                                                ssfc.getOwnNeeds(),
-                                                ssfc.getGeneration() == 0 ? 0
-                                                        : ssfc.getOwnNeeds() / ssfc.getGeneration() * 100d,
-                                                ssfc.getProduction(),
-                                                ssfc.getSsfcg(),
-                                                ssfc.getSsfc(),
-                                                threeDigitsStyle,
-                                                twoDigitsStyle);
-                                    });
+                                    ssfcs.forEach(ssfc -> setSsfcMonthDataCellsStd(sheet, counter.getCounter(),
+                                            5 + ssfc.getMonth(), // data set in 6 - 17 cells
+                                            ssfc.getGeneration(),
+                                            ssfc.getOwnNeeds(),
+                                            ssfc.getGeneration() == 0 ? 0
+                                                    : ssfc.getOwnNeeds() / ssfc.getGeneration() * 100d,
+                                            ssfc.getProduction(),
+                                            ssfc.getSsfcg(),
+                                            ssfc.getSsfc(),
+                                            threeDigitsStyle,
+                                            twoDigitsStyle));
 
                                     // set source summary data
 //                            setSsfcMonthDataCells(sheet, i, 5,
@@ -902,9 +898,10 @@ public class ReportServiceImpl implements ReportService {
             };
 
             Counter counter = new Counter(2);
+            Counter number = new Counter(1);
 
             summary.getSubSsfcs().
-                    forEach(sum -> consumer.accept(sum, counter));
+                    forEach(sum -> consumer.accept(sum, counter, number));
 
             Row row = sheet.createRow(counter.getAndIncrement());
             row.createCell(0).setCellValue("TOTAL SECTION");
