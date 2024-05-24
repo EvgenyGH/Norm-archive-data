@@ -64,9 +64,11 @@ public class SecurityConfiguration {
 
         http.authorizeHttpRequests(conf ->
                 conf
-                        .requestMatchers("/login")
+                        .requestMatchers("/login",
+                                "/css/login.css")
                         .permitAll()
-                        .requestMatchers("/source/**",
+                        .requestMatchers("/logout",
+                                "/source/**",
                                 "/sourceproperty/**",
                                 "/tariffzone/**",
                                 "/branch/**",
