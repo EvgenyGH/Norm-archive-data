@@ -757,6 +757,9 @@ public class ReportServiceImpl implements ReportService {
     public Resource getAllSsfcReport(Integer year, String selection, List<UUID> srcIds) {
         //todo set fixed view for excel
         //todo add branch summary amd tariff zone summary
+        //todo may be util class for operating with avgData
+        //todo move summary to util
+
         Resource resource;
 
         List<StandardSFC> ssfcs = switch (selection) {

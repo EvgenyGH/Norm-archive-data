@@ -4,7 +4,6 @@ spring:
     password: ${DB_PASSWORD}
     username: ${DB_USER}
     driver-class-name: org.postgresql.Driver
-
   jpa:
     generate-ddl: false
     show-sql: false
@@ -18,9 +17,16 @@ spring:
     hiddenmethod:
       filter:
         enabled: true
+
 logging:
   level:
     ru.bk.j3000.normarchivedata: info
 
 server:
-  port: 5050
+  port: 443
+  ssl:
+    key-store-type: PKCS12
+    key-store: keystore/norm.p12
+    key-alias: ${KEYSTORE_ALIAS}
+    key-store-password: ${KEYSTORE_PASSWORD}
+    enabled: true
