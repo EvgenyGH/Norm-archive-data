@@ -1,41 +1,50 @@
 body {
     background: cornsilk;
-    color: #000000;
+    color: black;
     text-align: center;
 }
 
 h1 {
-
+    font-size: 1.5em;
 }
 
 h2 {
+    font-size: 0.8em;
+}
 
+h3 {
+    font-size: 1em;
 }
 
 .error, .logout {
-    padding-left: 30%;
-    width: 12.5em;
+    text-align: center;
     margin-top: 0.08em;
 }
 
 .error {
-    color: red;
-    background-color: rgba(255, 0, 0, 0.51);;
+    color: darkred;
+    background-color: LightCoral;
 }
 
 .logout {
-    color: green;
-    background-color: rgba(106, 255, 31, 0.51);
+    color: darkgreen;
+    background-color: lime;
 }
 
-input {
+.field {
     width: 12.5em;
     margin-top: 0.08em;
+    background: LightGoldenrodYellow;
 }
 
 .button {
     width: 13em;
     margin-top: 0.2em;
-
+    height: 3em;
+    background: Khaki;
 }
 
+.button:hover,
+.field:hover {
+    background: darkkhaki;
+}

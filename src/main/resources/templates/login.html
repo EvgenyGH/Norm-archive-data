@@ -9,20 +9,20 @@
 
 <body>
 <h1>Нормативные удельные расходы топлива на отпуск тепловой энергии</h1>
-<h1>(Архив данных)</h1>
-<h2>Пожалуйста, введите имя пользователя и проль</h2>
+<h2>(Архив данных)</h2>
+<h3>Пожалуйста, введите имя пользователя и пароль</h3>
 <div th:if="${param.error}" class="error">
-    Имя пользователя и пароль неверны.
+    Имя пользователя и пароль введены неверно
 </div>
 <div th:if="${param.logout}" class="logout">
-    Вы вышли из системы.
+    Вы вышли из системы
 </div>
 <form th:action="@{/login}" method="post">
     <div>
-        <input type="text" name="username" placeholder="Имя пользователя"/>
+        <input class="field" type="text" name="username" placeholder="Имя пользователя"/>
     </div>
     <div>
-        <input type="password" name="password" placeholder="Пароль"/>
+        <input class="field" type="password" name="password" placeholder="Пароль"/>
     </div>
     <input type="submit" value="Войти" class="button"/>
 </form>
