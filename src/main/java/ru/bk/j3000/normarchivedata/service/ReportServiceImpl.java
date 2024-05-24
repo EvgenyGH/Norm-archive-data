@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.ss.util.RegionUtil;
 import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
 import org.apache.poi.xssf.usermodel.XSSFColor;
@@ -19,6 +20,7 @@ import ru.bk.j3000.normarchivedata.model.dto.SsfcShortDTO;
 import ru.bk.j3000.normarchivedata.model.dto.SsfcsDTO;
 import ru.bk.j3000.normarchivedata.util.Counter;
 import ru.bk.j3000.normarchivedata.util.TripleConsumer;
+import ru.bk.j3000.normarchivedata.util.ssfcsum.AvgDataHandler;
 import ru.bk.j3000.normarchivedata.util.ssfcsum.SsfcSumTZBranch;
 import ru.bk.j3000.normarchivedata.util.ssfcsum.SsfcSummary;
 
@@ -795,7 +797,7 @@ public class ReportServiceImpl implements ReportService {
             IntStream.rangeClosed(0, allSsfcsColumns.length - 1)
                     .forEach(i -> createCell(headerRow, i, allSsfcsColumns[i], headerStylePrimary));
 
-            // set data and merge cells
+            // set data and merge cells (Function)
             TripleConsumer<SsfcSummary, Counter, Counter> consumer = new TripleConsumer<>() {
                 @Override
                 public void accept(SsfcSummary summary, Counter counter, Counter number) {
@@ -817,6 +819,7 @@ public class ReportServiceImpl implements ReportService {
                                         .getId().getSource().getSourceType()))
                                 .sorted(Comparator.comparing(ssfcs -> ssfcs.getFirst().getFuelType()))
                                 .forEach(ssfcs -> {
+                                    //todo may be extra
                                     ssfcs = ssfcs.stream()
                                             .sorted(Comparator.comparing(StandardSFC::getMonth))
                                             .sorted(Comparator.comparing(ssfc -> ssfc.getProperties()
@@ -870,14 +873,15 @@ public class ReportServiceImpl implements ReportService {
                                             twoDigitsStyle));
 
                                     // set source summary data
-//                            setSsfcMonthDataCells(sheet, i, 5,
-//                                    srcSsfcsDTO.avgGeneration(),
-//                                    srcSsfcsDTO.avgOwnNeeds(),
-//                                    srcSsfcsDTO.avgPercentOwnNeeds(),
-//                                    srcSsfcsDTO.avgProduction(),
-//                                    srcSsfcsDTO.avgSsfcg(),
-//                                    srcSsfcsDTO.avgSsfc(),
-//                                    threeDigitsStyle, twoDigitsStyle);
+                                    double[] data = AvgDataHandler.avgSingleSrcDataOf(ssfcs);
+                                    setSsfcMonthDataCellsStd(sheet, counter.getCounter(), 5,
+                                            data[0],
+                                            data[1],
+                                            data[2],
+                                            data[3],
+                                            data[4],
+                                            data[5],
+                                            threeDigitsStyle, twoDigitsStyle);
 
                                     //set solid borders
                                     var range = new CellRangeAddress(counter.getCounter(),
@@ -983,6 +987,40 @@ public class ReportServiceImpl implements ReportService {
 
         log.debug("Ssfc one month data for one source set to report file");
     }
+
+    private void styleBranchSum(Sheet sheet, int firstRow, int lastRow,
+                                int firstColumn, int lastColumn) {
+        styleRegion(sheet, firstRow, lastRow, firstColumn,
+                lastColumn, IndexedColors.ORCHID);
+    }
+
+    private void styleTZSum(Sheet sheet, int firstRow, int lastRow,
+                            int firstColumn, int lastColumn) {
+        styleRegion(sheet, firstRow, lastRow, firstColumn,
+                lastColumn, IndexedColors.VIOLET);
+    }
+
+    private void styleRegion(Sheet sheet, int firstRow, int lastRow, int firstColumn,
+                             int lastColumn, IndexedColors color) {
+
+        var range = new CellRangeAddress(firstRow, lastRow, firstColumn, lastColumn);
+
+        IntStream.rangeClosed(firstRow, lastRow)
+                .forEach(row -> IntStream.rangeClosed(firstColumn, lastColumn)
+                        .forEach(col -> {
+                            Cell cell = sheet.getRow(row).getCell(col);
+                            CellUtil.setCellStyleProperty(cell, CellUtil.BORDER_BOTTOM, IndexedColors.BLACK);
+                            CellUtil.setCellStyleProperty(cell, CellUtil.BORDER_LEFT, IndexedColors.BLACK);
+                            CellUtil.setCellStyleProperty(cell, CellUtil.BORDER_RIGHT, IndexedColors.BLACK);
+                            CellUtil.setCellStyleProperty(cell, CellUtil.BORDER_TOP, IndexedColors.BLACK);
+                            CellUtil.setCellStyleProperty(cell, CellUtil.FILL_FOREGROUND_COLOR, color);
+                            CellUtil.setCellStyleProperty(cell, CellUtil.FILL_PATTERN,
+                                    FillPatternType.SOLID_FOREGROUND);
+                        }));
+
+        RegionUtil.setBorderBottom(BorderStyle.DOUBLE, range, sheet);
+    }
+
 
     private CellStyle getIntegerStyle(CellStyle cellStyle, DataFormat dataFormat, Font font) {
         getBaseStyle(cellStyle, font)
