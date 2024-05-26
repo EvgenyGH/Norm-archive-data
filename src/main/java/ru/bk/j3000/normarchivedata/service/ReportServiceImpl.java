@@ -20,6 +20,7 @@ import ru.bk.j3000.normarchivedata.model.dto.SsfcShortDTO;
 import ru.bk.j3000.normarchivedata.model.dto.SsfcsDTO;
 import ru.bk.j3000.normarchivedata.util.Counter;
 import ru.bk.j3000.normarchivedata.util.ssfcsum.AvgDataHandler;
+import ru.bk.j3000.normarchivedata.util.ssfcsum.SsfcSumSrc;
 import ru.bk.j3000.normarchivedata.util.ssfcsum.SsfcSumTZBranch;
 import ru.bk.j3000.normarchivedata.util.ssfcsum.SsfcSummary;
 
@@ -798,11 +799,11 @@ public class ReportServiceImpl implements ReportService {
 
             log.debug("Standard report headers set.");
 
-            //todo
             // set data and merge cells
             Counter counter = new Counter(2);
-            //Counter number = new Counter(1);
-            summary.getSubSsfcs().forEach(sum -> this.formStandardSsfcBlock(sheet, sum, counter, new Counter(1),
+            Counter number = new Counter(1);
+
+            summary.getSubSsfcs().forEach(sum -> this.formStandardSsfcBlock(sheet, sum, counter, number,
                     integerStyle, stringStyle, threeDigitsStyle, twoDigitsStyle));
 
             log.debug("Standard report data set.");
@@ -860,20 +861,32 @@ public class ReportServiceImpl implements ReportService {
         } else {
             summary.getAllSsfcs()
                     .stream()
-                    .collect(Collectors.groupingBy(ssfc ->
-                            new SrcIdAndFuelType(ssfc.getProperties().getId().getSource().getId(),
-                                    ssfc.getFuelType())))
+                    .collect(Collectors.groupingBy(ssfc -> ssfc.getProperties().getId()
+                            .getSource().getId()))
                     .values().stream()
-                    .sorted(Comparator.comparing(ssfcs -> ssfcs.getFirst().getProperties()
-                            .getId().getSource().getName()))
-                    .sorted(Comparator.comparing(ssfcs -> ssfcs.getFirst().getProperties()
-                            .getId().getSource().getSourceType()))
-                    .sorted(Comparator.comparing(ssfcs -> ssfcs.getFirst().getFuelType()))
-                    .forEach(ssfcs -> formGroupData(ssfcs.getFirst()
-                                    .getProperties().getId().getSource().getName(),
-                            ssfcs.getFirst().getFuelType().getName(),
-                            sheet, ssfcs, counter, number, integerStyle,
-                            stringStyle, threeDigitsStyle, twoDigitsStyle));
+                    .map(SsfcSumSrc::new)
+                    .forEach(sum -> formSumGroupBlock(sum.getAllSsfcs().getFirst().getProperties()
+                                    .getId().getSource().getName(), sheet, sum.avgData(),
+                            counter, number, sum.getClass().getSimpleName(),
+                            integerStyle, stringStyle, threeDigitsStyle, twoDigitsStyle));
+
+//                            formSumGroupData(sum.getAllSsfcs().getFirst().getProperties()
+//                                    .getId().getSource().getName(), sheet, sum.avgData(),
+//                            sum.getAllSsfcs().getFirst().getFuelType().getName(),
+//                            counter, number, sum.getClass().getSimpleName(),
+//                            integerStyle, stringStyle, threeDigitsStyle, twoDigitsStyle));
+
+
+//                    .sorted(Comparator.comparing(ssfcs -> ssfcs.getFirst().getProperties()
+//                            .getId().getSource().getName()))
+//                    .sorted(Comparator.comparing(ssfcs -> ssfcs.getFirst().getProperties()
+//                            .getId().getSource().getSourceType()))
+//                    .sorted(Comparator.comparing(ssfcs -> ssfcs.getFirst().getFuelType()))
+//                    .forEach(ssfcs -> formGroupData(ssfcs.getFirst()
+//                                    .getProperties().getId().getSource().getName(),
+//                            ssfcs.getFirst().getFuelType().getName(),
+//                            sheet, ssfcs, counter, number, integerStyle,
+//                            stringStyle, threeDigitsStyle, twoDigitsStyle));
         }
 
         log.debug("Standard report sum footer started for {}. Row {}",
@@ -978,10 +991,13 @@ public class ReportServiceImpl implements ReportService {
                 threeDigitsStyle,
                 twoDigitsStyle);
 
-        styleGroup(sheet, counter.getCounter(),
-                counter.getCounter() + ssfcRows.length - 1,
-                0, allSsfcsColumns.length - 1,
-                className, true);
+        // style summary blocks
+        if (!className.equals(SsfcSumSrc.class.getSimpleName())) {
+            styleGroup(sheet, counter.getCounter(),
+                    counter.getCounter() + ssfcRows.length - 1,
+                    0, allSsfcsColumns.length - 1,
+                    className, true);
+        }
 
         //set solid borders
         var range = new CellRangeAddress(counter.getCounter(),
