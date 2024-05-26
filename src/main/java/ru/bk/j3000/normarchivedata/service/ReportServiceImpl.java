@@ -19,7 +19,6 @@ import ru.bk.j3000.normarchivedata.model.*;
 import ru.bk.j3000.normarchivedata.model.dto.SsfcShortDTO;
 import ru.bk.j3000.normarchivedata.model.dto.SsfcsDTO;
 import ru.bk.j3000.normarchivedata.util.Counter;
-import ru.bk.j3000.normarchivedata.util.TripleConsumer;
 import ru.bk.j3000.normarchivedata.util.ssfcsum.AvgDataHandler;
 import ru.bk.j3000.normarchivedata.util.ssfcsum.SsfcSumTZBranch;
 import ru.bk.j3000.normarchivedata.util.ssfcsum.SsfcSummary;
@@ -764,7 +763,6 @@ public class ReportServiceImpl implements ReportService {
     public Resource getAllSsfcReport(Integer year, String selection, List<UUID> srcIds) {
         //todo set fixed view for excel
         //todo add branch summary amd tariff zone summary
-
         Resource resource;
 
         List<StandardSFC> ssfcs = switch (selection) {
@@ -797,137 +795,27 @@ public class ReportServiceImpl implements ReportService {
             IntStream.rangeClosed(0, allSsfcsColumns.length - 1)
                     .forEach(i -> createCell(headerRow, i, allSsfcsColumns[i], headerStylePrimary));
 
-            // set data and merge cells (Function)
-            TripleConsumer<SsfcSummary, Counter, Counter> consumer = new TripleConsumer<>() {
-                @Override
-                public void accept(SsfcSummary summary, Counter counter, Counter number) {
-                    Row row = sheet.createRow(counter.getAndIncrement());
-                    CellUtil.createCell(row, 1, summary.getName(), stringStyle);
-                    styleGroupTitle(sheet, row.getRowNum(), row.getRowNum(),
-                            0, allSsfcsColumns.length - 1,
-                            summary.getClass().getSimpleName());
-
-                    if (summary.hasSub()) {
-                        summary.getSubSsfcs().forEach(sum -> this.accept(sum, counter, number));
-                    } else {
-                        summary.getAllSsfcs()
-                                .stream()
-                                .collect(Collectors.groupingBy(ssfc ->
-                                        new SrcIdAndFuelType(ssfc.getProperties().getId().getSource().getId(),
-                                                ssfc.getFuelType())))
-                                .values().stream()
-                                .sorted(Comparator.comparing(ssfcs -> ssfcs.getFirst().getProperties()
-                                        .getId().getSource().getName()))
-                                .sorted(Comparator.comparing(ssfcs -> ssfcs.getFirst().getProperties()
-                                        .getId().getSource().getSourceType()))
-                                .sorted(Comparator.comparing(ssfcs -> ssfcs.getFirst().getFuelType()))
-                                .forEach(ssfcs -> {
-                                    //todo may be extra
-                                    ssfcs = ssfcs.stream()
-                                            .sorted(Comparator.comparing(StandardSFC::getMonth))
-                                            .sorted(Comparator.comparing(ssfc -> ssfc.getProperties()
-                                                    .getId().getYear())).toList();
-
-                                    // create rows
-                                    IntStream.rangeClosed(counter.getCounter(),
-                                                    counter.getCounter() + ssfcRows.length)
-                                            .forEach(sheet::createRow);
-
-                                    // merge cells
-                                    IntStream.of(0, 1, 2).forEach(col -> {
-                                        var range = new CellRangeAddress(counter.getCounter(),
-                                                counter.getCounter() + ssfcRows.length - 1,
-                                                col, col);
-                                        sheet.addMergedRegion(range);
-                                        RegionUtil.setBorderLeft(BorderStyle.THIN, range, sheet);
-                                        RegionUtil.setBorderRight(BorderStyle.THIN, range, sheet);
-                                    });
-
-                                    // set data to merged cells
-                                    Row currentRow = sheet.getRow(counter.getCounter());
-                                    Cell cell = currentRow.createCell(0);
-                                    cell.setCellValue(number.getAndIncrement());
-                                    cell.setCellStyle(integerStyle);
-                                    createCell(currentRow, 1,
-                                            ssfcs.getFirst().getProperties().getId().getSource().getName(),
-                                            stringStyle);
-                                    createCell(currentRow, 2, ssfcs.getFirst().getFuelType().getName(),
-                                            stringStyle);
-
-                                    // set ssfc data row names and units
-                                    IntStream.range(0, ssfcRows.length).forEach(k -> {
-                                        createCell(sheet.getRow(counter.getCounter() + k), 3,
-                                                ssfcRows[k], stringStyle);
-                                        createCell(sheet.getRow(counter.getCounter() + k), 4,
-                                                ssfcUnits[k], stringStyle);
-                                    });
-
-                                    // set ssfc data
-                                    ssfcs.forEach(ssfc -> setSsfcMonthDataCellsStd(sheet, counter.getCounter(),
-                                            5 + ssfc.getMonth(), // data set in 6 - 17 cells
-                                            ssfc.getGeneration(),
-                                            ssfc.getOwnNeeds(),
-                                            ssfc.getGeneration() == 0 ? 0
-                                                    : ssfc.getOwnNeeds() / ssfc.getGeneration() * 100d,
-                                            ssfc.getProduction(),
-                                            ssfc.getSsfcg(),
-                                            ssfc.getSsfc(),
-                                            threeDigitsStyle,
-                                            twoDigitsStyle));
-
-                                    // set source summary data
-                                    double[] data = AvgDataHandler.avgSingleSrcDataOf(ssfcs);
-                                    setSsfcMonthDataCellsStd(sheet, counter.getCounter(), 5,
-                                            data[0],
-                                            data[1],
-                                            data[2],
-                                            data[3],
-                                            data[4],
-                                            data[5],
-                                            threeDigitsStyle, twoDigitsStyle);
-
-                                    //set solid borders
-                                    var range = new CellRangeAddress(counter.getCounter(),
-                                            counter.getCounter() + ssfcRows.length - 1,
-                                            0, allSsfcsColumns.length - 1);
-                                    RegionUtil.setBorderBottom(BorderStyle.DOUBLE, range, sheet);
-
-
-                                    counter.increment(ssfcRows.length);
-                                });
-                    }
-                    row = sheet.createRow(counter.getAndIncrement());
-                    row.createCell(0).setCellValue(summary.getName());
-                }
-            };
-
+            // set data and merge cells
             Counter counter = new Counter(2);
             Counter number = new Counter(1);
+            summary.getSubSsfcs().forEach(sum -> this.formStandardSsfcBlock(sheet, sum, counter, number,
+                    integerStyle, stringStyle, threeDigitsStyle, twoDigitsStyle));
 
-            summary.getSubSsfcs().
-                    forEach(sum -> consumer.accept(sum, counter, number));
-
+            // set totals
             Row row = sheet.createRow(counter.getAndIncrement());
             row.createCell(0).setCellValue("TOTAL SECTION");
 
-
             // autosize columns
-            IntStream.rangeClosed(0, allSsfcsColumns.length - 1)
-                    .forEach(sheet::autoSizeColumn);
+            IntStream.rangeClosed(0, allSsfcsColumns.length - 1).forEach(sheet::autoSizeColumn);
 
             // set title (first cell is too wide if before)
             Row titleRow = sheet.createRow(0);
-
             createCell(titleRow, 0, String.format("Нормативные удельные расходы топлива на единицу " +
                     "отпущенной тепловой энергии источников ПАО \"МОЭК\" на %s год", year), titleStyle);
 
             ByteArrayOutputStream out = new ByteArrayOutputStream();
-
             wb.write(out);
-
-            resource = new
-
-                    ByteArrayResource(out.toByteArray());
+            resource = new ByteArrayResource(out.toByteArray());
 
         } catch (
                 IOException e) {
@@ -936,6 +824,124 @@ public class ReportServiceImpl implements ReportService {
         }
 
         return resource;
+    }
+
+    private void formStandardSsfcBlock(Sheet sheet, SsfcSummary summary, Counter counter, Counter number,
+                                       CellStyle integerStyle, CellStyle stringStyle,
+                                       CellStyle threeDigitsStyle, CellStyle twoDigitsStyle) {
+
+        // set group header
+        Row row = sheet.createRow(counter.getAndIncrement());
+        CellUtil.createCell(row, 1, summary.getName(), stringStyle);
+        styleGroupTitle(sheet, row.getRowNum(), row.getRowNum(),
+                0, allSsfcsColumns.length - 1,
+                summary.getClass().getSimpleName());
+
+        // set data
+        if (summary.hasSub()) {
+            summary.getSubSsfcs().forEach(sum -> this.formStandardSsfcBlock(sheet, summary, counter,
+                    number, integerStyle, stringStyle, threeDigitsStyle, twoDigitsStyle));
+        } else {
+            summary.getAllSsfcs()
+                    .stream()
+                    .collect(Collectors.groupingBy(ssfc ->
+                            new SrcIdAndFuelType(ssfc.getProperties().getId().getSource().getId(),
+                                    ssfc.getFuelType())))
+                    .values().stream()
+                    .sorted(Comparator.comparing(ssfcs -> ssfcs.getFirst().getProperties()
+                            .getId().getSource().getName()))
+                    .sorted(Comparator.comparing(ssfcs -> ssfcs.getFirst().getProperties()
+                            .getId().getSource().getSourceType()))
+                    .sorted(Comparator.comparing(ssfcs -> ssfcs.getFirst().getFuelType()))
+                    .forEach(ssfcs -> formGroupData(ssfcs.getFirst()
+                                    .getProperties().getId().getSource().getName(),
+                            ssfcs.getFirst().getFuelType().getName(),
+                            sheet, ssfcs, counter, number, integerStyle,
+                            stringStyle, threeDigitsStyle, twoDigitsStyle));
+        }
+
+        // set footer
+        row = sheet.createRow(counter.getAndIncrement());
+        row.createCell(0).setCellValue(summary.getName());
+        // style summ
+        // rename
+        //styleGroupTitle();
+
+    }
+
+    private void formGroupData(String name, String fuelType, Sheet sheet, List<StandardSFC> ssfcs,
+                               Counter counter, Counter number,
+                               CellStyle integerStyle, CellStyle stringStyle,
+                               CellStyle threeDigitsStyle, CellStyle twoDigitsStyle) {
+        //todo may be extra
+        ssfcs = ssfcs.stream()
+                .sorted(Comparator.comparing(StandardSFC::getMonth))
+                .sorted(Comparator.comparing(ssfc -> ssfc.getProperties()
+                        .getId().getYear())).toList();
+
+        // create rows
+        IntStream.rangeClosed(counter.getCounter(),
+                        counter.getCounter() + ssfcRows.length)
+                .forEach(sheet::createRow);
+
+        // merge cells
+        IntStream.of(0, 1, 2).forEach(col -> {
+            var range = new CellRangeAddress(counter.getCounter(),
+                    counter.getCounter() + ssfcRows.length - 1,
+                    col, col);
+            sheet.addMergedRegion(range);
+            RegionUtil.setBorderLeft(BorderStyle.THIN, range, sheet);
+            RegionUtil.setBorderRight(BorderStyle.THIN, range, sheet);
+        });
+
+        // set data to merged cells
+        Row currentRow = sheet.getRow(counter.getCounter());
+        Cell cell = currentRow.createCell(0);
+        cell.setCellValue(number.getAndIncrement());
+        cell.setCellStyle(integerStyle);
+        createCell(currentRow, 1, name, stringStyle);
+        createCell(currentRow, 2, fuelType, stringStyle);
+
+        // set ssfc data row names and units
+        IntStream.range(0, ssfcRows.length).forEach(k -> {
+            createCell(sheet.getRow(counter.getCounter() + k), 3,
+                    ssfcRows[k], stringStyle);
+            createCell(sheet.getRow(counter.getCounter() + k), 4,
+                    ssfcUnits[k], stringStyle);
+        });
+
+        // set ssfc data
+        ssfcs.forEach(ssfc -> setSsfcMonthDataCellsStd(sheet, counter.getCounter(),
+                5 + ssfc.getMonth(), // data set in 6 - 17 cells
+                ssfc.getGeneration(),
+                ssfc.getOwnNeeds(),
+                ssfc.getGeneration() == 0 ? 0
+                        : ssfc.getOwnNeeds() / ssfc.getGeneration() * 100d,
+                ssfc.getProduction(),
+                ssfc.getSsfcg(),
+                ssfc.getSsfc(),
+                threeDigitsStyle,
+                twoDigitsStyle));
+
+        // set source summary data
+        double[] data = AvgDataHandler.avgSingleSrcDataOf(ssfcs);
+        setSsfcMonthDataCellsStd(sheet, counter.getCounter(), 5,
+                data[0],
+                data[1],
+                data[2],
+                data[3],
+                data[4],
+                data[5],
+                threeDigitsStyle, twoDigitsStyle);
+
+        //set solid borders
+        var range = new CellRangeAddress(counter.getCounter(),
+                counter.getCounter() + ssfcRows.length - 1,
+                0, allSsfcsColumns.length - 1);
+        RegionUtil.setBorderBottom(BorderStyle.DOUBLE, range, sheet);
+
+
+        counter.increment(ssfcRows.length);
     }
 
     private void setSsfcMonthDataCells(Sheet sheet, int elementNumber, int columnNumber,
