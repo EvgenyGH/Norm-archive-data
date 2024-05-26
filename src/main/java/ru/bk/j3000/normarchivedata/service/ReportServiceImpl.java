@@ -27,10 +27,7 @@ import ru.bk.j3000.normarchivedata.util.ssfcsum.SsfcSummary;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.InvalidParameterException;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -809,7 +806,7 @@ public class ReportServiceImpl implements ReportService {
             log.debug("Standard report data set.");
 
             // set totals
-            formSumGroupBlock("Всего по компании", sheet, summary.avgData(), counter,
+            formGroupBlock("Всего по компании", sheet, summary.avgData(), counter,
                     null, summary.getClass().getSimpleName(),
                     integerStyle, stringStyle, threeDigitsStyle, twoDigitsStyle);
 
@@ -865,65 +862,47 @@ public class ReportServiceImpl implements ReportService {
                             .getSource().getId()))
                     .values().stream()
                     .map(SsfcSumSrc::new)
-                    .forEach(sum -> formSumGroupBlock(sum.getAllSsfcs().getFirst().getProperties()
+                    .forEach(sum -> formGroupBlock(sum.getAllSsfcs().getFirst().getProperties()
                                     .getId().getSource().getName(), sheet, sum.avgData(),
                             counter, number, sum.getClass().getSimpleName(),
                             integerStyle, stringStyle, threeDigitsStyle, twoDigitsStyle));
-
-//                            formSumGroupData(sum.getAllSsfcs().getFirst().getProperties()
-//                                    .getId().getSource().getName(), sheet, sum.avgData(),
-//                            sum.getAllSsfcs().getFirst().getFuelType().getName(),
-//                            counter, number, sum.getClass().getSimpleName(),
-//                            integerStyle, stringStyle, threeDigitsStyle, twoDigitsStyle));
-
-
-//                    .sorted(Comparator.comparing(ssfcs -> ssfcs.getFirst().getProperties()
-//                            .getId().getSource().getName()))
-//                    .sorted(Comparator.comparing(ssfcs -> ssfcs.getFirst().getProperties()
-//                            .getId().getSource().getSourceType()))
-//                    .sorted(Comparator.comparing(ssfcs -> ssfcs.getFirst().getFuelType()))
-//                    .forEach(ssfcs -> formGroupData(ssfcs.getFirst()
-//                                    .getProperties().getId().getSource().getName(),
-//                            ssfcs.getFirst().getFuelType().getName(),
-//                            sheet, ssfcs, counter, number, integerStyle,
-//                            stringStyle, threeDigitsStyle, twoDigitsStyle));
         }
 
         log.debug("Standard report sum footer started for {}. Row {}",
                 summary.getName(), counter.getCounter());
 
         // set footer sums
-        formSumGroupBlock(summary.getName(), sheet, summary.avgData(), counter,
+        formGroupBlock(summary.getName(), sheet, summary.avgData(), counter,
                 null, summary.getClass().getSimpleName(),
                 integerStyle, stringStyle, threeDigitsStyle, twoDigitsStyle);
     }
 
-    private void formSumGroupBlock(String name, Sheet sheet, double[][] avgData,
-                                   Counter counter, Counter number, String className,
-                                   CellStyle integerStyle, CellStyle stringStyle,
-                                   CellStyle threeDigitsStyle, CellStyle twoDigitsStyle) {
+    private void formGroupBlock(String name, Sheet sheet, double[][] avgData,
+                                Counter counter, Counter number, String className,
+                                CellStyle integerStyle, CellStyle stringStyle,
+                                CellStyle threeDigitsStyle, CellStyle twoDigitsStyle) {
 
         List<double[][]> listData = AvgDataHandler.avgDataToList(avgData);
 
         if (listData.size() == 1) {
-            formSumGroupData(name, sheet, listData.getFirst(),
+            formGroupData(name, sheet, listData.getFirst(),
                     avgData[1][12] == 0 ? FUEL_TYPE.DIESEL.getName() : FUEL_TYPE.GAS.getName(),
                     counter, number, className, integerStyle, stringStyle, threeDigitsStyle, twoDigitsStyle);
         } else {
-            formSumGroupData(String.format("%s (газ + дизель)", name), sheet, listData.get(0),
+            formGroupData(String.format("%s (газ + дизель)", name), sheet, listData.get(0),
                     "газ + дизель", counter, number, className, integerStyle,
                     stringStyle, threeDigitsStyle, twoDigitsStyle);
-            formSumGroupData(String.format("%s (газ)", name), sheet, listData.get(1), FUEL_TYPE.GAS.getName(),
+            formGroupData(String.format("%s (газ)", name), sheet, listData.get(1), FUEL_TYPE.GAS.getName(),
                     counter, number, className, integerStyle, stringStyle, threeDigitsStyle, twoDigitsStyle);
-            formSumGroupData(String.format("%s (дизель)", name), sheet, listData.get(2), FUEL_TYPE.DIESEL.getName(),
+            formGroupData(String.format("%s (дизель)", name), sheet, listData.get(2), FUEL_TYPE.DIESEL.getName(),
                     counter, number, className, integerStyle, stringStyle, threeDigitsStyle, twoDigitsStyle);
         }
     }
 
-    private void formSumGroupData(String name, Sheet sheet, double[][] data, String fuelType,
-                                  Counter counter, Counter number, String className,
-                                  CellStyle integerStyle, CellStyle stringStyle,
-                                  CellStyle threeDigitsStyle, CellStyle twoDigitsStyle) {
+    private void formGroupData(String name, Sheet sheet, double[][] data, String fuelType,
+                               Counter counter, Counter number, String className,
+                               CellStyle integerStyle, CellStyle stringStyle,
+                               CellStyle threeDigitsStyle, CellStyle twoDigitsStyle) {
 
         log.debug("Standard report sum group data started for {}. Row {}",
                 name, counter.getCounter());
@@ -1011,82 +990,6 @@ public class ReportServiceImpl implements ReportService {
                 name, counter.getCounter());
     }
 
-    //todo this is for inner data
-    private void formGroupData(String name, String fuelType, Sheet sheet, List<StandardSFC> ssfcs,
-                               Counter counter, Counter number,
-                               CellStyle integerStyle, CellStyle stringStyle,
-                               CellStyle threeDigitsStyle, CellStyle twoDigitsStyle) {
-        //todo may be extra
-        ssfcs = ssfcs.stream()
-                .sorted(Comparator.comparing(StandardSFC::getMonth))
-                .sorted(Comparator.comparing(ssfc -> ssfc.getProperties()
-                        .getId().getYear())).toList();
-
-        // create rows
-        IntStream.rangeClosed(counter.getCounter(),
-                        counter.getCounter() + ssfcRows.length)
-                .forEach(sheet::createRow);
-
-        // merge cells
-        IntStream.of(0, 1, 2).forEach(col -> {
-            var range = new CellRangeAddress(counter.getCounter(),
-                    counter.getCounter() + ssfcRows.length - 1,
-                    col, col);
-            sheet.addMergedRegion(range);
-            RegionUtil.setBorderLeft(BorderStyle.THIN, range, sheet);
-            RegionUtil.setBorderRight(BorderStyle.THIN, range, sheet);
-        });
-
-        // set data to merged cells
-        Row currentRow = sheet.getRow(counter.getCounter());
-        Cell cell = currentRow.createCell(0);
-        cell.setCellValue(number.getAndIncrement());
-        cell.setCellStyle(integerStyle);
-        createCell(currentRow, 1, name, stringStyle);
-        createCell(currentRow, 2, fuelType, stringStyle);
-
-        // set ssfc data row names and units
-        IntStream.range(0, ssfcRows.length).forEach(k -> {
-            createCell(sheet.getRow(counter.getCounter() + k), 3,
-                    ssfcRows[k], stringStyle);
-            createCell(sheet.getRow(counter.getCounter() + k), 4,
-                    ssfcUnits[k], stringStyle);
-        });
-
-        // set ssfc data
-        ssfcs.forEach(ssfc -> setSsfcMonthDataCellsStd(sheet, counter.getCounter(),
-                5 + ssfc.getMonth(), // data set in 6 - 17 cells
-                ssfc.getGeneration(),
-                ssfc.getOwnNeeds(),
-                ssfc.getGeneration() == 0 ? 0
-                        : ssfc.getOwnNeeds() / ssfc.getGeneration() * 100d,
-                ssfc.getProduction(),
-                ssfc.getSsfcg(),
-                ssfc.getSsfc(),
-                threeDigitsStyle,
-                twoDigitsStyle));
-
-        // set source summary data
-        double[] data = AvgDataHandler.avgSingleSrcDataOf(ssfcs);
-        setSsfcMonthDataCellsStd(sheet, counter.getCounter(), 5,
-                data[0],
-                data[1],
-                data[2],
-                data[3],
-                data[4],
-                data[5],
-                threeDigitsStyle, twoDigitsStyle);
-
-        //set solid borders
-        var range = new CellRangeAddress(counter.getCounter(),
-                counter.getCounter() + ssfcRows.length - 1,
-                0, allSsfcsColumns.length - 1);
-        RegionUtil.setBorderBottom(BorderStyle.DOUBLE, range, sheet);
-
-
-        counter.increment(ssfcRows.length);
-    }
-
     private void setSsfcMonthDataCells(Sheet sheet, int elementNumber, int columnNumber,
                                        Double generation, Double ownNeeds, Double percentOwnNeeds,
                                        Double production, Double ssfcg, Double ssfc,
@@ -1149,36 +1052,57 @@ public class ReportServiceImpl implements ReportService {
 
     private void styleRegion(Sheet sheet, int firstRow, int lastRow, int firstColumn,
                              int lastColumn, IndexedColors color, boolean border) {
+        Map<String, Object> properties = Map.of(
+                CellUtil.BOTTOM_BORDER_COLOR, IndexedColors.BLACK,
+                CellUtil.TOP_BORDER_COLOR, IndexedColors.BLACK,
+                CellUtil.RIGHT_BORDER_COLOR, IndexedColors.BLACK,
+                CellUtil.LEFT_BORDER_COLOR, IndexedColors.BLACK,
+                CellUtil.BORDER_BOTTOM, border ? BorderStyle.THIN : BorderStyle.NONE,
+                CellUtil.BORDER_TOP, border ? BorderStyle.THIN : BorderStyle.NONE,
+                CellUtil.BORDER_RIGHT, border ? BorderStyle.THIN : BorderStyle.NONE,
+                CellUtil.BORDER_LEFT, border ? BorderStyle.THIN : BorderStyle.NONE,
+                CellUtil.FILL_PATTERN, FillPatternType.SOLID_FOREGROUND,
+                CellUtil.FILL_FOREGROUND_COLOR, color.getIndex()
+        );
 
         IntStream.rangeClosed(firstRow, lastRow)
                 .forEach(row -> IntStream.rangeClosed(firstColumn, lastColumn)
                         .forEach(col -> {
                             Cell cell = sheet.getRow(row).getCell(col);
                             cell = Objects.isNull(cell) ? sheet.getRow(firstRow).createCell(col) : cell;
-
-                            CellUtil.setCellStyleProperty(cell, CellUtil.BOTTOM_BORDER_COLOR,
-                                    IndexedColors.BLACK);
-                            CellUtil.setCellStyleProperty(cell, CellUtil.TOP_BORDER_COLOR,
-                                    IndexedColors.BLACK);
-                            CellUtil.setCellStyleProperty(cell, CellUtil.RIGHT_BORDER_COLOR,
-                                    IndexedColors.BLACK);
-                            CellUtil.setCellStyleProperty(cell, CellUtil.LEFT_BORDER_COLOR,
-                                    IndexedColors.BLACK);
-
-                            CellUtil.setCellStyleProperty(cell, CellUtil.BORDER_BOTTOM,
-                                    border ? BorderStyle.THIN : BorderStyle.NONE);
-                            CellUtil.setCellStyleProperty(cell, CellUtil.BORDER_TOP,
-                                    border ? BorderStyle.THIN : BorderStyle.NONE);
-                            CellUtil.setCellStyleProperty(cell, CellUtil.BORDER_RIGHT,
-                                    border ? BorderStyle.THIN : BorderStyle.NONE);
-                            CellUtil.setCellStyleProperty(cell, CellUtil.BORDER_LEFT,
-                                    border ? BorderStyle.THIN : BorderStyle.NONE);
-
-                            CellUtil.setCellStyleProperty(cell, CellUtil.FILL_PATTERN,
-                                    FillPatternType.SOLID_FOREGROUND);
-                            CellUtil.setCellStyleProperty(cell, CellUtil.FILL_FOREGROUND_COLOR, color.getIndex());
+                            CellUtil.setCellStyleProperties(cell, properties);
                         })
                 );
+
+//        IntStream.rangeClosed(firstRow, lastRow)
+//                .forEach(row -> IntStream.rangeClosed(firstColumn, lastColumn)
+//                        .forEach(col -> {
+//                            Cell cell = sheet.getRow(row).getCell(col);
+//                            cell = Objects.isNull(cell) ? sheet.getRow(firstRow).createCell(col) : cell;
+//
+//                            CellUtil.setCellStyleProperty(cell, CellUtil.BOTTOM_BORDER_COLOR,
+//                                    IndexedColors.BLACK);
+//                            CellUtil.setCellStyleProperty(cell, CellUtil.TOP_BORDER_COLOR,
+//                                    IndexedColors.BLACK);
+//                            CellUtil.setCellStyleProperty(cell, CellUtil.RIGHT_BORDER_COLOR,
+//                                    IndexedColors.BLACK);
+//                            CellUtil.setCellStyleProperty(cell, CellUtil.LEFT_BORDER_COLOR,
+//                                    IndexedColors.BLACK);
+//
+//                            CellUtil.setCellStyleProperty(cell, CellUtil.BORDER_BOTTOM,
+//                                    border ? BorderStyle.THIN : BorderStyle.NONE);
+//                            CellUtil.setCellStyleProperty(cell, CellUtil.BORDER_TOP,
+//                                    border ? BorderStyle.THIN : BorderStyle.NONE);
+//                            CellUtil.setCellStyleProperty(cell, CellUtil.BORDER_RIGHT,
+//                                    border ? BorderStyle.THIN : BorderStyle.NONE);
+//                            CellUtil.setCellStyleProperty(cell, CellUtil.BORDER_LEFT,
+//                                    border ? BorderStyle.THIN : BorderStyle.NONE);
+//
+//                            CellUtil.setCellStyleProperty(cell, CellUtil.FILL_PATTERN,
+//                                    FillPatternType.SOLID_FOREGROUND);
+//                            CellUtil.setCellStyleProperty(cell, CellUtil.FILL_FOREGROUND_COLOR, color.getIndex());
+//                        })
+//                );
 
         // set top and bottom borders to double
         var range = new CellRangeAddress(firstRow, lastRow, firstColumn, lastColumn);
