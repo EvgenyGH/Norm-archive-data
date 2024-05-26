@@ -763,6 +763,7 @@ public class ReportServiceImpl implements ReportService {
     public Resource getAllSsfcReport(Integer year, String selection, List<UUID> srcIds) {
         //todo set fixed view for excel
         //todo add branch summary amd tariff zone summary
+        // add to ssfc by tz view
         Resource resource;
 
         List<StandardSFC> ssfcs = switch (selection) {
@@ -795,23 +796,35 @@ public class ReportServiceImpl implements ReportService {
             IntStream.rangeClosed(0, allSsfcsColumns.length - 1)
                     .forEach(i -> createCell(headerRow, i, allSsfcsColumns[i], headerStylePrimary));
 
+            log.debug("Standard report headers set.");
+
+            //todo
             // set data and merge cells
             Counter counter = new Counter(2);
-            Counter number = new Counter(1);
-            summary.getSubSsfcs().forEach(sum -> this.formStandardSsfcBlock(sheet, sum, counter, number,
+            //Counter number = new Counter(1);
+            summary.getSubSsfcs().forEach(sum -> this.formStandardSsfcBlock(sheet, sum, counter, new Counter(1),
                     integerStyle, stringStyle, threeDigitsStyle, twoDigitsStyle));
 
+            log.debug("Standard report data set.");
+
             // set totals
-            Row row = sheet.createRow(counter.getAndIncrement());
-            row.createCell(0).setCellValue("TOTAL SECTION");
+            formSumGroupBlock("Всего по компании", sheet, summary.avgData(), counter,
+                    null, summary.getClass().getSimpleName(),
+                    integerStyle, stringStyle, threeDigitsStyle, twoDigitsStyle);
+
+            log.debug("Standard report totals set.");
 
             // autosize columns
             IntStream.rangeClosed(0, allSsfcsColumns.length - 1).forEach(sheet::autoSizeColumn);
+
+            log.debug("Standard report columns autosized.");
 
             // set title (first cell is too wide if before)
             Row titleRow = sheet.createRow(0);
             createCell(titleRow, 0, String.format("Нормативные удельные расходы топлива на единицу " +
                     "отпущенной тепловой энергии источников ПАО \"МОЭК\" на %s год", year), titleStyle);
+
+            log.debug("Standard report title set.");
 
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             wb.write(out);
@@ -830,16 +843,19 @@ public class ReportServiceImpl implements ReportService {
                                        CellStyle integerStyle, CellStyle stringStyle,
                                        CellStyle threeDigitsStyle, CellStyle twoDigitsStyle) {
 
+        log.debug("Standard report ssfcBlock started for {}. Row {}",
+                summary.getName(), counter.getCounter());
+
         // set group header
         Row row = sheet.createRow(counter.getAndIncrement());
         CellUtil.createCell(row, 1, summary.getName(), stringStyle);
-        styleGroupTitle(sheet, row.getRowNum(), row.getRowNum(),
+        styleGroup(sheet, row.getRowNum(), row.getRowNum(),
                 0, allSsfcsColumns.length - 1,
-                summary.getClass().getSimpleName());
+                summary.getClass().getSimpleName(), false);
 
         // set data
         if (summary.hasSub()) {
-            summary.getSubSsfcs().forEach(sum -> this.formStandardSsfcBlock(sheet, summary, counter,
+            summary.getSubSsfcs().forEach(sum -> this.formStandardSsfcBlock(sheet, sum, counter,
                     number, integerStyle, stringStyle, threeDigitsStyle, twoDigitsStyle));
         } else {
             summary.getAllSsfcs()
@@ -860,15 +876,126 @@ public class ReportServiceImpl implements ReportService {
                             stringStyle, threeDigitsStyle, twoDigitsStyle));
         }
 
-        // set footer
-        row = sheet.createRow(counter.getAndIncrement());
-        row.createCell(0).setCellValue(summary.getName());
-        // style summ
-        // rename
-        //styleGroupTitle();
+        log.debug("Standard report sum footer started for {}. Row {}",
+                summary.getName(), counter.getCounter());
 
+        // set footer sums
+        formSumGroupBlock(summary.getName(), sheet, summary.avgData(), counter,
+                null, summary.getClass().getSimpleName(),
+                integerStyle, stringStyle, threeDigitsStyle, twoDigitsStyle);
     }
 
+    private void formSumGroupBlock(String name, Sheet sheet, double[][] avgData,
+                                   Counter counter, Counter number, String className,
+                                   CellStyle integerStyle, CellStyle stringStyle,
+                                   CellStyle threeDigitsStyle, CellStyle twoDigitsStyle) {
+
+        List<double[][]> listData = AvgDataHandler.avgDataToList(avgData);
+
+        if (listData.size() == 1) {
+            formSumGroupData(name, sheet, listData.getFirst(),
+                    avgData[1][12] == 0 ? FUEL_TYPE.DIESEL.getName() : FUEL_TYPE.GAS.getName(),
+                    counter, number, className, integerStyle, stringStyle, threeDigitsStyle, twoDigitsStyle);
+        } else {
+            formSumGroupData(String.format("%s (газ + дизель)", name), sheet, listData.get(0),
+                    "газ + дизель", counter, number, className, integerStyle,
+                    stringStyle, threeDigitsStyle, twoDigitsStyle);
+            formSumGroupData(String.format("%s (газ)", name), sheet, listData.get(1), FUEL_TYPE.GAS.getName(),
+                    counter, number, className, integerStyle, stringStyle, threeDigitsStyle, twoDigitsStyle);
+            formSumGroupData(String.format("%s (дизель)", name), sheet, listData.get(2), FUEL_TYPE.DIESEL.getName(),
+                    counter, number, className, integerStyle, stringStyle, threeDigitsStyle, twoDigitsStyle);
+        }
+    }
+
+    private void formSumGroupData(String name, Sheet sheet, double[][] data, String fuelType,
+                                  Counter counter, Counter number, String className,
+                                  CellStyle integerStyle, CellStyle stringStyle,
+                                  CellStyle threeDigitsStyle, CellStyle twoDigitsStyle) {
+
+        log.debug("Standard report sum group data started for {}. Row {}",
+                name, counter.getCounter());
+
+        // create rows
+        IntStream.rangeClosed(counter.getCounter(),
+                        counter.getCounter() + ssfcRows.length)
+                .forEach(sheet::createRow);
+
+        // merge cells
+        IntStream.of(0, 1, 2).forEach(col -> {
+            var range = new CellRangeAddress(counter.getCounter(),
+                    counter.getCounter() + ssfcRows.length - 1,
+                    col, col);
+            sheet.addMergedRegion(range);
+            RegionUtil.setBorderLeft(BorderStyle.THIN, range, sheet);
+            RegionUtil.setBorderRight(BorderStyle.THIN, range, sheet);
+        });
+
+        // set data to merged cells
+        Row currentRow = sheet.getRow(counter.getCounter());
+        Cell cell = currentRow.createCell(0);
+        if (Objects.isNull(number)) {
+            createCell(currentRow, 0, "Итого", stringStyle);
+        } else {
+            cell.setCellValue(number.getAndIncrement());
+            cell.setCellStyle(integerStyle);
+        }
+
+        createCell(currentRow, 1, name, stringStyle);
+        createCell(currentRow, 2, fuelType, stringStyle);
+
+        // set ssfc data row names and units
+        IntStream.range(0, ssfcRows.length).forEach(i -> {
+            createCell(sheet.getRow(counter.getCounter() + i), 3,
+                    ssfcRows[i], stringStyle);
+            createCell(sheet.getRow(counter.getCounter() + i), 4,
+                    ssfcUnits[i], stringStyle);
+        });
+
+        // set ssfc data
+        IntStream.range(0, 12).forEach(i ->
+                setSsfcMonthDataCellsStd(sheet,
+                        counter.getCounter(),
+                        6 + i, // data set in 6 - 17 cells
+                        data[0][i],
+                        data[1][i],
+                        data[2][i],
+                        data[3][i],
+                        data[4][i],
+                        data[5][i],
+                        threeDigitsStyle,
+                        twoDigitsStyle));
+
+        // set source summary data
+        setSsfcMonthDataCellsStd(sheet,
+                counter.getCounter(),
+                5,
+                data[0][12],
+                data[1][12],
+                data[2][12],
+                data[3][12],
+                data[4][12],
+                data[5][12],
+                threeDigitsStyle,
+                twoDigitsStyle);
+
+        styleGroup(sheet, counter.getCounter(),
+                counter.getCounter() + ssfcRows.length - 1,
+                0, allSsfcsColumns.length - 1,
+                className, true);
+
+        //set solid borders
+        var range = new CellRangeAddress(counter.getCounter(),
+                counter.getCounter() + ssfcRows.length - 1,
+                0, allSsfcsColumns.length - 1);
+        RegionUtil.setBorderBottom(BorderStyle.DOUBLE, range, sheet);
+
+        counter.increment(ssfcRows.length);
+
+        log.debug("Standard report sum group data set for {}. Row {}",
+                name, counter.getCounter());
+    }
+
+    //todo this is for inner data
     private void formGroupData(String name, String fuelType, Sheet sheet, List<StandardSFC> ssfcs,
                                Counter counter, Counter number,
                                CellStyle integerStyle, CellStyle stringStyle,
@@ -992,20 +1119,20 @@ public class ReportServiceImpl implements ReportService {
         log.debug("Ssfc one month data for one source set to report file");
     }
 
-    private void styleGroupTitle(Sheet sheet, int firstRow, int lastRow,
-                                 int firstColumn, int lastColumn,
-                                 String className) {
+    private void styleGroup(Sheet sheet, int firstRow, int lastRow,
+                            int firstColumn, int lastColumn,
+                            String className, boolean border) {
         IndexedColors color = switch (className) {
             case "SsfcSumBranch" -> IndexedColors.LEMON_CHIFFON;
             default -> IndexedColors.LIGHT_GREEN;
         };
 
         styleRegion(sheet, firstRow, lastRow, firstColumn,
-                lastColumn, color);
+                lastColumn, color, border);
     }
 
     private void styleRegion(Sheet sheet, int firstRow, int lastRow, int firstColumn,
-                             int lastColumn, IndexedColors color) {
+                             int lastColumn, IndexedColors color, boolean border) {
 
         IntStream.rangeClosed(firstRow, lastRow)
                 .forEach(row -> IntStream.rangeClosed(firstColumn, lastColumn)
@@ -1023,13 +1150,13 @@ public class ReportServiceImpl implements ReportService {
                                     IndexedColors.BLACK);
 
                             CellUtil.setCellStyleProperty(cell, CellUtil.BORDER_BOTTOM,
-                                    BorderStyle.NONE);
+                                    border ? BorderStyle.THIN : BorderStyle.NONE);
                             CellUtil.setCellStyleProperty(cell, CellUtil.BORDER_TOP,
-                                    BorderStyle.NONE);
+                                    border ? BorderStyle.THIN : BorderStyle.NONE);
                             CellUtil.setCellStyleProperty(cell, CellUtil.BORDER_RIGHT,
-                                    BorderStyle.NONE);
+                                    border ? BorderStyle.THIN : BorderStyle.NONE);
                             CellUtil.setCellStyleProperty(cell, CellUtil.BORDER_LEFT,
-                                    BorderStyle.NONE);
+                                    border ? BorderStyle.THIN : BorderStyle.NONE);
 
                             CellUtil.setCellStyleProperty(cell, CellUtil.FILL_PATTERN,
                                     FillPatternType.SOLID_FOREGROUND);

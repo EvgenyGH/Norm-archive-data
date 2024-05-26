@@ -34,3 +34,4 @@ build/
 
 ### extra
 .env
+./keystore
