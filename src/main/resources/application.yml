@@ -21,7 +21,7 @@ spring:
 logging:
   level:
     ru.bk.j3000.normarchivedata: info
-    org.springframework.security: debug
+    org.springframework.security: info
 
 server:
   port: 443

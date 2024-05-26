@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -74,7 +75,7 @@ public class ReportServiceImpl implements ReportService {
             "Тепловая энергия на собственные нужды",
             "Тепловая энергия на собственные нужды",
             "Отпуск тепловой энергии с коллекторов источников",
-            "УРУТ на выработу тепловой энергии",
+            "УРУТ на выработку тепловой энергии",
             "УРУТ на отпуск тепловой энергии"};
 
     private final String[] ssfcUnits = {"тыс. Гкал", "тыс. Гкал", "%", "тыс. Гкал", "кг у.т./Гкал", "кг у.т./Гкал"};
@@ -801,11 +802,10 @@ public class ReportServiceImpl implements ReportService {
                 @Override
                 public void accept(SsfcSummary summary, Counter counter, Counter number) {
                     Row row = sheet.createRow(counter.getAndIncrement());
-//                    Cell cellSum = row.createCell(0);
-//                    cellSum.setCellValue("start section" + summary.getName());
-                    styleBranchSum(sheet, row.getRowNum(), row.getRowNum(),
-                            0, allSsfcsColumns.length - 1);
-                    row.createCell(0).setCellValue("start section" + summary.getName());
+                    CellUtil.createCell(row, 1, summary.getName(), stringStyle);
+                    styleGroupTitle(sheet, row.getRowNum(), row.getRowNum(),
+                            0, allSsfcsColumns.length - 1,
+                            summary.getClass().getSimpleName());
 
                     if (summary.hasSub()) {
                         summary.getSubSsfcs().forEach(sum -> this.accept(sum, counter, number));
@@ -895,12 +895,9 @@ public class ReportServiceImpl implements ReportService {
 
                                     counter.increment(ssfcRows.length);
                                 });
-
-                        row = sheet.createRow(counter.getAndIncrement());
-                        row.createCell(0).
-
-                                setCellValue("end section" + summary.getName());
                     }
+                    row = sheet.createRow(counter.getAndIncrement());
+                    row.createCell(0).setCellValue(summary.getName());
                 }
             };
 
@@ -956,8 +953,6 @@ public class ReportServiceImpl implements ReportService {
                                           Double production, Double ssfcg, Double ssfc,
                                           CellStyle threeDigitsStyle, CellStyle twoDigitsStyle) {
 
-        log.warn("rowNumber {}", rowNumber);
-
         Row row = sheet.getRow(rowNumber);
         Cell cellSsfc = row.createCell(columnNumber);
         cellSsfc.setCellValue(generation);
@@ -991,35 +986,27 @@ public class ReportServiceImpl implements ReportService {
         log.debug("Ssfc one month data for one source set to report file");
     }
 
-    private void styleBranchSum(Sheet sheet, int firstRow, int lastRow,
-                                int firstColumn, int lastColumn) {
-        styleRegion(sheet, firstRow, lastRow, firstColumn,
-                lastColumn, IndexedColors.ORCHID);
-    }
+    private void styleGroupTitle(Sheet sheet, int firstRow, int lastRow,
+                                 int firstColumn, int lastColumn,
+                                 String className) {
+        IndexedColors color = switch (className) {
+            case "SsfcSumBranch" -> IndexedColors.LEMON_CHIFFON;
+            default -> IndexedColors.LIGHT_GREEN;
+        };
 
-    private void styleTZSum(Sheet sheet, int firstRow, int lastRow,
-                            int firstColumn, int lastColumn) {
         styleRegion(sheet, firstRow, lastRow, firstColumn,
-                lastColumn, IndexedColors.VIOLET);
+                lastColumn, color);
     }
 
     private void styleRegion(Sheet sheet, int firstRow, int lastRow, int firstColumn,
                              int lastColumn, IndexedColors color) {
 
-        var range = new CellRangeAddress(firstRow, lastRow, firstColumn, lastColumn);
-
         IntStream.rangeClosed(firstRow, lastRow)
                 .forEach(row -> IntStream.rangeClosed(firstColumn, lastColumn)
                         .forEach(col -> {
-                            Cell cell = sheet.getRow(row).createCell(col);
-                            CellUtil.setCellStyleProperty(cell, CellUtil.BORDER_BOTTOM,
-                                    BorderStyle.MEDIUM);
-                            CellUtil.setCellStyleProperty(cell, CellUtil.BORDER_TOP,
-                                    BorderStyle.MEDIUM);
-                            CellUtil.setCellStyleProperty(cell, CellUtil.BORDER_RIGHT,
-                                    BorderStyle.MEDIUM);
-                            CellUtil.setCellStyleProperty(cell, CellUtil.BORDER_LEFT,
-                                    BorderStyle.MEDIUM);
+                            Cell cell = sheet.getRow(row).getCell(col);
+                            cell = Objects.isNull(cell) ? sheet.getRow(firstRow).createCell(col) : cell;
+
                             CellUtil.setCellStyleProperty(cell, CellUtil.BOTTOM_BORDER_COLOR,
                                     IndexedColors.BLACK);
                             CellUtil.setCellStyleProperty(cell, CellUtil.TOP_BORDER_COLOR,
@@ -1028,12 +1015,29 @@ public class ReportServiceImpl implements ReportService {
                                     IndexedColors.BLACK);
                             CellUtil.setCellStyleProperty(cell, CellUtil.LEFT_BORDER_COLOR,
                                     IndexedColors.BLACK);
-                            CellUtil.setCellStyleProperty(cell, CellUtil.FILL_FOREGROUND_COLOR, color);
+
+                            CellUtil.setCellStyleProperty(cell, CellUtil.BORDER_BOTTOM,
+                                    BorderStyle.NONE);
+                            CellUtil.setCellStyleProperty(cell, CellUtil.BORDER_TOP,
+                                    BorderStyle.NONE);
+                            CellUtil.setCellStyleProperty(cell, CellUtil.BORDER_RIGHT,
+                                    BorderStyle.NONE);
+                            CellUtil.setCellStyleProperty(cell, CellUtil.BORDER_LEFT,
+                                    BorderStyle.NONE);
+
                             CellUtil.setCellStyleProperty(cell, CellUtil.FILL_PATTERN,
                                     FillPatternType.SOLID_FOREGROUND);
-                        }));
+                            CellUtil.setCellStyleProperty(cell, CellUtil.FILL_FOREGROUND_COLOR, color.getIndex());
+                        })
+                );
+
+        // set top and bottom borders to double
+        var range = new CellRangeAddress(firstRow, lastRow, firstColumn, lastColumn);
 
         RegionUtil.setBorderBottom(BorderStyle.DOUBLE, range, sheet);
+        RegionUtil.setBorderTop(BorderStyle.DOUBLE, range, sheet);
+        RegionUtil.setBorderLeft(BorderStyle.THIN, range, sheet);
+        RegionUtil.setBorderRight(BorderStyle.THIN, range, sheet);
     }
 
 
