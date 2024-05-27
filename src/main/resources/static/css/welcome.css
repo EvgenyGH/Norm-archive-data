@@ -330,6 +330,7 @@ select:invalid {
     overflow: scroll;
     border: thin;
     transition: max-height 1s;
+    margin-top: 0.5em;
 }
 
 .ssfc-report {

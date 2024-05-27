@@ -14,7 +14,7 @@ public interface ReportService {
 
     Resource getSrcPropertyReport(String type, Integer year);
 
-    Resource getSsfcsReport(String type, String selection, Integer year, List<UUID> srcIds);
+    Resource getSsfcsReport(String type, String selection, Integer year, List<UUID> srcIds, List<String> sumTypes);
 
     Resource getSrcTemplateReport();
 
@@ -34,5 +34,5 @@ public interface ReportService {
 
     Resource getSsfcTemplateReport(Integer year, String selection, List<UUID> srcIds);
 
-    Resource getAllSsfcReport(Integer year, String selection, List<UUID> srcIds);
+    Resource getAllSsfcReport(Integer year, String selection, List<UUID> srcIds, List<String> sumTypes);
 }

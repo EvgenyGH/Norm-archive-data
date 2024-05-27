@@ -101,17 +101,28 @@
             <br>
             <br>
 
+            <div class="select-summaries">
+                <fieldset>
+                    <legend>Суммировать по:</legend>
+                    <th:block th:each="sumType : ${sumTypes}">
+                        <input type="checkbox" th:id="${#ids.seq('sumType')}" name="sumType"
+                               th:value="${sumType.getValue()}">
+                        <label th:for="${#ids.prev('sumType')}" th:text="${sumType.getKey()}"></label>
+                    </th:block>
+                </fieldset>
+            </div>
+
             <fieldset>
                 <legend>Выбор источников:</legend>
                 <input type="radio" id="select-all" name="selection" value="all" checked>
                 <label for="select-all">Все источники</label>
                 <input type="radio" id="select-particular" name="selection" value="particular">
                 <label for="select-particular">Выборочно</label>
-                <br>
-                <br>
+
                 <p th:if="${reportSources.isEmpty()}"
                    th:text="'НУР на указанный период не заведены в систему'">
                 </p>
+
                 <div class="select-sources">
                     <th:block th:each="source : ${reportSources}">
                         <input type="checkbox" th:id="${#ids.seq('source')}" name="sources"

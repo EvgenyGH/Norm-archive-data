@@ -29,7 +29,6 @@ import java.util.stream.IntStream;
 
 import static org.apache.poi.ss.util.CellUtil.createCell;
 
-
 @Service
 @Slf4j
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -136,10 +135,11 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public Resource getSsfcsReport(String type, String selection, Integer year, List<UUID> srcIds) {
+    public Resource getSsfcsReport(String type, String selection, Integer year,
+                                   List<UUID> srcIds, List<String> sumTypes) {
         Resource resource = switch (type) {
             case "template" -> getSsfcTemplateReport(year, selection, srcIds);
-            case "standard" -> getAllSsfcReport(year, selection, srcIds);
+            case "standard" -> getAllSsfcReport(year, selection, srcIds, sumTypes);
             default -> throw new InvalidParameterException(String.format("Invalid ssfc report type <%s>",
                     type));
         };
@@ -754,8 +754,7 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public Resource getAllSsfcReport(Integer year, String selection, List<UUID> srcIds) {
-        //todo set fixed view for excel
+    public Resource getAllSsfcReport(Integer year, String selection, List<UUID> srcIds, List<String> sumTypes) {
         //todo add branch summary amd tariff zone summary
         // add to ssfc by tz view
         Resource resource;

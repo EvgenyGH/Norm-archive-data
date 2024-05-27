@@ -77,12 +77,15 @@ public class ReportController {
     public ResponseEntity<Resource> getSsfcReport(@RequestParam(name = "type") String type,
                                                   @RequestParam(name = "selection") String selection,
                                                   @RequestParam(name = "year") Integer year,
-                                                  @RequestParam(name = "sources", required = false) List<UUID> srcIds) {
+                                                  @RequestParam(name = "sources",
+                                                          required = false) List<UUID> srcIds,
+                                                  @RequestParam(name = "sumType",
+                                                          required = false) List<String> sumTypes) {
 
         return ResponseEntity.ok()
                 .contentType(MediaType.asMediaType(MimeType.valueOf("application/vnd.ms-excel")))
                 .header(HttpHeaders.CONTENT_DISPOSITION,
                         "attachment; filename=ssfcReport.xlsx")
-                .body(reportService.getSsfcsReport(type, selection, year, srcIds));
+                .body(reportService.getSsfcsReport(type, selection, year, srcIds, sumTypes));
     }
 }
