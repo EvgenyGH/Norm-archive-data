@@ -3,8 +3,12 @@ package ru.bk.j3000.normarchivedata.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.UUID;
 
@@ -18,7 +22,8 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "standard_sfcs",
-        uniqueConstraints = {@UniqueConstraint(columnNames = {"properties", "fuelType", "month"})})
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"source_id", "ssfc_year",
+                "fuel_type", "ssfc_month"})})
 public class StandardSFC {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -72,7 +77,7 @@ public class StandardSFC {
     // тип топлива
     @Column(name = "fuel_type", nullable = false)
     @Enumerated(EnumType.ORDINAL)
-    @NonNull
+    @NotNull
     private FUEL_TYPE fuelType;
 
     @Override

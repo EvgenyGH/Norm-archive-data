@@ -55,7 +55,8 @@ public class StandardSFCServiceImpl implements StandardSFCService {
     public List<StandardSFC> findAllSsfcByYearAndSrcId(Integer year, UUID srcId) {
         List<StandardSFC> ssfcs = ssfcRepository.findAllSsfcByYearAndSrcId(year, srcId);
 
-        log.info("Found {} ssfcs for {} year.", ssfcs.size(), year);
+        log.info("Found {} ssfcs for {} year and source id {}.",
+                ssfcs.size(), year, srcId.toString());
 
         return ssfcs;
     }

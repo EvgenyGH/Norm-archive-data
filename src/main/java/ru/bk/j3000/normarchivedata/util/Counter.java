@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 public class Counter {
     private int counter = 0;
 
-    public int getAndIncrement() {
+    public int incrementAndGet() {
         return counter++;
     }
 
@@ -16,7 +16,7 @@ public class Counter {
         int oldCounter = counter;
         counter += increment;
 
-        return counter;
+        return oldCounter;
     }
 
     public void increment(int number) {

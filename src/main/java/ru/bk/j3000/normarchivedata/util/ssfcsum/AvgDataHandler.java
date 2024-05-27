@@ -29,9 +29,8 @@ public class AvgDataHandler {
 
         dataList = new ArrayList<>(size);
 
-        IntStream.range(0, size).forEach(i -> {
-            dataList.add(new double[avgData.length / 3][avgData[0].length]);
-        });
+        IntStream.range(0, size).forEach(i -> dataList
+                .add(new double[avgData.length / 3][avgData[0].length]));
 
         IntStream.range(0, avgData.length / 3).forEach(i -> IntStream.range(0, avgData[0].length)
                 .forEach(j -> {

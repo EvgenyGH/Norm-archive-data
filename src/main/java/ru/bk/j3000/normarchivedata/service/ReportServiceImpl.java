@@ -858,7 +858,7 @@ public class ReportServiceImpl implements ReportService {
 
         // set group header
         if (sumTypes.contains(group)) {
-            Row row = sheet.createRow(counter.getAndIncrement());
+            Row row = sheet.createRow(counter.incrementAndGet());
             IntStream.range(0, allSsfcsColumns.length).forEach(i -> row.createCell(i)
                     .setCellStyle(styles.get(group + " no borders").get("string")));
             styleTopBottomDoubleBorder(sheet, row.getRowNum(), row.getRowNum(),
@@ -971,7 +971,7 @@ public class ReportServiceImpl implements ReportService {
         if (Objects.isNull(number)) {
             createCell(currentRow, 0, "Итого", stringStyle);
         } else {
-            cell.setCellValue(number.getAndIncrement());
+            cell.setCellValue(number.incrementAndGet());
             cell.setCellStyle(integerStyle);
         }
 
