@@ -298,6 +298,7 @@ select:invalid {
     box-shadow: 0 0 0.2em 0.05em red;
 }
 
+
 /* Report */
 .report {
     font-size: 1.5em;
@@ -323,14 +324,15 @@ select:invalid {
     font-weight: bold;
 }
 
-.report .select-sources {
+.report .pick-sources {
     display: grid;
     grid-template-columns: auto auto auto auto auto auto;
     max-height: 8em;
     overflow: scroll;
     border: thin;
     transition: max-height 1s;
-    margin-top: 0.5em;
+    margin-top: 0.35em;
+    border-top: dotted thin black;
 }
 
 .ssfc-report {
@@ -338,6 +340,41 @@ select:invalid {
     overflow: scroll;
 }
 
-.ssfc-report #select-all:checked ~ .select-sources {
+.pick-sources label {
+    margin-top: 0.22em;
+}
+
+.ssfc-report .ssfc-selection:has(#select-all:checked) ~ .pick-sources {
     max-height: 0;
+    border-top: none;
+}
+
+.ssfc-report .select-type:has(#ssfc-template:checked) ~ fieldset .select-summaries {
+    max-height: 0;
+}
+
+.report .select-summaries label {
+    width: max-content;
+}
+
+.report .select-summaries {
+    overflow: hidden;
+    max-height: 4em;
+    transition: max-height 1s;
+    margin-bottom: 0.8em;
+}
+
+.ssfc-report p {
+    margin: 0;
+    margin-bottom: 0.5em;
+    margin-top: 0.1em;
+}
+
+.report .select-type {
+    margin-bottom: 1em;
+    margin-top: 0.5em;
+}
+
+.report .ssfc-selection {
+    margin-bottom: 0.5em;
 }

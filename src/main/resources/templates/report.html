@@ -93,42 +93,44 @@
                         th:selected="${year == reportYear}">
                 </option>
             </select>
-            <br>
-            <input type="radio" id="ssfc-template" name="type" value="template">
-            <label for="ssfc-template">В формате шаблона загрузки</label>
-            <input type="radio" id="ssfc-all" name="type" value="standard" checked>
-            <label for="ssfc-all">В стандартном формате</label>
-            <br>
-            <br>
 
-            <div class="select-summaries">
-                <fieldset>
-                    <legend>Суммировать по:</legend>
-                    <th:block th:each="sumType : ${sumTypes}">
-                        <input type="checkbox" th:id="${#ids.seq('sumType')}" name="sumType"
-                               th:value="${sumType.getValue()}">
-                        <label th:for="${#ids.prev('sumType')}" th:text="${sumType.getKey()}"></label>
-                    </th:block>
-                </fieldset>
+            <div class="select-type">
+                <input type="radio" id="ssfc-template" name="type" value="template">
+                <label for="ssfc-template">В формате шаблона загрузки</label>
+                <input type="radio" id="ssfc-all" name="type" value="standard" checked>
+                <label for="ssfc-all">В стандартном формате</label>
             </div>
 
             <fieldset>
                 <legend>Выбор источников:</legend>
-                <input type="radio" id="select-all" name="selection" value="all" checked>
-                <label for="select-all">Все источники</label>
-                <input type="radio" id="select-particular" name="selection" value="particular">
-                <label for="select-particular">Выборочно</label>
-
-                <p th:if="${reportSources.isEmpty()}"
-                   th:text="'НУР на указанный период не заведены в систему'">
-                </p>
-
                 <div class="select-sources">
-                    <th:block th:each="source : ${reportSources}">
-                        <input type="checkbox" th:id="${#ids.seq('source')}" name="sources"
-                               th:value="${source.sourceId}">
-                        <label th:for="${#ids.prev('source')}" th:text="${source.sourceName}"></label>
-                    </th:block>
+                    <div class="select-summaries">
+                        <p>Промежуточные итоги по:</p>
+                        <th:block th:each="sumType : ${sumTypes}">
+                            <input type="checkbox" th:id="${#ids.seq('sumType')}" name="sumType"
+                                   th:value="${sumType.getValue()}" checked>
+                            <label th:for="${#ids.prev('sumType')}" th:text="${sumType.getKey()}"></label>
+                        </th:block>
+                    </div>
+
+                    <div class="ssfc-selection">
+                        <input type="radio" id="select-all" name="selection" value="all" checked>
+                        <label for="select-all">Все источники</label>
+                        <input type="radio" id="select-particular" name="selection" value="particular">
+                        <label for="select-particular">Выборочно</label>
+                    </div>
+
+                    <div class="pick-sources">
+                        <p th:if="${reportSources.isEmpty()}"
+                           th:text="'НУР на указанный период не заведены в систему'">
+                        </p>
+
+                        <th:block th:each="source : ${reportSources}">
+                            <input type="checkbox" th:id="${#ids.seq('source')}" name="sources"
+                                   th:value="${source.sourceId}">
+                            <label th:for="${#ids.prev('source')}" th:text="${source.sourceName}"></label>
+                        </th:block>
+                    </div>
                 </div>
             </fieldset>
             <br>
