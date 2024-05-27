@@ -1,5 +1,5 @@
 DROP TABLE IF EXISTS sources, tariff_zones, standard_sfcs,
-    source_properties, users, authorities, branches CASCADE;
+    source_properties, users, public.authorities, branches CASCADE;
 
 CREATE TABLE IF NOT EXISTS sources
 (
@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS standard_sfcs
     CONSTRAINT pk_ssfc PRIMARY KEY (ssfc_id),
     CONSTRAINT fk_source_prop FOREIGN KEY (source_id, ssfc_year)
         REFERENCES source_properties (source_id, ssfc_year) ON DELETE CASCADE,
-    CONSTRAINT unique_src_d_fuel_type unique (source_id, fuel_type, ssfc_month)
+    CONSTRAINT unique_src_d_fuel_type unique (source_id, fuel_type, ssfc_month, ssfc_year)
 );
 
 CREATE TABLE IF NOT EXISTS users

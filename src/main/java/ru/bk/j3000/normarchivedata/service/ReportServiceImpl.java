@@ -159,7 +159,7 @@ public class ReportServiceImpl implements ReportService {
                 .toList();
 
         try (Workbook wb = new XSSFWorkbook()) {
-            Sheet sheet = wb.createSheet("Sources");
+            Sheet sheet = wb.createSheet("sources");
             Font fontHeader = wb.createFont();
             Font fontData = wb.createFont();
 
@@ -269,7 +269,7 @@ public class ReportServiceImpl implements ReportService {
                 .toList();
 
         try (Workbook wb = new XSSFWorkbook()) {
-            Sheet sheet = wb.createSheet("Branches");
+            Sheet sheet = wb.createSheet("branches");
             Font fontHeader = wb.createFont();
             Font fontData = wb.createFont();
 
@@ -376,7 +376,7 @@ public class ReportServiceImpl implements ReportService {
                 .toList();
 
         try (Workbook wb = new XSSFWorkbook()) {
-            Sheet sheet = wb.createSheet("TariffZones");
+            Sheet sheet = wb.createSheet("tariffZones");
             Font fontHeader = wb.createFont();
             Font fontData = wb.createFont();
 
@@ -486,7 +486,7 @@ public class ReportServiceImpl implements ReportService {
                 .toList();
 
         try (Workbook wb = new XSSFWorkbook()) {
-            Sheet sheet = wb.createSheet("SourceProperties");
+            Sheet sheet = wb.createSheet("sourceProperties");
             Font fontHeader = wb.createFont();
             Font fontData = wb.createFont();
             Font fontTitle = wb.createFont();
@@ -638,7 +638,7 @@ public class ReportServiceImpl implements ReportService {
 
 
         try (Workbook wb = new XSSFWorkbook()) {
-            Sheet sheet = wb.createSheet("Ssfcs");
+            Sheet sheet = wb.createSheet("ssfcs");
 
             Font fontHeader = wb.createFont();
             Font fontData = wb.createFont();
