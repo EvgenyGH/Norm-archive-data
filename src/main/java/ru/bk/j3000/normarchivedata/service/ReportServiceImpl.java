@@ -865,6 +865,12 @@ public class ReportServiceImpl implements ReportService {
                     .collect(Collectors.groupingBy(ssfc -> ssfc.getProperties().getId()
                             .getSource().getId()))
                     .values().stream()
+                    .sorted(Comparator.comparing(ssfcs -> ssfcs.getFirst().getProperties().getId().getYear()))
+                    .sorted(Comparator.comparing(ssfcs -> ssfcs.getFirst().getProperties()
+                            .getId().getSource().getName()))
+                    .sorted(Comparator.comparing(ssfcs -> ssfcs.getFirst().getProperties()
+                            .getId().getSource().getSourceType()))
+                    .sorted(Comparator.comparing(ssfcs -> ssfcs.getFirst().getFuelType()))
                     .map(SsfcSumSrc::new)
                     .forEach(sum -> formGroupBlock(sum.getAllSsfcs().getFirst().getProperties()
                                     .getId().getSource().getName(), sheet, sum.avgData(),
