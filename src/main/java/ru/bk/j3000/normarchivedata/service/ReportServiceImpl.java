@@ -814,6 +814,12 @@ public class ReportServiceImpl implements ReportService {
 
             log.debug("Standard report title set.");
 
+
+            // freeze rows and columns
+            sheet.createFreezePane(0, 2);
+
+            log.debug("Standard report columns and rows frozen.");
+
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             wb.write(out);
             resource = new ByteArrayResource(out.toByteArray());
