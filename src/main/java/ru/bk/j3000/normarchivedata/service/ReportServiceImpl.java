@@ -139,7 +139,8 @@ public class ReportServiceImpl implements ReportService {
                                    List<UUID> srcIds, List<String> sumTypes) {
         Resource resource = switch (type) {
             case "template" -> getSsfcTemplateReport(year, selection, srcIds);
-            case "standard" -> getAllSsfcReport(year, selection, srcIds, sumTypes);
+            case "standard" -> getAllSsfcReport(year, selection, srcIds,
+                    Objects.isNull(sumTypes) ? List.of() : sumTypes);
             default -> throw new InvalidParameterException(String.format("Invalid ssfc report type <%s>",
                     type));
         };
@@ -786,17 +787,19 @@ public class ReportServiceImpl implements ReportService {
             Counter number = new Counter(1);
 
             summary.getSubSsfcs().forEach(sum -> this.formStandardSsfcBlock(sheet, sum, counter,
-                    number, styles)
+                    number, styles, sumTypes)
             );
 
             log.debug("Standard report data set.");
 
             // set totals
-            formGroupBlock("Всего по компании", sheet, summary.avgData(), counter, null,
-                    styles.get("totals").get("integer"),
-                    styles.get("totals").get("string"),
-                    styles.get("totals").get("threeDigits"),
-                    styles.get("totals").get("twoDigits"));
+            if (sumTypes.contains("totals")) {
+                formGroupBlock("Всего по компании", sheet, summary.avgData(), counter, null,
+                        styles.get("totals").get("integer"),
+                        styles.get("totals").get("string"),
+                        styles.get("totals").get("threeDigits"),
+                        styles.get("totals").get("twoDigits"));
+            }
 
             log.debug("Standard report totals set.");
 
@@ -844,7 +847,8 @@ public class ReportServiceImpl implements ReportService {
     }
 
     private void formStandardSsfcBlock(Sheet sheet, SsfcSummary summary, Counter counter, Counter number,
-                                       Map<String, Map<String, CellStyle>> styles) {
+                                       Map<String, Map<String, CellStyle>> styles,
+                                       List<String> sumTypes) {
 
         log.debug("Standard report ssfcBlock started for {}. Row {}",
                 summary.getName(), counter.getCounter());
@@ -853,17 +857,19 @@ public class ReportServiceImpl implements ReportService {
         String group = selectGroup(summary.getClass().getSimpleName(), summary.getName());
 
         // set group header
-        Row row = sheet.createRow(counter.getAndIncrement());
-        IntStream.range(0, allSsfcsColumns.length).forEach(i -> row.createCell(i)
-                .setCellStyle(styles.get(group + " no borders").get("string")));
-        styleTopBottomDoubleBorder(sheet, row.getRowNum(), row.getRowNum(),
-                0, allSsfcsColumns.length - 1);
-        row.getCell(1).setCellValue(summary.getName());
+        if (sumTypes.contains(group)) {
+            Row row = sheet.createRow(counter.getAndIncrement());
+            IntStream.range(0, allSsfcsColumns.length).forEach(i -> row.createCell(i)
+                    .setCellStyle(styles.get(group + " no borders").get("string")));
+            styleTopBottomDoubleBorder(sheet, row.getRowNum(), row.getRowNum(),
+                    0, allSsfcsColumns.length - 1);
+            row.getCell(1).setCellValue(summary.getName());
+        }
 
         // set data
         if (summary.hasSub()) {
             summary.getSubSsfcs().forEach(sum -> this.formStandardSsfcBlock(sheet, sum, counter,
-                    number, styles));
+                    number, styles, sumTypes));
         } else {
             summary.getAllSsfcs()
                     .stream()
@@ -891,11 +897,13 @@ public class ReportServiceImpl implements ReportService {
                 summary.getName(), counter.getCounter());
 
         // set footer sums
-        formGroupBlock(summary.getName(), sheet, summary.avgData(), counter, null,
-                styles.get(group).get("integer"),
-                styles.get(group).get("string"),
-                styles.get(group).get("threeDigits"),
-                styles.get(group).get("twoDigits"));
+        if (sumTypes.contains(group)) {
+            formGroupBlock(summary.getName(), sheet, summary.avgData(), counter, null,
+                    styles.get(group).get("integer"),
+                    styles.get(group).get("string"),
+                    styles.get(group).get("threeDigits"),
+                    styles.get(group).get("twoDigits"));
+        }
     }
 
     private String selectGroup(String className, String summaryName) {
