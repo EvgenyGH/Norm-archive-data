@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.ss.util.RegionUtil;
 import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
 import org.apache.poi.xssf.usermodel.XSSFColor;
@@ -795,10 +794,10 @@ public class ReportServiceImpl implements ReportService {
 
             // set totals
             formGroupBlock("Всего по компании", sheet, summary.avgData(), counter, null,
-                    styles.get("tz").get("integer"),
-                    styles.get("tz").get("string"),
-                    styles.get("tz").get("threeDigits"),
-                    styles.get("tz").get("twoDigits"));
+                    styles.get("totals").get("integer"),
+                    styles.get("totals").get("string"),
+                    styles.get("totals").get("threeDigits"),
+                    styles.get("totals").get("twoDigits"));
 
             log.debug("Standard report totals set.");
 
@@ -1054,53 +1053,6 @@ public class ReportServiceImpl implements ReportService {
         log.debug("Ssfc one month data for one source set to report file");
     }
 
-    //todo remove
-    private void styleGroup(Sheet sheet, int firstRow, int lastRow,
-                            int firstColumn, int lastColumn,
-                            String className, boolean borders) {
-        IndexedColors color = switch (className) {
-            case "SsfcSumBranch" -> IndexedColors.LEMON_CHIFFON;
-            default -> IndexedColors.LIGHT_GREEN;
-        };
-
-        styleRegion(sheet, firstRow, lastRow, firstColumn,
-                lastColumn, color, borders);
-    }
-
-    //todo remove
-    private void styleRegion(Sheet sheet, int firstRow, int lastRow, int firstColumn,
-                             int lastColumn, IndexedColors color, boolean border) {
-        Map<String, Object> properties = Map.of(
-                CellUtil.BOTTOM_BORDER_COLOR, IndexedColors.BLACK,
-                CellUtil.TOP_BORDER_COLOR, IndexedColors.BLACK,
-                CellUtil.RIGHT_BORDER_COLOR, IndexedColors.BLACK,
-                CellUtil.LEFT_BORDER_COLOR, IndexedColors.BLACK,
-                CellUtil.BORDER_BOTTOM, border ? BorderStyle.THIN : BorderStyle.NONE,
-                CellUtil.BORDER_TOP, border ? BorderStyle.THIN : BorderStyle.NONE,
-                CellUtil.BORDER_RIGHT, border ? BorderStyle.THIN : BorderStyle.NONE,
-                CellUtil.BORDER_LEFT, border ? BorderStyle.THIN : BorderStyle.NONE,
-                CellUtil.FILL_PATTERN, FillPatternType.SOLID_FOREGROUND,
-                CellUtil.FILL_FOREGROUND_COLOR, color.getIndex()
-        );
-
-        IntStream.rangeClosed(firstRow, lastRow)
-                .forEach(row -> IntStream.rangeClosed(firstColumn, lastColumn)
-                        .forEach(col -> {
-                            Cell cell = sheet.getRow(row).getCell(col);
-                            cell = Objects.isNull(cell) ? sheet.getRow(firstRow).createCell(col) : cell;
-                            CellUtil.setCellStyleProperties(cell, properties);
-                        })
-                );
-
-        // set top and bottom borders to double
-        var range = new CellRangeAddress(firstRow, lastRow, firstColumn, lastColumn);
-
-        RegionUtil.setBorderBottom(BorderStyle.DOUBLE, range, sheet);
-        RegionUtil.setBorderTop(BorderStyle.DOUBLE, range, sheet);
-        RegionUtil.setBorderLeft(BorderStyle.THIN, range, sheet);
-        RegionUtil.setBorderRight(BorderStyle.THIN, range, sheet);
-    }
-
     private Map<String, Map<String, CellStyle>> getStyles(Workbook wb) {
         Map<String, Map<String, CellStyle>> styles = new HashMap<>();
 
@@ -1109,6 +1061,7 @@ public class ReportServiceImpl implements ReportService {
         styles.put("tz no borders", new HashMap<>());
         styles.put("branch", new HashMap<>());
         styles.put("branch no borders", new HashMap<>());
+        styles.put("totals", new HashMap<>());
 
         Font fontHeader = wb.createFont();
         Font fontData = wb.createFont();
@@ -1171,6 +1124,18 @@ public class ReportServiceImpl implements ReportService {
                 fontData, 3, false));
         styleGroup.put("twoDigits", getDecimalStyleBranch(wb.createCellStyle(), wb.createDataFormat(),
                 fontData, 2, false));
+
+        styleGroup = styles.get("totals");
+        styleGroup.put("title", getTitleStyleTotals(wb.createCellStyle(), fontTitle, true));
+        styleGroup.put("header primary", getPrimaryHeaderStyleTotals(wb.createCellStyle(), fontHeader,
+                true));
+        styleGroup.put("string", getStringStyleTotals(wb.createCellStyle(), fontData, true));
+        styleGroup.put("integer", getIntegerStyleTotals(wb.createCellStyle(), wb.createDataFormat(),
+                fontData, true));
+        styleGroup.put("threeDigits", getDecimalStyleTotals(wb.createCellStyle(), wb.createDataFormat(),
+                fontData, 3, true));
+        styleGroup.put("twoDigits", getDecimalStyleTotals(wb.createCellStyle(), wb.createDataFormat(),
+                fontData, 2, true));
 
         return styles;
     }
@@ -1244,6 +1209,42 @@ public class ReportServiceImpl implements ReportService {
     private CellStyle getTitleStyleBranch(CellStyle style, Font font, boolean borders) {
         getTitleStyle(style, font);
         styleBackgroundAndBorders(style, IndexedColors.LEMON_CHIFFON, borders);
+
+        return style;
+    }
+
+    private CellStyle getDecimalStyleTotals(CellStyle style, DataFormat dataFormat, Font font,
+                                            int digits, boolean borders) {
+        getDecimalStyle(style, dataFormat, font, digits);
+        styleBackgroundAndBorders(style, IndexedColors.LIGHT_YELLOW, borders);
+
+        return style;
+    }
+
+    private CellStyle getIntegerStyleTotals(CellStyle style, DataFormat dataFormat, Font font, boolean borders) {
+        getIntegerStyle(style, dataFormat, font);
+        styleBackgroundAndBorders(style, IndexedColors.LIGHT_YELLOW, borders);
+
+        return style;
+    }
+
+    private CellStyle getStringStyleTotals(CellStyle style, Font font, boolean borders) {
+        getStringStyle(style, font);
+        styleBackgroundAndBorders(style, IndexedColors.LIGHT_YELLOW, borders);
+
+        return style;
+    }
+
+    private CellStyle getPrimaryHeaderStyleTotals(CellStyle style, Font font, boolean borders) {
+        getPrimaryHeaderStyle(style, font);
+        styleBackgroundAndBorders(style, IndexedColors.LIGHT_YELLOW, borders);
+
+        return style;
+    }
+
+    private CellStyle getTitleStyleTotals(CellStyle style, Font font, boolean borders) {
+        getTitleStyle(style, font);
+        styleBackgroundAndBorders(style, IndexedColors.LIGHT_YELLOW, borders);
 
         return style;
     }

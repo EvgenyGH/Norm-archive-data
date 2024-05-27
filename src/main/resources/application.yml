@@ -20,7 +20,7 @@ spring:
 
 logging:
   level:
-    ru.bk.j3000.normarchivedata: debug
+    ru.bk.j3000.normarchivedata: info
     org.springframework.security: info
 
 server:
