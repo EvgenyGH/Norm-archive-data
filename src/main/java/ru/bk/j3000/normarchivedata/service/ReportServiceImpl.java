@@ -19,10 +19,7 @@ import ru.bk.j3000.normarchivedata.model.*;
 import ru.bk.j3000.normarchivedata.model.dto.SsfcShortDTO;
 import ru.bk.j3000.normarchivedata.model.dto.SsfcsDTO;
 import ru.bk.j3000.normarchivedata.util.Counter;
-import ru.bk.j3000.normarchivedata.util.ssfcsum.AvgDataHandler;
-import ru.bk.j3000.normarchivedata.util.ssfcsum.SsfcSumSrc;
-import ru.bk.j3000.normarchivedata.util.ssfcsum.SsfcSumTZBranch;
-import ru.bk.j3000.normarchivedata.util.ssfcsum.SsfcSummary;
+import ru.bk.j3000.normarchivedata.util.ssfcsum.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -776,23 +773,13 @@ public class ReportServiceImpl implements ReportService {
         try (Workbook wb = new XSSFWorkbook()) {
             Sheet sheet = wb.createSheet("Ssfcs");
 
-            Font fontHeader = wb.createFont();
-            Font fontData = wb.createFont();
-            Font fontTitle = wb.createFont();
-
-            CellStyle titleStyle = getTitleStyle(wb.createCellStyle(), fontTitle);
-            CellStyle headerStylePrimary = getPrimaryHeaderStyle(wb.createCellStyle(), fontHeader);
-            CellStyle stringStyle = getStringStyle(wb.createCellStyle(), fontData);
-            CellStyle integerStyle = getIntegerStyle(wb.createCellStyle(), wb.createDataFormat(), fontData);
-            CellStyle threeDigitsStyle = getDecimalStyle(wb.createCellStyle(),
-                    wb.createDataFormat(), fontData, 3);
-            CellStyle twoDigitsStyle = getDecimalStyle(wb.createCellStyle(),
-                    wb.createDataFormat(), fontData, 2);
+            Map<String, Map<String, CellStyle>> styles = getStyles(wb);
 
             // set headers
             Row headerRow = sheet.createRow(1);
             IntStream.rangeClosed(0, allSsfcsColumns.length - 1)
-                    .forEach(i -> createCell(headerRow, i, allSsfcsColumns[i], headerStylePrimary));
+                    .forEach(i -> createCell(headerRow, i, allSsfcsColumns[i],
+                            styles.get("base").get("header primary")));
 
             log.debug("Standard report headers set.");
 
@@ -800,15 +787,18 @@ public class ReportServiceImpl implements ReportService {
             Counter counter = new Counter(2);
             Counter number = new Counter(1);
 
-            summary.getSubSsfcs().forEach(sum -> this.formStandardSsfcBlock(sheet, sum, counter, number,
-                    integerStyle, stringStyle, threeDigitsStyle, twoDigitsStyle));
+            summary.getSubSsfcs().forEach(sum -> this.formStandardSsfcBlock(sheet, sum, counter,
+                    number, styles)
+            );
 
             log.debug("Standard report data set.");
 
             // set totals
-            formGroupBlock("Всего по компании", sheet, summary.avgData(), counter,
-                    null, summary.getClass().getSimpleName(),
-                    integerStyle, stringStyle, threeDigitsStyle, twoDigitsStyle);
+            formGroupBlock("Всего по компании", sheet, summary.avgData(), counter, null,
+                    styles.get("tz").get("integer"),
+                    styles.get("tz").get("string"),
+                    styles.get("tz").get("threeDigits"),
+                    styles.get("tz").get("twoDigits"));
 
             log.debug("Standard report totals set.");
 
@@ -820,7 +810,8 @@ public class ReportServiceImpl implements ReportService {
             // set title (first cell is too wide if before)
             Row titleRow = sheet.createRow(0);
             createCell(titleRow, 0, String.format("Нормативные удельные расходы топлива на единицу " +
-                    "отпущенной тепловой энергии источников ПАО \"МОЭК\" на %s год", year), titleStyle);
+                            "отпущенной тепловой энергии источников ПАО \"МОЭК\" на %s год", year),
+                    styles.get("base").get("title"));
 
             log.debug("Standard report title set.");
 
@@ -837,24 +828,38 @@ public class ReportServiceImpl implements ReportService {
         return resource;
     }
 
+    // set top and bottom borders to double
+    private void styleTopBottomDoubleBorder(Sheet sheet, int firstRow, int lastRow,
+                                            int firstColumn, int lastColumn) {
+        var range = new CellRangeAddress(firstRow, lastRow, firstColumn, lastColumn);
+
+        RegionUtil.setBorderBottom(BorderStyle.DOUBLE, range, sheet);
+        RegionUtil.setBorderTop(BorderStyle.DOUBLE, range, sheet);
+        RegionUtil.setBorderLeft(BorderStyle.THIN, range, sheet);
+        RegionUtil.setBorderRight(BorderStyle.THIN, range, sheet);
+    }
+
     private void formStandardSsfcBlock(Sheet sheet, SsfcSummary summary, Counter counter, Counter number,
-                                       CellStyle integerStyle, CellStyle stringStyle,
-                                       CellStyle threeDigitsStyle, CellStyle twoDigitsStyle) {
+                                       Map<String, Map<String, CellStyle>> styles) {
 
         log.debug("Standard report ssfcBlock started for {}. Row {}",
                 summary.getName(), counter.getCounter());
 
+        // select group
+        String group = selectGroup(summary.getClass().getSimpleName(), summary.getName());
+
         // set group header
         Row row = sheet.createRow(counter.getAndIncrement());
-        CellUtil.createCell(row, 1, summary.getName(), stringStyle);
-        styleGroup(sheet, row.getRowNum(), row.getRowNum(),
-                0, allSsfcsColumns.length - 1,
-                summary.getClass().getSimpleName(), false);
+        IntStream.range(0, allSsfcsColumns.length).forEach(i -> row.createCell(i)
+                .setCellStyle(styles.get(group + " no borders").get("string")));
+        styleTopBottomDoubleBorder(sheet, row.getRowNum(), row.getRowNum(),
+                0, allSsfcsColumns.length - 1);
+        row.getCell(1).setCellValue(summary.getName());
 
         // set data
         if (summary.hasSub()) {
             summary.getSubSsfcs().forEach(sum -> this.formStandardSsfcBlock(sheet, sum, counter,
-                    number, integerStyle, stringStyle, threeDigitsStyle, twoDigitsStyle));
+                    number, styles));
         } else {
             summary.getAllSsfcs()
                     .stream()
@@ -864,21 +869,41 @@ public class ReportServiceImpl implements ReportService {
                     .map(SsfcSumSrc::new)
                     .forEach(sum -> formGroupBlock(sum.getAllSsfcs().getFirst().getProperties()
                                     .getId().getSource().getName(), sheet, sum.avgData(),
-                            counter, number, sum.getClass().getSimpleName(),
-                            integerStyle, stringStyle, threeDigitsStyle, twoDigitsStyle));
+                            counter, number,
+                            styles.get("base").get("integer"),
+                            styles.get("base").get("string"),
+                            styles.get("base").get("threeDigits"),
+                            styles.get("base").get("twoDigits"))
+                    );
         }
 
         log.debug("Standard report sum footer started for {}. Row {}",
                 summary.getName(), counter.getCounter());
 
         // set footer sums
-        formGroupBlock(summary.getName(), sheet, summary.avgData(), counter,
-                null, summary.getClass().getSimpleName(),
-                integerStyle, stringStyle, threeDigitsStyle, twoDigitsStyle);
+        formGroupBlock(summary.getName(), sheet, summary.avgData(), counter, null,
+                styles.get(group).get("integer"),
+                styles.get(group).get("string"),
+                styles.get(group).get("threeDigits"),
+                styles.get(group).get("twoDigits"));
+    }
+
+    private String selectGroup(String className, String summaryName) {
+        String group;
+
+        if (className.equals(SsfcSumBranch.class.getSimpleName())) {
+            group = "tz";
+        } else if (summaryName.equals("source")) {
+            group = "base";
+        } else {
+            group = "branch";
+        }
+
+        return group;
     }
 
     private void formGroupBlock(String name, Sheet sheet, double[][] avgData,
-                                Counter counter, Counter number, String className,
+                                Counter counter, Counter number,
                                 CellStyle integerStyle, CellStyle stringStyle,
                                 CellStyle threeDigitsStyle, CellStyle twoDigitsStyle) {
 
@@ -887,20 +912,20 @@ public class ReportServiceImpl implements ReportService {
         if (listData.size() == 1) {
             formGroupData(name, sheet, listData.getFirst(),
                     avgData[1][12] == 0 ? FUEL_TYPE.DIESEL.getName() : FUEL_TYPE.GAS.getName(),
-                    counter, number, className, integerStyle, stringStyle, threeDigitsStyle, twoDigitsStyle);
+                    counter, number, integerStyle, stringStyle, threeDigitsStyle, twoDigitsStyle);
         } else {
             formGroupData(String.format("%s (газ + дизель)", name), sheet, listData.get(0),
-                    "газ + дизель", counter, number, className, integerStyle,
+                    "газ + дизель", counter, number, integerStyle,
                     stringStyle, threeDigitsStyle, twoDigitsStyle);
             formGroupData(String.format("%s (газ)", name), sheet, listData.get(1), FUEL_TYPE.GAS.getName(),
-                    counter, number, className, integerStyle, stringStyle, threeDigitsStyle, twoDigitsStyle);
+                    counter, number, integerStyle, stringStyle, threeDigitsStyle, twoDigitsStyle);
             formGroupData(String.format("%s (дизель)", name), sheet, listData.get(2), FUEL_TYPE.DIESEL.getName(),
-                    counter, number, className, integerStyle, stringStyle, threeDigitsStyle, twoDigitsStyle);
+                    counter, number, integerStyle, stringStyle, threeDigitsStyle, twoDigitsStyle);
         }
     }
 
     private void formGroupData(String name, Sheet sheet, double[][] data, String fuelType,
-                               Counter counter, Counter number, String className,
+                               Counter counter, Counter number,
                                CellStyle integerStyle, CellStyle stringStyle,
                                CellStyle threeDigitsStyle, CellStyle twoDigitsStyle) {
 
@@ -970,19 +995,10 @@ public class ReportServiceImpl implements ReportService {
                 threeDigitsStyle,
                 twoDigitsStyle);
 
-        // style summary blocks
-        if (!className.equals(SsfcSumSrc.class.getSimpleName())) {
-            styleGroup(sheet, counter.getCounter(),
-                    counter.getCounter() + ssfcRows.length - 1,
-                    0, allSsfcsColumns.length - 1,
-                    className, true);
-        }
-
-        //set solid borders
-        var range = new CellRangeAddress(counter.getCounter(),
+        // set top and bottom double borders
+        styleTopBottomDoubleBorder(sheet, counter.getCounter(),
                 counter.getCounter() + ssfcRows.length - 1,
                 0, allSsfcsColumns.length - 1);
-        RegionUtil.setBorderBottom(BorderStyle.DOUBLE, range, sheet);
 
         counter.increment(ssfcRows.length);
 
@@ -1038,18 +1054,20 @@ public class ReportServiceImpl implements ReportService {
         log.debug("Ssfc one month data for one source set to report file");
     }
 
+    //todo remove
     private void styleGroup(Sheet sheet, int firstRow, int lastRow,
                             int firstColumn, int lastColumn,
-                            String className, boolean border) {
+                            String className, boolean borders) {
         IndexedColors color = switch (className) {
             case "SsfcSumBranch" -> IndexedColors.LEMON_CHIFFON;
             default -> IndexedColors.LIGHT_GREEN;
         };
 
         styleRegion(sheet, firstRow, lastRow, firstColumn,
-                lastColumn, color, border);
+                lastColumn, color, borders);
     }
 
+    //todo remove
     private void styleRegion(Sheet sheet, int firstRow, int lastRow, int firstColumn,
                              int lastColumn, IndexedColors color, boolean border) {
         Map<String, Object> properties = Map.of(
@@ -1074,36 +1092,6 @@ public class ReportServiceImpl implements ReportService {
                         })
                 );
 
-//        IntStream.rangeClosed(firstRow, lastRow)
-//                .forEach(row -> IntStream.rangeClosed(firstColumn, lastColumn)
-//                        .forEach(col -> {
-//                            Cell cell = sheet.getRow(row).getCell(col);
-//                            cell = Objects.isNull(cell) ? sheet.getRow(firstRow).createCell(col) : cell;
-//
-//                            CellUtil.setCellStyleProperty(cell, CellUtil.BOTTOM_BORDER_COLOR,
-//                                    IndexedColors.BLACK);
-//                            CellUtil.setCellStyleProperty(cell, CellUtil.TOP_BORDER_COLOR,
-//                                    IndexedColors.BLACK);
-//                            CellUtil.setCellStyleProperty(cell, CellUtil.RIGHT_BORDER_COLOR,
-//                                    IndexedColors.BLACK);
-//                            CellUtil.setCellStyleProperty(cell, CellUtil.LEFT_BORDER_COLOR,
-//                                    IndexedColors.BLACK);
-//
-//                            CellUtil.setCellStyleProperty(cell, CellUtil.BORDER_BOTTOM,
-//                                    border ? BorderStyle.THIN : BorderStyle.NONE);
-//                            CellUtil.setCellStyleProperty(cell, CellUtil.BORDER_TOP,
-//                                    border ? BorderStyle.THIN : BorderStyle.NONE);
-//                            CellUtil.setCellStyleProperty(cell, CellUtil.BORDER_RIGHT,
-//                                    border ? BorderStyle.THIN : BorderStyle.NONE);
-//                            CellUtil.setCellStyleProperty(cell, CellUtil.BORDER_LEFT,
-//                                    border ? BorderStyle.THIN : BorderStyle.NONE);
-//
-//                            CellUtil.setCellStyleProperty(cell, CellUtil.FILL_PATTERN,
-//                                    FillPatternType.SOLID_FOREGROUND);
-//                            CellUtil.setCellStyleProperty(cell, CellUtil.FILL_FOREGROUND_COLOR, color.getIndex());
-//                        })
-//                );
-
         // set top and bottom borders to double
         var range = new CellRangeAddress(firstRow, lastRow, firstColumn, lastColumn);
 
@@ -1113,6 +1101,166 @@ public class ReportServiceImpl implements ReportService {
         RegionUtil.setBorderRight(BorderStyle.THIN, range, sheet);
     }
 
+    private Map<String, Map<String, CellStyle>> getStyles(Workbook wb) {
+        Map<String, Map<String, CellStyle>> styles = new HashMap<>();
+
+        styles.put("base", new HashMap<>());
+        styles.put("tz", new HashMap<>());
+        styles.put("tz no borders", new HashMap<>());
+        styles.put("branch", new HashMap<>());
+        styles.put("branch no borders", new HashMap<>());
+
+        Font fontHeader = wb.createFont();
+        Font fontData = wb.createFont();
+        Font fontTitle = wb.createFont();
+
+        Map<String, CellStyle> styleGroup = styles.get("base");
+        styleGroup.put("title", getTitleStyle(wb.createCellStyle(), fontTitle));
+        styleGroup.put("header primary", getPrimaryHeaderStyle(wb.createCellStyle(), fontHeader));
+        styleGroup.put("string", getStringStyle(wb.createCellStyle(), fontData));
+        styleGroup.put("integer", getIntegerStyle(wb.createCellStyle(), wb.createDataFormat(), fontData));
+        styleGroup.put("threeDigits", getDecimalStyle(wb.createCellStyle(), wb.createDataFormat(),
+                fontData, 3));
+        styleGroup.put("twoDigits", getDecimalStyle(wb.createCellStyle(), wb.createDataFormat(),
+                fontData, 2));
+
+        styleGroup = styles.get("tz");
+        styleGroup.put("title", getTitleStyleTZ(wb.createCellStyle(), fontTitle, true));
+        styleGroup.put("header primary", getPrimaryHeaderStyleTZ(wb.createCellStyle(), fontHeader,
+                true));
+        styleGroup.put("string", getStringStyleTZ(wb.createCellStyle(), fontData, true));
+        styleGroup.put("integer", getIntegerStyleTZ(wb.createCellStyle(), wb.createDataFormat(),
+                fontData, true));
+        styleGroup.put("threeDigits", getDecimalStyleTZ(wb.createCellStyle(), wb.createDataFormat(),
+                fontData, 3, true));
+        styleGroup.put("twoDigits", getDecimalStyleTZ(wb.createCellStyle(), wb.createDataFormat(),
+                fontData, 2, true));
+
+        styleGroup = styles.get("tz no borders");
+        styleGroup.put("title", getTitleStyleTZ(wb.createCellStyle(), fontTitle, false));
+        styleGroup.put("header primary", getPrimaryHeaderStyleTZ(wb.createCellStyle(), fontHeader,
+                false));
+        styleGroup.put("string", getStringStyleTZ(wb.createCellStyle(), fontData, false));
+        styleGroup.put("integer", getIntegerStyleTZ(wb.createCellStyle(), wb.createDataFormat(),
+                fontData, false));
+        styleGroup.put("threeDigits", getDecimalStyleTZ(wb.createCellStyle(), wb.createDataFormat(),
+                fontData, 3, false));
+        styleGroup.put("twoDigits", getDecimalStyleTZ(wb.createCellStyle(), wb.createDataFormat(),
+                fontData, 2, false));
+
+        styleGroup = styles.get("branch");
+        styleGroup.put("title", getTitleStyleBranch(wb.createCellStyle(), fontTitle, true));
+        styleGroup.put("header primary", getPrimaryHeaderStyleBranch(wb.createCellStyle(), fontHeader,
+                true));
+        styleGroup.put("string", getStringStyleBranch(wb.createCellStyle(), fontData, true));
+        styleGroup.put("integer", getIntegerStyleBranch(wb.createCellStyle(), wb.createDataFormat(),
+                fontData, true));
+        styleGroup.put("threeDigits", getDecimalStyleBranch(wb.createCellStyle(), wb.createDataFormat(),
+                fontData, 3, true));
+        styleGroup.put("twoDigits", getDecimalStyleBranch(wb.createCellStyle(), wb.createDataFormat(),
+                fontData, 2, true));
+
+        styleGroup = styles.get("branch no borders");
+        styleGroup.put("title", getTitleStyleBranch(wb.createCellStyle(), fontTitle, false));
+        styleGroup.put("header primary", getPrimaryHeaderStyleBranch(wb.createCellStyle(), fontHeader,
+                false));
+        styleGroup.put("string", getStringStyleBranch(wb.createCellStyle(), fontData, false));
+        styleGroup.put("integer", getIntegerStyleBranch(wb.createCellStyle(), wb.createDataFormat(),
+                fontData, false));
+        styleGroup.put("threeDigits", getDecimalStyleBranch(wb.createCellStyle(), wb.createDataFormat(),
+                fontData, 3, false));
+        styleGroup.put("twoDigits", getDecimalStyleBranch(wb.createCellStyle(), wb.createDataFormat(),
+                fontData, 2, false));
+
+        return styles;
+    }
+
+    private CellStyle getDecimalStyleTZ(CellStyle style, DataFormat dataFormat, Font font,
+                                        int digits, boolean borders) {
+        getDecimalStyle(style, dataFormat, font, digits);
+        styleBackgroundAndBorders(style, IndexedColors.LIGHT_GREEN, borders);
+
+        return style;
+    }
+
+    private CellStyle getIntegerStyleTZ(CellStyle style, DataFormat dataFormat,
+                                        Font font, boolean borders) {
+        getIntegerStyle(style, dataFormat, font);
+        styleBackgroundAndBorders(style, IndexedColors.LIGHT_GREEN, borders);
+
+        return style;
+    }
+
+    private CellStyle getStringStyleTZ(CellStyle style, Font font, boolean borders) {
+        getStringStyle(style, font);
+        styleBackgroundAndBorders(style, IndexedColors.LIGHT_GREEN, borders);
+
+        return style;
+    }
+
+    private CellStyle getPrimaryHeaderStyleTZ(CellStyle style, Font font, boolean borders) {
+        getPrimaryHeaderStyle(style, font);
+        styleBackgroundAndBorders(style, IndexedColors.LIGHT_GREEN, borders);
+
+        return style;
+    }
+
+    private CellStyle getTitleStyleTZ(CellStyle style, Font font, boolean borders) {
+        getTitleStyle(style, font);
+        styleBackgroundAndBorders(style, IndexedColors.LIGHT_GREEN, borders);
+
+        return style;
+    }
+
+    private CellStyle getDecimalStyleBranch(CellStyle style, DataFormat dataFormat, Font font,
+                                            int digits, boolean borders) {
+        getDecimalStyle(style, dataFormat, font, digits);
+        styleBackgroundAndBorders(style, IndexedColors.LEMON_CHIFFON, borders);
+
+        return style;
+    }
+
+    private CellStyle getIntegerStyleBranch(CellStyle style, DataFormat dataFormat, Font font, boolean borders) {
+        getIntegerStyle(style, dataFormat, font);
+        styleBackgroundAndBorders(style, IndexedColors.LEMON_CHIFFON, borders);
+
+        return style;
+    }
+
+    private CellStyle getStringStyleBranch(CellStyle style, Font font, boolean borders) {
+        getStringStyle(style, font);
+        styleBackgroundAndBorders(style, IndexedColors.LEMON_CHIFFON, borders);
+
+        return style;
+    }
+
+    private CellStyle getPrimaryHeaderStyleBranch(CellStyle style, Font font, boolean borders) {
+        getPrimaryHeaderStyle(style, font);
+        styleBackgroundAndBorders(style, IndexedColors.LEMON_CHIFFON, borders);
+
+        return style;
+    }
+
+    private CellStyle getTitleStyleBranch(CellStyle style, Font font, boolean borders) {
+        getTitleStyle(style, font);
+        styleBackgroundAndBorders(style, IndexedColors.LEMON_CHIFFON, borders);
+
+        return style;
+    }
+
+    private CellStyle styleBackgroundAndBorders(CellStyle cellStyle, IndexedColors color, boolean borders) {
+        cellStyle.setFillForegroundColor(color.getIndex());
+        cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+        if (!borders) {
+            cellStyle.setBorderBottom(BorderStyle.NONE);
+            cellStyle.setBorderTop(BorderStyle.NONE);
+            cellStyle.setBorderLeft(BorderStyle.NONE);
+            cellStyle.setBorderRight(BorderStyle.NONE);
+        }
+
+        return cellStyle;
+    }
 
     private CellStyle getIntegerStyle(CellStyle cellStyle, DataFormat dataFormat, Font font) {
         getBaseStyle(cellStyle, font)
