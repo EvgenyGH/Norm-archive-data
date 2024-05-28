@@ -114,13 +114,14 @@
                         <label for="select-all">Все источники</label>
                         <input type="radio" id="select-particular" name="selection" value="particular">
                         <label for="select-particular">Выборочно</label>
+
+                        <p th:if="${reportSources.isEmpty()}"
+                           class="no-data"
+                           th:text="'НУР на указанный период не заведены в систему'">
+                        </p>
                     </div>
 
                     <div class="pick-sources">
-                        <p th:if="${reportSources.isEmpty()}"
-                           th:text="'НУР на указанный период не заведены в систему'">
-                        </p>
-
                         <th:block th:each="source : ${reportSources}">
                             <input type="checkbox" th:id="${#ids.seq('source')}" name="sources"
                                    th:value="${source.sourceId}">
@@ -129,7 +130,6 @@
                     </div>
                 </div>
             </fieldset>
-            <br>
             <input type="submit" value="Выгрузить отчет">
         </fieldset>
     </form>

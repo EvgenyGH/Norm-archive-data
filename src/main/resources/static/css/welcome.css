@@ -429,6 +429,11 @@ select:invalid {
     margin-top: 0.1em;
 }
 
+.ssfc-report .no-data {
+    margin-top: 1em;
+    font-style: italic;
+}
+
 .ssfc-report fieldset fieldset {
     padding-bottom: 0.2em;
 }
