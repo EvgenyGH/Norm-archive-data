@@ -299,23 +299,43 @@ select:invalid {
     box-shadow: 0 0 0.2em 0.05em red;
 }
 
+/* Buttons */
+input[type=submit] {
+    width: 100%;
+    height: 3em;
+    margin-top: 0.2em;
+    background: Khaki;
+}
+
+input[type=submit]:hover {
+    background: darkkhaki;
+}
+
+input[type=submit]:focus {
+    outline: none;
+    border-color: lightsteelblue;
+}
 
 /* Report */
 .report {
     font-size: 1.5em;
-    max-width: 34em;
     text-wrap: nowrap;
-    overflow: scroll;
     text-align: left;
+    overflow: scroll;
+    max-width: 34em;
     margin-bottom: 1em;
+}
+
+.report input[type=submit] {
+    margin-top: 0.5em;
 }
 
 .report label {
     display: inline-block;
     overflow: hidden;
     width: 14em;
-    vertical-align: middle;
     margin-bottom: 0.22em;
+    vertical-align: middle;
 }
 
 .report label:hover {
@@ -326,24 +346,36 @@ select:invalid {
     font-weight: bold;
 }
 
-.report .pick-sources {
-    display: grid;
-    grid-template-columns: auto auto auto auto auto auto;
-    max-height: 8em;
-    overflow: scroll;
-    border: thin;
-    transition: max-height 0.5s;
-    margin-top: 0.35em;
-    border-top: dotted thin black;
-    max-width: 51em;
-}
-
+/* Ssfc report */
 .ssfc-report {
     max-width: 51em;
     overflow: scroll;
+    transition: max-width 1s, max-height 1s;
+    transition-timing-function: ease-in-out;
 }
 
-.pick-sources label {
+.ssfc-report:has(.ssfc-selection #select-all:checked) {
+    max-width: 34em;
+}
+
+.ssfc-report .pick-sources {
+    display: grid;
+    grid-template-columns: auto auto auto auto auto auto;
+    max-height: 8em;
+    max-width: 51em;
+    overflow: scroll;
+    transition: max-height 0.5s;
+    margin-top: 0.35em;
+    border-top: dotted thin black;
+}
+
+.ssfc-report .pick-sources {
+    max-width: 47em;
+    transition: max-width 0.5s, max-height 0.5s, opacity 0.5s;
+    transition-timing-function: ease-in-out;
+}
+
+.ssfc-report .pick-sources label {
     margin-top: 0.09em;
 }
 
@@ -352,33 +384,43 @@ select:invalid {
     opacity: 0;
 }
 
-.ssfc-report .select-type:has(#ssfc-template:checked) ~ fieldset .select-summaries {
-    max-height: 0;
-}
-
-.ssfc-report:has(.ssfc-selection #select-all:checked) {
-    max-width: 34em;
+.ssfc-report .select-sources {
+    max-width: 47em;
+    transition: max-width 1s, max-height 1s;
+    transition-timing-function: ease-in-out;
 }
 
 .ssfc-report:has(.ssfc-selection #select-all:checked) .select-sources {
     max-width: 30em;
 }
 
-.ssfc-report:has(.ssfc-selection #select-all:checked) .pick-sources {
-    @max-width: 30em;
+.ssfc-report .select-summaries {
+    max-height: 4em;
+    margin-bottom: 0.4em;
+    overflow: hidden;
+    transition: max-height 0.5s;
+    transition-timing-function: ease-in-out;
 }
 
-
-.report .select-summaries label {
+.ssfc-report .select-summaries label {
     width: max-content;
 }
 
-.report .select-summaries {
-    overflow: hidden;
-    max-height: 4em;
-    transition: max-height 0.5s;
-    margin-bottom: 0.8em;
-    transition-timing-function: ease-in-out;
+.ssfc-report .select-summaries input {
+    margin-left: 0;
+}
+
+.ssfc-report .select-type:has(#ssfc-template:checked) ~ fieldset .select-summaries {
+    max-height: 0;
+}
+
+.ssfc-report .ssfc-selection input {
+    margin-left: 0;
+}
+
+.ssfc-report .select-type {
+    margin-bottom: 0.6em;
+    margin-top: 0.6em;
 }
 
 .ssfc-report p {
@@ -387,29 +429,30 @@ select:invalid {
     margin-top: 0.1em;
 }
 
-.report .select-type {
-    margin-bottom: 1em;
-    margin-top: 0.5em;
+.ssfc-report fieldset fieldset {
+    padding-bottom: 0.2em;
 }
 
-.report .ssfc-selection {
-    margin-bottom: 0.5em;
+/* Year */
+#year {
+    background-color: lemonchiffon;
+    width: 4.8em;
 }
 
-.ssfc-report {
-    max-width: 51em;
-    transition: max-width 1s, max-height 1s;
-    transition-timing-function: ease-in-out;
-}
 
-.report .select-sources {
-    max-width: 47em;
-    transition: max-width 1s, max-height 1s;
-    transition-timing-function: ease-in-out;
-}
 
-.report .pick-sources {
-    max-width: 47em;
-    transition: max-width 0.5s, max-height 0.5s, opacity 0.5s;
-    transition-timing-function: ease-in-out;
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
