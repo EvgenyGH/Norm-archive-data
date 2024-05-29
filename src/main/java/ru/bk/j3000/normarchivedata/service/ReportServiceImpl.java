@@ -756,8 +756,6 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public Resource getAllSsfcReport(Integer year, String selection, List<UUID> srcIds, List<String> sumTypes) {
-        //todo add branch summary amd tariff zone summary
-        // add to ssfc by tz view
         Resource resource;
 
         List<StandardSFC> ssfcs = switch (selection) {
@@ -767,7 +765,13 @@ public class ReportServiceImpl implements ReportService {
                     .format("Invalid ssfc report type <%s>", selection));
         };
 
-        SsfcSummary summary = new SsfcSumTZBranch(ssfcs);
+        SsfcSummary summary;
+
+        if (sumTypes.contains("branch") && !sumTypes.contains("tz")) {
+            summary = new SsfcSumBranch(ssfcs);
+        } else {
+            summary = new SsfcSumTZBranch(ssfcs);
+        }
 
         try (Workbook wb = new XSSFWorkbook()) {
             Sheet sheet = wb.createSheet("Ssfcs");
@@ -849,6 +853,7 @@ public class ReportServiceImpl implements ReportService {
     private void formStandardSsfcBlock(Sheet sheet, SsfcSummary summary, Counter counter, Counter number,
                                        Map<String, Map<String, CellStyle>> styles,
                                        List<String> sumTypes) {
+        boolean srcsIncluded = !sumTypes.contains("sumsOnly");
 
         log.debug("Standard report ssfcBlock started for {}. Row {}",
                 summary.getName(), counter.getCounter());
@@ -857,7 +862,7 @@ public class ReportServiceImpl implements ReportService {
         String group = selectGroup(summary.getClass().getSimpleName(), summary.getName());
 
         // set group header
-        if (sumTypes.contains(group)) {
+        if (sumTypes.contains(group) && srcsIncluded) {
             Row row = sheet.createRow(counter.incrementAndGet());
             IntStream.range(0, allSsfcsColumns.length).forEach(i -> row.createCell(i)
                     .setCellStyle(styles.get(group + " no borders").get("string")));
@@ -870,7 +875,7 @@ public class ReportServiceImpl implements ReportService {
         if (summary.hasSub()) {
             summary.getSubSsfcs().forEach(sum -> this.formStandardSsfcBlock(sheet, sum, counter,
                     number, styles, sumTypes));
-        } else {
+        } else if (srcsIncluded) {
             summary.getAllSsfcs()
                     .stream()
                     .collect(Collectors.groupingBy(ssfc -> ssfc.getProperties().getId()
