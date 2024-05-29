@@ -6,6 +6,8 @@
     <title>Нормативные удельные расходы топлива</title>
     <link rel="stylesheet" type="text/css" media="all"
           href="../static/css/welcome.css" th:href="@{/css/welcome.css}">
+    <script th:if="${activeMenu.contains('report')}" type="text/javascript"
+            th:src="@{/js/ssfcReport.js}" defer></script>
 </head>
 <body>
 <div class="welcome-container">

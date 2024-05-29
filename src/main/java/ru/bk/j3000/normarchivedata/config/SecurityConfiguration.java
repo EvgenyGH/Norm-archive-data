@@ -74,7 +74,8 @@ public class SecurityConfiguration {
                                 "/branch/**",
                                 "/ssfc/**",
                                 "/report/**",
-                                "/css/*")
+                                "/css/*",
+                                "/js/*")
                         .hasRole("USER")
                         .requestMatchers("/user/**")
                         .hasRole("ADMIN")

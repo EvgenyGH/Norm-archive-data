@@ -285,6 +285,7 @@ tr:has(td:not([rowspan]):hover) td:not([rowspan]) {
     font-size: 0.7em;
 }
 
+
 /* Invalid field */
 input:invalid {
     box-shadow: 0 0 0.5em 0.1em red;
@@ -298,6 +299,7 @@ select:focus {
 select:invalid {
     box-shadow: 0 0 0.2em 0.05em red;
 }
+
 
 /* Buttons */
 .report input[type=submit] {
@@ -315,6 +317,7 @@ select:invalid {
     outline: none;
     border-color: lightsteelblue;
 }
+
 
 /* Report */
 .report {
@@ -345,6 +348,7 @@ select:invalid {
 .report legend {
     font-weight: bold;
 }
+
 
 /* Ssfc report */
 .ssfc-report {
@@ -404,6 +408,7 @@ select:invalid {
 
 .ssfc-report .select-summaries label {
     width: max-content;
+    padding-right: 1em;
 }
 
 .ssfc-report .select-summaries input {
@@ -443,21 +448,3 @@ select:invalid {
     background-color: lemonchiffon;
     width: 4.8em;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
