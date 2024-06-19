@@ -10,8 +10,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.bk.j3000.normarchivedata.exception.FileParseException;
@@ -21,8 +21,6 @@ import ru.bk.j3000.normarchivedata.model.dto.SsfcsDTO;
 import ru.bk.j3000.normarchivedata.repository.StandardSFCRepository;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.IntStream;
 
@@ -172,17 +170,11 @@ public class StandardSFCServiceImpl implements StandardSFCService {
 
     @Override
     public Resource getSsfcTemplate() {
-        Path path = Path.of("src/main/resources/exceltemplates/ssfcsTemplate.xlsm");
-        try {
-            Resource resource = new UrlResource(path.toUri());
+        Resource resource = new ClassPathResource("exceltemplates/ssfcsTemplate.xlsm");
 
-            log.info("Ssfcs template resource created.");
+        log.info("Ssfcs template resource created.");
 
-            return resource;
-
-        } catch (MalformedURLException e) {
-            throw new FileReadException("Error reading template file.", "Ssfcs template.");
-        }
+        return resource;
     }
 
     @Override
