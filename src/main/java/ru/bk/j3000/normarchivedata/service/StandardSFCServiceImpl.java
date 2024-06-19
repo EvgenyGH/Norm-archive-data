@@ -38,7 +38,7 @@ public class StandardSFCServiceImpl implements StandardSFCService {
             "Id вида топлива", "Январь", "Февраль",
             "Март", "Апрель", "Май", "Июнь", "Июль",
             "Август", "Сентябрь", "Октябрь", "Ноябрь",
-            "Декабрь", "2024 год", "Комментарии"};
+            "Декабрь", "год", "Комментарии"};
 
     @Override
     public List<StandardSFC> findAllSsfcByYear(Integer year) {
