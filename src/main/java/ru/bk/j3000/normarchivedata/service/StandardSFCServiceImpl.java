@@ -203,7 +203,7 @@ public class StandardSFCServiceImpl implements StandardSFCService {
 
             checkHeaders(sheet.getRow(0));
 
-            for (int i = 1; i <= sheet.getLastRowNum(); i += 6) {
+            for (int i = 1; i < sheet.getLastRowNum(); i += 6) {
                 Row row1 = sheet.getRow(i);
                 Row row2 = sheet.getRow(i + 1);
                 Row row4 = sheet.getRow(i + 3);
