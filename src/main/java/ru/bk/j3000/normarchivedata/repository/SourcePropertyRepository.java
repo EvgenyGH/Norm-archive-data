@@ -49,5 +49,4 @@ public interface SourcePropertyRepository extends JpaRepository<SourceProperty, 
             "FROM SourceProperty sp " +
             "WHERE sp.id.year = :year")
     List<Source> findAllSourcesByYear(@Param("year") Integer year);
-
 }

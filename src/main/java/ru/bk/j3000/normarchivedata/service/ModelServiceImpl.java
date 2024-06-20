@@ -338,7 +338,7 @@ public class ModelServiceImpl implements ModelService {
         attributes.put("title", "Отчеты");
         attributes.put("activeMenu", Set.of("report"));
         attributes.put("reportYear", year);
-        attributes.put("reportSources", srcPropService.findAllSourcesByYear(year)
+        attributes.put("reportSources", ssfcService.findAllDefinedSourcesByYear(year)
                 .stream()
                 .map(SourceAlterDTO::new)
                 .toList());
