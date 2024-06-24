@@ -8,6 +8,8 @@
           href="../static/css/welcome.css" th:href="@{/css/welcome.css}">
     <script th:if="${activeMenu.contains('report')}" type="text/javascript"
             th:src="@{/js/ssfcReport.js}" defer></script>
+    <script th:if="${activeMenu.contains('ssfc')}" type="text/javascript"
+            th:src="@{/js/ssfcWarns.js}" defer></script>
 </head>
 <body>
 <div class="welcome-container">
@@ -57,6 +59,10 @@
         <div th:if="${activeMenu.contains('ssfc')}"
              th:insert="~{util::select-year(${'ssfc'}, ${reportYear})}">
             select report years
+        </div>
+        <!--/* НУР предупреждения */-->
+        <div th:if="${activeMenu.contains('ssfc')}"
+             th:replace="~{ssfc::ssfc-warns(${warns}, ${activeMenu.contains('ssfc')})}">
         </div>
         <div th:if="${activeMenu.contains('ssfc')}"
              th:insert="~{ssfc::all-ssfcs(${ssfcs}, ${reportYear})}">ssfcs

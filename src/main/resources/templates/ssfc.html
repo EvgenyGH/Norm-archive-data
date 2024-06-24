@@ -229,5 +229,14 @@
         </fieldset>
     </form>
 </div>
+
+<div th:if="${show}" th:class="ssfc-warns" th:fragment="ssfc-warns(warns, show)">
+    <p th:text="'Внимание!'"></p>
+
+    <p th:each="warn : ${warns}" th:text="${warn.getKey() + ' ' + warn.getValue()}"></p>
+
+    <input type="button" th:class="warns-ok" value="Ok">
+</div>
+
 </body>
 </html>

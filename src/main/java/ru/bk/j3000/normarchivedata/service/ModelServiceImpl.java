@@ -238,6 +238,12 @@ public class ModelServiceImpl implements ModelService {
 
     @Override
     public Map<String, Object> getAllSsfcViewAttributes(Optional<Integer> year) {
+        return getAllSsfcViewAttributes(year, Map.of());
+    }
+
+    @Override
+    public Map<String, Object> getAllSsfcViewAttributes(Optional<Integer> year,
+                                                        Map<String, String> warns) {
         Map<String, Object> attributes = new HashMap<>();
         Integer reportYear = year.orElse(LocalDate.now().getYear());
         List<SsfcsDTO> dtos = ssfcService.findAllSsfcByYear(reportYear)
@@ -263,6 +269,7 @@ public class ModelServiceImpl implements ModelService {
         attributes.put("activeMenu", Set.of("ssfc"));
         attributes.put("reportYear", reportYear);
         attributes.put("ssfcs", dtos);
+        attributes.put("warns", warns);
 
         log.info("All ssfcs view attributes for year {} created.", reportYear);
 
