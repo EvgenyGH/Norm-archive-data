@@ -40,6 +40,10 @@ public class StandardSFCServiceImpl implements StandardSFCService {
             "Август", "Сентябрь", "Октябрь", "Ноябрь",
             "Декабрь", "Год", "Комментарии"};
 
+    private final String[] months = {"Январь", "Февраль", "Март",
+            "Апрель", "Май", "Июнь", "Июль", "Август",
+            "Сентябрь", "Октябрь", "Ноябрь", "декабрь"};
+
     @Override
     public List<StandardSFC> findAllSsfcByYear(Integer year) {
         List<StandardSFC> ssfcs = ssfcRepository.findAllSsfcByYear(year);
@@ -179,9 +183,9 @@ public class StandardSFCServiceImpl implements StandardSFCService {
 
     @Override
     @Transactional
-    public Map<String, String> uploadSsfc(MultipartFile file, Integer year) {
+    public List<String> uploadSsfc(MultipartFile file, Integer year) {
         List<StandardSFC> ssfcs = readSsfcsFromFile(file, year);
-        Map<String, String> warns = checkSsfcsConsistents(ssfcs);
+        List<String> warns = checkSsfcsConsistents(ssfcs);
         ssfcRepository.deleteAllByYear(year);
         ssfcRepository.saveAll(ssfcs);
 
@@ -190,8 +194,12 @@ public class StandardSFCServiceImpl implements StandardSFCService {
         return warns;
     }
 
-    private Map<String, String> checkSsfcsConsistents(List<StandardSFC> ssfcs) {
-        Map<String, String> warns = new HashMap<>();
+    private List<String> checkSsfcsConsistents(List<StandardSFC> ssfcs) {
+        List<String> warns = new LinkedList<>();
+        ssfcs = ssfcs.stream()
+                .sorted(Comparator.comparing(s -> s.getProperties().getId().getSource().getName()))
+                .sorted(Comparator.comparing(StandardSFC::getMonth))
+                .toList();
 
         for (StandardSFC stSsfc : ssfcs) {
             double generation = stSsfc.getGeneration();
@@ -202,23 +210,31 @@ public class StandardSFCServiceImpl implements StandardSFCService {
             double balance = Math.abs(generation - production - ownNeeds);
 
             if (balance > 0.000001) {
-                warns.put(stSsfc.getProperties().getId().getSource().getName(),
-                        String.format("Небаланс %.6f.", balance));
+                warns.add(String.format("%s (%s). Небаланс %.6f.",
+                        stSsfc.getProperties().getId().getSource().getName(),
+                        months[stSsfc.getMonth() - 1],
+                        balance));
             }
 
             if (generation > 0 && ssfc < 142.86) {
-                warns.put(stSsfc.getProperties().getId().getSource().getName(),
-                        "УРУТ на отпуск т/э < 142.86 кг.у.т./Гкал.");
+                warns.add(String.format("%s (%s). %s",
+                        stSsfc.getProperties().getId().getSource().getName(),
+                        months[stSsfc.getMonth() - 1],
+                        "УРУТ на отпуск т/э < 142.86 кг.у.т./Гкал."));
             }
 
             if (generation > 0 && ssfcg < 142.86) {
-                warns.put(stSsfc.getProperties().getId().getSource().getName(),
-                        "УРУТ на выработку т/э < 142.86 кг.у.т./Гкал.");
+                warns.add(String.format("%s (%s). %s",
+                        stSsfc.getProperties().getId().getSource().getName(),
+                        months[stSsfc.getMonth() - 1],
+                        "УРУТ на выработку т/э < 142.86 кг.у.т./Гкал."));
             }
 
             if (generation <= 0 && (production > 0 || ownNeeds > 0 || ssfcg > 0 || ssfc > 0)) {
-                warns.put(stSsfc.getProperties().getId().getSource().getName(),
-                        "При нулевой выработке т/э заведены ненулевые показатели.");
+                warns.add(String.format("%s (%s). %s",
+                        stSsfc.getProperties().getId().getSource().getName(),
+                        months[stSsfc.getMonth() - 1],
+                        "При нулевой выработке т/э заведены ненулевые показатели."));
             }
         }
 

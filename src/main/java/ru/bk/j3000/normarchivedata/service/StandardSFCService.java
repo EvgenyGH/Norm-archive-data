@@ -8,7 +8,6 @@ import ru.bk.j3000.normarchivedata.model.StandardSFC;
 import ru.bk.j3000.normarchivedata.model.dto.SsfcsDTO;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 public interface StandardSFCService {
@@ -30,7 +29,7 @@ public interface StandardSFCService {
 
     void deleteSsfcBySrcIdAndYearAndFuelType(UUID srcId, Integer year, FUEL_TYPE fuelType);
 
-    Map<String, String> uploadSsfc(MultipartFile file, Integer year);
+    List<String> uploadSsfc(MultipartFile file, Integer year);
 
     Resource getSsfcTemplate();
 

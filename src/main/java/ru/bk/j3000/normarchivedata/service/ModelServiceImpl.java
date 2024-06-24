@@ -264,7 +264,7 @@ public class ModelServiceImpl implements ModelService {
         attributes.put("activeMenu", Set.of("ssfc"));
         attributes.put("reportYear", reportYear);
         attributes.put("ssfcs", dtos);
-        attributes.put("warns", warns instanceof Map ? warns : Map.of());
+        attributes.put("warns", warns instanceof List ? warns : List.of());
 
         log.info("All ssfcs view attributes for year {} created.", reportYear);
 

@@ -17,7 +17,6 @@ import ru.bk.j3000.normarchivedata.model.dto.SsfcsDTO;
 import ru.bk.j3000.normarchivedata.service.ModelService;
 import ru.bk.j3000.normarchivedata.service.StandardSFCService;
 
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -87,13 +86,6 @@ public class StandardSFCController {
         attributes.addFlashAttribute("warns", ssfcService.uploadSsfc(file, year));
 
         return "redirect:/ssfc?selectedYear=" + year;
-    }
-
-    @GetMapping("/ssfc/test")
-    public String test(RedirectAttributes attributes) {
-        attributes.addFlashAttribute("warns", Map.of("s1", "w1"));
-
-        return "redirect:/ssfc";
     }
 
     // Get ssfc template
