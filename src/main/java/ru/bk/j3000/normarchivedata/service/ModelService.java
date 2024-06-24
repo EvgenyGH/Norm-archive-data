@@ -29,10 +29,7 @@ public interface ModelService {
 
     Map<String, Object> getAlterBranchAttributes(Optional<Integer> id);
 
-    Map<String, Object> getAllSsfcViewAttributes(Optional<Integer> year);
-
-    Map<String, Object> getAllSsfcViewAttributes(Optional<Integer> year,
-                                                 Map<String, String> warns);
+    Map<String, Object> getAllSsfcViewAttributes(Optional<Integer> year, Object warns);
 
     Map<String, Object> getAlterSsfcAttributes(Integer year, Optional<UUID> id, FUEL_TYPE fuelType);
 

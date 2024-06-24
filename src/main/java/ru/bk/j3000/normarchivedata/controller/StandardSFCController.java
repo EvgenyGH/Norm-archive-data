@@ -11,11 +11,13 @@ import org.springframework.ui.Model;
 import org.springframework.util.MimeType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.bk.j3000.normarchivedata.model.FUEL_TYPE;
 import ru.bk.j3000.normarchivedata.model.dto.SsfcsDTO;
 import ru.bk.j3000.normarchivedata.service.ModelService;
 import ru.bk.j3000.normarchivedata.service.StandardSFCService;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -28,8 +30,9 @@ public class StandardSFCController {
     // Get all ssfcs for a particular year
     @GetMapping("/ssfc")
     public String getAllSsfc(Model model,
-                             @RequestParam(name = "selectedYear", required = false) Optional<Integer> year) {
-        model.addAllAttributes(modelService.getAllSsfcViewAttributes(year));
+                             @RequestParam(name = "selectedYear", required = false) Optional<Integer> year,
+                             @ModelAttribute(name = "warns") Object warns) {
+        model.addAllAttributes(modelService.getAllSsfcViewAttributes(year, warns));
 
         return "welcome";
     }
@@ -80,10 +83,17 @@ public class StandardSFCController {
     // Upload ssfc from file
     @PostMapping("/ssfc/template/{reportYear}")
     public String uploadSsfc(@PathVariable(name = "reportYear") Integer year,
-                             MultipartFile file) {
+                             MultipartFile file, Model model) {
         ssfcService.uploadSsfc(file, year);
 
         return "redirect:/ssfc?selectedYear=" + year;
+    }
+
+    @GetMapping("/ssfc/test")
+    public String test(RedirectAttributes attributes) {
+        attributes.addFlashAttribute("warns", Map.of("s1", "w1"));
+
+        return "redirect:/ssfc";
     }
 
     // Get ssfc template

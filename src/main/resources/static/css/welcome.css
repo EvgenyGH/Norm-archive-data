@@ -449,3 +449,12 @@ select:invalid {
     background-color: lemonchiffon;
     width: 4.8em;
 }
+
+/* SSFC warns */
+.ssfc-warns {
+    border: red solid;
+}
+
+.warns-ok {
+    width: 6em;
+}
