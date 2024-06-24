@@ -83,8 +83,8 @@ public class StandardSFCController {
     // Upload ssfc from file
     @PostMapping("/ssfc/template/{reportYear}")
     public String uploadSsfc(@PathVariable(name = "reportYear") Integer year,
-                             MultipartFile file, Model model) {
-        ssfcService.uploadSsfc(file, year);
+                             MultipartFile file, RedirectAttributes attributes) {
+        attributes.addFlashAttribute("warns", ssfcService.uploadSsfc(file, year));
 
         return "redirect:/ssfc?selectedYear=" + year;
     }

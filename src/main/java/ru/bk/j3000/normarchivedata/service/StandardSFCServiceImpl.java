@@ -179,12 +179,52 @@ public class StandardSFCServiceImpl implements StandardSFCService {
 
     @Override
     @Transactional
-    public void uploadSsfc(MultipartFile file, Integer year) {
+    public Map<String, String> uploadSsfc(MultipartFile file, Integer year) {
         List<StandardSFC> ssfcs = readSsfcsFromFile(file, year);
+        Map<String, String> warns = checkSsfcsConsistents(ssfcs);
         ssfcRepository.deleteAllByYear(year);
         ssfcRepository.saveAll(ssfcs);
 
         log.info("Ssfcs loaded to database from file ({} in total).", ssfcs.size());
+
+        return warns;
+    }
+
+    private Map<String, String> checkSsfcsConsistents(List<StandardSFC> ssfcs) {
+        Map<String, String> warns = new HashMap<>();
+
+        for (StandardSFC stSsfc : ssfcs) {
+            double generation = stSsfc.getGeneration();
+            double production = stSsfc.getProduction();
+            double ownNeeds = stSsfc.getOwnNeeds();
+            double ssfcg = stSsfc.getSsfcg();
+            double ssfc = stSsfc.getSsfc();
+            double balance = Math.abs(generation - production - ownNeeds);
+
+            if (balance > 0.000001) {
+                warns.put(stSsfc.getProperties().getId().getSource().getName(),
+                        String.format("Небаланс %.6f.", balance));
+            }
+
+            if (generation > 0 && ssfc < 142.86) {
+                warns.put(stSsfc.getProperties().getId().getSource().getName(),
+                        "УРУТ на отпуск т/э < 142.86 кг.у.т./Гкал.");
+            }
+
+            if (generation > 0 && ssfcg < 142.86) {
+                warns.put(stSsfc.getProperties().getId().getSource().getName(),
+                        "УРУТ на выработку т/э < 142.86 кг.у.т./Гкал.");
+            }
+
+            if (generation <= 0 && (production > 0 || ownNeeds > 0 || ssfcg > 0 || ssfc > 0)) {
+                warns.put(stSsfc.getProperties().getId().getSource().getName(),
+                        "При нулевой выработке т/э заведены ненулевые показатели.");
+            }
+        }
+
+        log.info("Formed {} warns", warns.size());
+
+        return warns;
     }
 
     private List<StandardSFC> readSsfcsFromFile(MultipartFile file, Integer year) {

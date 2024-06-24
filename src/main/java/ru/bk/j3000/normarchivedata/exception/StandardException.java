@@ -12,6 +12,6 @@ public class StandardException extends RuntimeException {
     }
 
     public String getErrorReport() {
-        return String.format("%s. Объект: %s.", getMessage(), objectName);
+        return String.format("Объект: %s. %s.", getMessage(), objectName);
     }
 }
