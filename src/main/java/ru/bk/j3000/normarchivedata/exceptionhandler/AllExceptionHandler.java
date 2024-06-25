@@ -6,6 +6,7 @@ import jakarta.persistence.PersistenceException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.EmptyFileException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -86,6 +87,19 @@ public class AllExceptionHandler {
         return "errorview";
     }
 
+    @ExceptionHandler({SsfcDataNotValidException.class})
+    public String ssfcDataNotValidExceptionHandler(SsfcDataNotValidException e, Model model,
+                                                   HttpServletRequest request) {
+
+        model.addAllAttributes(modelService.getErrorAttributes(e,
+                request.getRequestURI(),
+                e.getErrors()));
+
+        log.warn(e.getMessage());
+
+        return "errorview";
+    }
+
     @ExceptionHandler({StandardException.class})
     public String standardExceptionHandler(Exception e, Model model,
                                            HttpServletRequest request) {
@@ -122,13 +136,12 @@ public class AllExceptionHandler {
         return "errorview";
     }
 
-    @ExceptionHandler({SsfcDataNotValidException.class})
-    public String ssfcDataNotValidExceptionHandler(SsfcDataNotValidException e, Model model,
+    @ExceptionHandler({EmptyFileException.class})
+    public String emptyFileExceptionHandler(Exception e, Model model,
                                                    HttpServletRequest request) {
-
         model.addAllAttributes(modelService.getErrorAttributes(e,
                 request.getRequestURI(),
-                e.getErrors()));
+                "Загружен пустой файл."));
 
         log.warn(e.getMessage());
 

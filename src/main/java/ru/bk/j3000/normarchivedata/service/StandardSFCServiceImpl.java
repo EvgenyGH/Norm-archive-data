@@ -3,6 +3,10 @@ package ru.bk.j3000.normarchivedata.service;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Row;
@@ -16,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.bk.j3000.normarchivedata.exception.FileParseException;
 import ru.bk.j3000.normarchivedata.exception.FileReadException;
+import ru.bk.j3000.normarchivedata.exception.SsfcDataNotValidException;
 import ru.bk.j3000.normarchivedata.model.*;
 import ru.bk.j3000.normarchivedata.model.dto.SsfcsDTO;
 import ru.bk.j3000.normarchivedata.repository.StandardSFCRepository;
@@ -190,6 +195,10 @@ public class StandardSFCServiceImpl implements StandardSFCService {
         ssfcRepository.deleteAllByYear(year);
         ssfcRepository.saveAll(ssfcs);
 
+        if (!errors.isEmpty()) {
+            throw new SsfcDataNotValidException("Data constrains violation", "Uploaded file", errors);
+        }
+
         log.info("Ssfcs loaded to database from file ({} in total).", ssfcs.size());
 
         return warns;
@@ -203,6 +212,22 @@ public class StandardSFCServiceImpl implements StandardSFCService {
                 .sorted(Comparator.comparing(StandardSFC::getMonth))
                 .toList();
 
+        try (ValidatorFactory vf = Validation.buildDefaultValidatorFactory()) {
+            Validator validator = vf.getValidator();
+
+            for (StandardSFC ssfc : ssfcs) {
+                Set<ConstraintViolation<StandardSFC>> violations = validator.validate(ssfc);
+                if (!violations.isEmpty()) {
+                    violations.forEach(violation ->
+                            errors.add(String.format("%s (%s). Недопустимое значение %.6f.",
+                                    ssfc.getProperties().getId().getSource().getName(),
+                                    months[ssfc.getMonth() - 1],
+                                    (double) violation.getInvalidValue())
+                            )
+                    );
+                }
+            }
+        }
 
         return errors;
     }
