@@ -484,3 +484,12 @@ select:invalid {
 .warns-ok:hover {
     background: darkkhaki;
 }
+
+/* Ssfc alter warnings */
+.ssfc-warnings {
+    color: Maroon;
+    background-color: LightSalmon;
+    margin-top: 0.3em;
+    margin-left: 0.1%;
+    margin-right: 0.1%;
+}

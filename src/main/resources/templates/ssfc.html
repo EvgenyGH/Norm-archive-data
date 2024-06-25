@@ -177,7 +177,7 @@
                     <td th:each="monthSsfc, stats : *{ssfcs}">
                         <input th:field="*{ssfcs[__${stats.index}__].generation}"
                                type="text" required minlength="1"
-                               pattern="^-?([0-9]*[.])?[0-9]+$">
+                               pattern="^([0-9]*[.])?[0-9]+$">
                     </td>
                 </tr>
                 <tr>
@@ -186,7 +186,7 @@
                     <td th:each="monthSsfc, stats : *{ssfcs}">
                         <input th:field="*{ssfcs[__${stats.index}__].ownNeeds}"
                                type="text" required minlength="1"
-                               pattern="^-?([0-9]*[.])?[0-9]+$">
+                               pattern="^([0-9]*[.])?[0-9]+$">
                     </td>
                 </tr>
                 <tr>
@@ -195,7 +195,7 @@
                     <td th:each="monthSsfc, stats : *{ssfcs}">
                         <input th:field="*{ssfcs[__${stats.index}__].production}"
                                type="text" required minlength="1"
-                               pattern="^-?([0-9]*[.])?[0-9]+$">
+                               pattern="^([0-9]*[.])?[0-9]+$">
                     </td>
                 </tr>
                 <tr>
@@ -204,7 +204,7 @@
                     <td th:each="monthSsfc, stats : *{ssfcs}">
                         <input th:field="*{ssfcs[__${stats.index}__].ssfcg}"
                                type="text" required minlength="1"
-                               pattern="^-?([0-9]*[.])?[0-9]+$">
+                               pattern="^([0-9]*[.])?[0-9]+$">
                     </td>
                 </tr>
                 <tr>
@@ -213,7 +213,7 @@
                     <td th:each="monthSsfc, stats : *{ssfcs}">
                         <input th:field="*{ssfcs[__${stats.index}__].ssfc}"
                                type="text" required minlength="1"
-                               pattern="^-?([0-9]*[.])?[0-9]+$">
+                               pattern="^([0-9]*[.])?[0-9]+$">
                     </td>
                 </tr>
             </table>
@@ -226,6 +226,8 @@
 
             <input type="submit" value="Сохранить" autofocus>
             <a th:href="@{/ssfc(reportYear=${reportYear})}">Отмена</a>
+
+            <div th:class="ssfc-warnings"></div>
         </fieldset>
     </form>
 </div>

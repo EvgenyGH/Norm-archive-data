@@ -10,6 +10,8 @@
             th:src="@{/js/ssfcReport.js}" defer></script>
     <script th:if="${activeMenu.contains('ssfc')}" type="text/javascript"
             th:src="@{/js/ssfcWarns.js}" defer></script>
+    <script th:if="${alterSsfc}" type="text/javascript"
+            th:src="@{/js/ssfcAlter.js}" defer></script>
 </head>
 <body>
 <div class="welcome-container">
