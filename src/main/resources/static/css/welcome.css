@@ -452,9 +452,35 @@ select:invalid {
 
 /* SSFC warns */
 .ssfc-warns {
-    border: red solid;
+    color: Tomato;
+    margin-left: 5%;
+    margin-right: 5%;
+    padding-bottom: 0.6em;
+}
+
+.ssfc-warns p {
+    font-size: 1.3em;
+    margin: 0.2em;
+}
+
+.ssfc-warns .attention {
+    font-size: 2em;
+    font-weight: bold;
+}
+
+.ssfc-warns .warns-list {
+    max-height: 20em;
+    overflow-y: scroll;
+    text-align: left;
 }
 
 .warns-ok {
-    width: 6em;
+    width: 15em;
+    height: 1.7em;
+    margin-top: 0.2em;
+    background: Khaki;
+}
+
+.warns-ok:hover {
+    background: darkkhaki;
 }

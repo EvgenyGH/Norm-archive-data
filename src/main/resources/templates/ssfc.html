@@ -231,9 +231,11 @@
 </div>
 
 <div th:if="${show && warns.size() > 0}" th:class="ssfc-warns" th:fragment="ssfc-warns(warns, show)">
-    <p th:text="'Внимание!'"></p>
+    <p th:class="attention" th:text="'Внимание!'"></p>
 
-    <p th:each="warn : ${warns}" th:text="${warn}"></p>
+    <div th:class="warns-list">
+        <p th:each="warn : ${warns}" th:text="${warn}"></p>
+    </div>
 
     <input type="button" th:class="warns-ok" value="Ok">
 </div>
