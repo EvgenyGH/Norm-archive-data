@@ -186,12 +186,25 @@ public class StandardSFCServiceImpl implements StandardSFCService {
     public List<String> uploadSsfc(MultipartFile file, Integer year) {
         List<StandardSFC> ssfcs = readSsfcsFromFile(file, year);
         List<String> warns = checkSsfcsConsistents(ssfcs);
+        List<String> errors = checkSsfcsConstrains(ssfcs);
         ssfcRepository.deleteAllByYear(year);
         ssfcRepository.saveAll(ssfcs);
 
         log.info("Ssfcs loaded to database from file ({} in total).", ssfcs.size());
 
         return warns;
+    }
+
+    private List<String> checkSsfcsConstrains(List<StandardSFC> ssfcs) {
+        List<String> errors = new LinkedList<>();
+
+        ssfcs = ssfcs.stream()
+                .sorted(Comparator.comparing(s -> s.getProperties().getId().getSource().getName()))
+                .sorted(Comparator.comparing(StandardSFC::getMonth))
+                .toList();
+
+
+        return errors;
     }
 
     private List<String> checkSsfcsConsistents(List<StandardSFC> ssfcs) {

@@ -24,7 +24,7 @@
         <form th:action="@{${originUri}}" method="get">
             <fieldset>
                 <legend>Информация:</legend>
-                <div th:text="${error.userInfo}">Сообщение</div>
+                <div th:each="userInfo : ${error.userInfos}" th:text="${userInfo}">Сообщение</div>
             </fieldset>
             <input type="submit" value="Продолжить" autofocus>
         </form>

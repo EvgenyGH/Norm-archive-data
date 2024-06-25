@@ -105,7 +105,8 @@ public class ModelServiceImpl implements ModelService {
     }
 
     @Override
-    public Map<String, Object> getErrorAttributes(Throwable e, String requestUri, String userInfo) {
+    public Map<String, Object> getErrorAttributes(Throwable e, String requestUri,
+                                                  List<String> userInfos) {
         String originUri;
         Matcher matcher = urlOriginPattern.matcher(requestUri);
 
@@ -117,13 +118,19 @@ public class ModelServiceImpl implements ModelService {
 
         var errorAttributes = Map.of("message", e.getMessage(),
                 "className", e.getClass().getName(),
-                "userInfo", userInfo);
+                "userInfos", userInfos);
         Map<String, Object> attributes = Map.of("error", errorAttributes,
                 "originUri", originUri);
 
         log.info("Error view attributes created.");
 
         return attributes;
+    }
+
+    @Override
+    public Map<String, Object> getErrorAttributes(Throwable e, String requestUri,
+                                                  String userInfo) {
+        return getErrorAttributes(e, requestUri, List.of(userInfo));
     }
 
     @Override

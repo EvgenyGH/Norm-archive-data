@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import ru.bk.j3000.normarchivedata.exception.ReportIOException;
+import ru.bk.j3000.normarchivedata.exception.SsfcDataNotValidException;
 import ru.bk.j3000.normarchivedata.exception.StandardException;
 import ru.bk.j3000.normarchivedata.service.ModelService;
 
@@ -115,6 +116,19 @@ public class AllExceptionHandler {
         model.addAllAttributes(modelService.getErrorAttributes(e,
                 request.getRequestURI(),
                 "Недопустимый параметр."));
+
+        log.warn(e.getMessage());
+
+        return "errorview";
+    }
+
+    @ExceptionHandler({SsfcDataNotValidException.class})
+    public String ssfcDataNotValidExceptionHandler(SsfcDataNotValidException e, Model model,
+                                                   HttpServletRequest request) {
+
+        model.addAllAttributes(modelService.getErrorAttributes(e,
+                request.getRequestURI(),
+                e.getErrors()));
 
         log.warn(e.getMessage());
 
