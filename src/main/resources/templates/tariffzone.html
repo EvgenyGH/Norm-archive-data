@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/security">
 
 <head>
     <meta charset="UTF-8">
@@ -10,22 +11,22 @@
     <table>
         <th>Номер</th>
         <th>Название</th>
-        <th>Изменить</th>
-        <th>Удалить</th>
+        <th sec:authorize="hasRole('USER')">Изменить</th>
+        <th sec:authorize="hasRole('USER')">Удалить</th>
         <tr th:if="${tariffZones.size() == 0}">
             <td colspan="4">Нет данных</td>
         </tr>
         <tr th:each="zone : ${tariffZones}" th:object="${zone}">
             <td th:text="*{id}">Id</td>
             <td th:text="*{zoneName}">zoneName</td>
-            <td>
-                <form th:action="@{/tariffzone/alter}" th:method="get">
+            <td sec:authorize="hasRole('USER')">
+                <form sec:authorize="hasRole('USER')" th:action="@{/tariffzone/alter}" th:method="get">
                     <input type="hidden" name="id" th:value="*{id}">
                     <input type="submit" value="Изменить">
                 </form>
             </td>
-            <td>
-                <form th:action="@{'/tariffzone/' + *{id}}" th:method="delete">
+            <td sec:authorize="hasRole('USER')">
+                <form sec:authorize="hasRole('USER')" th:action="@{'/tariffzone/' + *{id}}" th:method="delete">
                     <input type="submit" value="Удалить">
                 </form>
             </td>

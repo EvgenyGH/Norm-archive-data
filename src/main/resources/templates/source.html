@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/security">
 
 <body>
 
@@ -10,8 +11,8 @@
             <th>Источник</th>
             <th>Адрес источника</th>
             <th>Тип источника</th>
-            <th>Изменить</th>
-            <th>Удалить</th>
+            <th sec:authorize="hasRole('USER')">Изменить</th>
+            <th sec:authorize="hasRole('USER')">Удалить</th>
             <tr th:if="${sources.size() == 0}">
                 <td colspan="6">Нет данных</td>
             </tr>
@@ -20,13 +21,13 @@
                 <td th:text="*{name}">Example</td>
                 <td th:text="*{address}">Example</td>
                 <td th:text="*{sourceType.getName()}">Example</td>
-                <td>
+                <td sec:authorize="hasRole('USER')">
                     <form th:action="@{/source/alter}" th:method="get">
                         <input type="hidden" name="id" th:value="*{id}">
                         <input type="submit" value="Изменить">
                     </form>
                 </td>
-                <td>
+                <td sec:authorize="hasRole('USER')">
                     <form th:action="@{'/source/delete/' + *{id}}" th:method="delete">
                         <input type="submit" value="Удалить">
                     </form>

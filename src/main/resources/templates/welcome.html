@@ -107,7 +107,7 @@
                 </ul>
             </li>
             <li><a th:href="@{/source}">Источники</a>
-                <ul class="sub-sub-menu" th:if="${activeMenu.contains('source')}">
+                <ul sec:authorize="hasRole('USER')" class="sub-sub-menu" th:if="${activeMenu.contains('source')}">
                     <li><a th:href="@{/source}">Список источников</a></li>
                     <li><a th:href="@{/source/alter}">Добавить источник</a></li>
                     <li sec:authorize="hasRole('EXPERT')">
@@ -127,7 +127,7 @@
                 </ul>
             </li>
             <li><a th:href="@{/tariffzone}">Тарифные зоны</a>
-                <ul class="sub-sub-menu" th:if="${activeMenu.contains('tariffZone')}">
+                <ul sec:authorize="hasRole('USER')" class="sub-sub-menu" th:if="${activeMenu.contains('tariffZone')}">
                     <li><a th:href="@{/tariffzone}">Список тарифных зон</a></li>
                     <li><a th:href="@{/tariffzone/alter}">Добавить тарифную зону</a></li>
                     <li sec:authorize="hasRole('EXPERT')">
@@ -147,7 +147,7 @@
                 </ul>
             </li>
             <li><a th:href="@{/branch}">Филиалы</a>
-                <ul class="sub-sub-menu" th:if="${activeMenu.contains('branch')}">
+                <ul sec:authorize="hasRole('USER')" class="sub-sub-menu" th:if="${activeMenu.contains('branch')}">
                     <li><a th:href="@{/branch}">Список филиалов</a></li>
                     <li><a th:href="@{/branch/alter}">Добавить филиал</a></li>
                     <li sec:authorize="hasRole('EXPERT')">
@@ -167,7 +167,8 @@
                 </ul>
             </li>
             <li><a th:href="@{/sourceproperty}">Свойства источников</a>
-                <ul class="sub-sub-menu" th:if="${activeMenu.contains('sourceProperty')}">
+                <ul sec:authorize="hasRole('USER')" class="sub-sub-menu"
+                    th:if="${activeMenu.contains('sourceProperty')}">
                     <li><a th:href="@{/sourceproperty}">Список свойств источников</a></li>
                     <li>
                         <a th:href="@{'/sourceproperty/alter/' + ${reportYear}}">
@@ -191,7 +192,7 @@
                 </ul>
             </li>
             <li><a th:href="@{/ssfc}">Нормативы (НУР)</a>
-                <ul class="sub-sub-menu" th:if="${activeMenu.contains('ssfc')}">
+                <ul sec:authorize="hasRole('USER')" class="sub-sub-menu" th:if="${activeMenu.contains('ssfc')}">
                     <li><a th:href="@{/ssfc}">Список НУР по источникам</a></li>
                     <li>
                         <a th:href="@{/ssfc/alter(reportYear=${reportYear})}">

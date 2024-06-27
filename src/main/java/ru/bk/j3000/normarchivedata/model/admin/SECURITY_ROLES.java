@@ -33,6 +33,17 @@ public enum SECURITY_ROLES {
         public String getRoleName() {
             return "Пользователь";
         }
+    },
+    ROLE_OBSERVER {
+        @Override
+        public String getRole() {
+            return "OBSERVER";
+        }
+
+        @Override
+        public String getRoleName() {
+            return "Наблюдатель";
+        }
     };
 
     abstract public String getRole();

@@ -29,7 +29,7 @@ public class SecurityConfiguration {
 
         if (!manager.userExists("admin")) {
             manager.createUser(User.withUsername("admin")
-                    .password(encoder.encode("12345"))
+                    .password(encoder.encode("12345sev"))
                     .roles("ADMIN")
                     .build());
         }
@@ -45,6 +45,13 @@ public class SecurityConfiguration {
             manager.createUser(User.withUsername("user")
                     .password(encoder.encode("54321"))
                     .roles("USER")
+                    .build());
+        }
+
+        if (!manager.userExists("observer")) {
+            manager.createUser(User.withUsername("observer")
+                    .password(encoder.encode("abcde"))
+                    .roles("OBSERVER")
                     .build());
         }
 
@@ -64,18 +71,27 @@ public class SecurityConfiguration {
 
         http.authorizeHttpRequests(conf ->
                 conf
-                        .requestMatchers("/login",
+                        .requestMatchers(
+                                "/login",
                                 "/css/login.css")
                         .permitAll()
-                        .requestMatchers("/logout",
+                        .requestMatchers(
+                                "/logout",
+                                "/report/**",
+                                "/css/*",
+                                "/js/*",
+                                "/source",
+                                "/sourceproperty",
+                                "/tariffzone",
+                                "/branch",
+                                "/ssfc")
+                        .hasRole("OBSERVER")
+                        .requestMatchers(
                                 "/source/**",
                                 "/sourceproperty/**",
                                 "/tariffzone/**",
                                 "/branch/**",
-                                "/ssfc/**",
-                                "/report/**",
-                                "/css/*",
-                                "/js/*")
+                                "/ssfc/**")
                         .hasRole("USER")
                         .requestMatchers("/user/**")
                         .hasRole("ADMIN")
@@ -89,7 +105,7 @@ public class SecurityConfiguration {
     @Bean
     RoleHierarchy roleHierarchy() {
         var hierarchy = new RoleHierarchyImpl();
-        hierarchy.setHierarchy("ROLE_ADMIN > ROLE_EXPERT > ROLE_USER");
+        hierarchy.setHierarchy("ROLE_ADMIN > ROLE_EXPERT > ROLE_USER > ROLE_OBSERVER");
         return hierarchy;
     }
 }

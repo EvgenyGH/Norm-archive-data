@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/security">
 
 <head>
     <meta charset="UTF-8">
@@ -10,21 +11,21 @@
     <table>
         <th>Номер</th>
         <th>Название</th>
-        <th>Изменить</th>
-        <th>Удалить</th>
+        <th sec:authorize="hasRole('USER')">Изменить</th>
+        <th sec:authorize="hasRole('USER')">Удалить</th>
         <tr th:if="${branches.size() == 0}">
             <td colspan="4">Нет данных</td>
         </tr>
         <tr th:each="br : ${branches}" th:object="${br}">
             <td th:text="*{branchId}">Id</td>
             <td th:text="*{branchName}">branchName</td>
-            <td>
+            <td sec:authorize="hasRole('USER')">
                 <form th:action="@{/branch/alter}" th:method="get">
                     <input type="hidden" name="id" th:value="*{branchId}">
                     <input type="submit" value="Изменить">
                 </form>
             </td>
-            <td>
+            <td sec:authorize="hasRole('USER')">
                 <form th:action="@{'/branch/' + *{branchId}}" th:method="delete">
                     <input type="submit" value="Удалить">
                 </form>

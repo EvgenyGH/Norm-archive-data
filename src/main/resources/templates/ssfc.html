@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/security">
 
 <head>
     <meta charset="UTF-8">
@@ -26,8 +27,8 @@
             <th>Октябрь</th>
             <th>Ноябрь</th>
             <th>Декабрь</th>
-            <th>Изменить</th>
-            <th>Удалить</th>
+            <th sec:authorize="hasRole('USER')">Изменить</th>
+            <th sec:authorize="hasRole('USER')">Удалить</th>
         </tr>
 
         <tr th:if="${ssfcs.size() == 0}">
@@ -59,7 +60,7 @@
                     th:text="${#numbers.formatDecimal(ssfc.generation, 1, 3)}">
                     Выработка тепловой энергии, тыс. Гкал
                 </td>
-                <td rowspan="6">
+                <td rowspan="6" sec:authorize="hasRole('USER')">
                     <form th:action="@{'/ssfc/alter'}" th:method="get">
                         <input type="hidden" th:id="${'reportYear'}" th:name="reportYear" th:value="${reportYear}">
                         <input type="hidden" th:id="${'srcId'}" th:name="srcId" th:value="${srcSsfc.srcId}">
@@ -67,7 +68,7 @@
                         <input type="submit" value="Изменить">
                     </form>
                 </td>
-                <td rowspan="6">
+                <td rowspan="6" sec:authorize="hasRole('USER')">
                     <form th:action="@{/ssfc}" th:method="delete">
                         <input type="hidden" th:id="${'reportYear'}" th:name="reportYear" th:value="${reportYear}">
                         <input type="hidden" th:id="srcId" th:name="srcId" th:value="${srcSsfc.srcId}">
