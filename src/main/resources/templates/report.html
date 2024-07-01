@@ -90,11 +90,64 @@
                 </option>
             </select>
 
+            <label th:class="add-year-link">Добавить</label>
+
             <div class="select-type">
                 <input type="radio" id="ssfc-template" name="type" value="template">
                 <label for="ssfc-template">В формате шаблона загрузки</label>
                 <input type="radio" id="ssfc-all" name="type" value="standard" checked>
                 <label for="ssfc-all">В стандартном формате</label>
+                <input type="radio" id="ssfc-period" name="type" value="period">
+                <label for="ssfc-period">Отчет за период</label>
+            </div>
+
+            <div th:class="ssfc-periods">
+                <fieldset>
+                    <legend>Период:</legend>
+                    <div th:class="ssfc-period">
+                        <label th:text="|${reportYear} год:|"></label>
+                        <input id="period-month-0" type="checkbox" class="period-select"
+                               value="|${reportYear}.0|}" checked/>
+                        <label for="period-month-0">Год</label>
+                        <input id="period-month-1" type="checkbox" class="period-month"
+                               value="|${reportYear}.01|" checked/>
+                        <label for="period-month-1">Январь</label>
+                        <input id="period-month-2" type="checkbox" class="period-month"
+                               value="|${reportYear}.02|" checked/>
+                        <label for="period-month-2">Февраль</label>
+                        <input id="period-month-3" type="checkbox" class="period-month"
+                               value="|${reportYear}.03|" checked/>
+                        <label for="period-month-3">Март</label>
+                        <input id="period-month-4" type="checkbox" class="period-month"
+                               value="|${reportYear}.04|" checked/>
+                        <label for="period-month-4">Апрель</label>
+                        <input id="period-month-5" type="checkbox" class="period-month"
+                               value="|${reportYear}.05|" checked/>
+                        <label for="period-month-5">Май</label>
+                        <input id="period-month-6" type="checkbox" class="period-month"
+                               value="|${reportYear}.06|" checked/>
+                        <label for="period-month-6">Июнь</label>
+                        <input id="period-month-7" type="checkbox" class="period-month"
+                               value="|${reportYear}.07|" checked/>
+                        <label for="period-month-7">Июль</label>
+                        <input id="period-month-8" type="checkbox" class="period-month"
+                               value="|${reportYear}.08|" checked/>
+                        <label for="period-month-8">Август</label>
+                        <input id="period-month-9" type="checkbox" class="period-month"
+                               value="|${reportYear}.09|" checked/>
+                        <label for="period-month-9">Сентябрь</label>
+                        <input id="period-month-10" type="checkbox" class="period-month"
+                               value="|${reportYear}.10|" checked/>
+                        <label for="period-month-10">Октябрь</label>
+                        <input id="period-month-11" type="checkbox" class="period-month"
+                               value="|${reportYear}.11|" checked/>
+                        <label for="period-month-11">Ноябрь</label>
+                        <input id="period-month-12" type="checkbox" class="period-month"
+                               value="|${reportYear}.12|" checked/>
+                        <label for="period-month-12">Декабрь</label>
+                        <label th:class="delete-year-link">Удалить</label>
+                    </div>
+                </fieldset>
             </div>
 
             <fieldset>

@@ -47,7 +47,7 @@ public class StandardSFCServiceImpl implements StandardSFCService {
 
     private final String[] months = {"Январь", "Февраль", "Март",
             "Апрель", "Май", "Июнь", "Июль", "Август",
-            "Сентябрь", "Октябрь", "Ноябрь", "декабрь"};
+            "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"};
 
     @Override
     public List<StandardSFC> findAllSsfcByYear(Integer year) {

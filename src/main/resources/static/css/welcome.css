@@ -353,19 +353,19 @@ select:invalid {
 
 /* Ssfc report */
 .ssfc-report {
-    max-width: 51em;
+    max-width: 67.5em;
     overflow: scroll;
     transition: max-width 1s, max-height 1s;
     transition-timing-function: ease-in-out;
 }
 
 .ssfc-report:has(.ssfc-selection #select-all:checked) {
-    max-width: 34em;
+    max-width: 67.5em;
 }
 
 .ssfc-report .pick-sources {
     display: grid;
-    grid-template-columns: auto auto auto auto auto auto;
+    grid-template-columns: auto auto auto auto auto auto auto auto;
     max-height: 8em;
     max-width: 51em;
     overflow: scroll;
@@ -375,7 +375,7 @@ select:invalid {
 }
 
 .ssfc-report .pick-sources {
-    max-width: 47em;
+    max-width: 61em;
     transition: max-width 0.5s, max-height 0.5s, opacity 0.5s;
     transition-timing-function: ease-in-out;
 }
@@ -390,7 +390,7 @@ select:invalid {
 }
 
 .ssfc-report .select-sources {
-    max-width: 47em;
+    max-width: 61em;
     transition: max-width 1s, max-height 1s;
     transition-timing-function: ease-in-out;
 }
@@ -425,7 +425,7 @@ select:invalid {
 }
 
 .ssfc-report .select-type {
-    margin-bottom: 0.6em;
+    margin-bottom: 0.1em;
     margin-top: 0.6em;
 }
 
@@ -492,4 +492,67 @@ select:invalid {
     margin-top: 0.3em;
     margin-left: 0.1%;
     margin-right: 0.1%;
+}
+
+/* Period */
+
+
+.add-year-link:hover,
+.delete-year-link:hover {
+    color: royalblue;
+}
+
+.ssfc-period:has(.delete-year-link:hover) {
+    background: peachpuff;
+}
+
+.ssfc-period {
+    height: max-content;
+    margin-bottom: 0.4em;
+}
+
+.ssfc-period label,
+.ssfc-period input {
+    width: fit-content;
+    height: 1.2em;
+    vertical-align: middle;
+    padding: 0;
+    margin: 0;
+}
+
+.add-year-link {
+    margin-left: 1em;
+    font-size: 0.85em;
+    vertical-align: middle;
+    max-width: 0;
+    transition: max-width 1s;
+    font-weight: bold;
+}
+
+.delete-year-link {
+    font-size: 0.85em;
+    font-weight: bold;
+}
+
+label:has(+ #period-month-0) {
+    font-weight: bold;
+}
+
+label:has(+ #period-month-0):hover {
+    color: inherit;
+}
+
+.ssfc-periods {
+    margin-bottom: 0.4em;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 1s;
+}
+
+.add-year-link:has(~ .select-type #ssfc-period:checked) {
+    max-width: 5em;
+}
+
+.select-type:has(#ssfc-period:checked) + .ssfc-periods {
+    max-height: 40em;
 }
