@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.MimeType;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,13 +28,9 @@ public class ReportController {
     @GetMapping("/report")
     public String reportsStartPage(Model model,
                                    @ModelAttribute(name = "year") String year,
-                                   @ModelAttribute(name = "type") String type,
-                                   @ModelAttribute(name = "periods") LinkedList<String> periods,
-                                   @ModelAttribute(name = "sumType") LinkedList<String> sumTypes,
-                                   BindingResult result) {
+                                   @ModelAttribute(name = "periods") LinkedList<String> periods) {
 
-        model.addAllAttributes(modelService.getReportsAttributes(year, type, periods,
-                sumTypes, result.hasErrors()));
+        model.addAllAttributes(modelService.getReportsAttributes(year, periods));
 
         return "welcome";
     }

@@ -2,9 +2,8 @@ function main() {
     setSsfcYearChangeListener();
     setGroupingCheckboxListeners();
 
-
     setAddPeriodListener();
-
+    setDeletePeriodListener();
 }
 
 function setSsfcYearChangeListener() {
@@ -16,40 +15,32 @@ function setSsfcYearChangeListener() {
         const form = document.querySelector(".ssfc-report form");
         const data = new FormData(form);
 
-        console.log(Array.from(data));
-        console.log(data);
-
-        // try {
-        //     const res = await fetch(
-        //         '/report?' + new URLSearchParams(data.),
-        //         {
-        //             method: 'GET',
-        //             body: data,
-        //         },
-        //     );
-        //
-        //     const resData = await res.json();
-        //
-        //     console.log(resData);
-        // } catch (err) {
-        //     console.log(err.message);
-        // }
+        try {
+            await fetch(
+                '/report?' + new URLSearchParams(data),
+                {
+                    method: 'GET'
+                },
+            );
+            console.debug("Report year changed. Request sent to the server.");
+        } catch (err) {
+            console.log(err.message);
+        }
     });
-
 }
 
 function setGroupingCheckboxListeners() {
     document.querySelector('input[value=branch]').addEventListener('change', (e) => {
         if (e.target.checked && document.querySelector('input[value=sumsOnly]').checked) {
             document.querySelector('input[value=tz]').checked = false;
-            console.log('tz unchecked');
+            console.debug('tz unchecked');
         }
     });
 
     document.querySelector('input[value=tz]').addEventListener('change', (e) => {
         if (e.target.checked && document.querySelector('input[value=sumsOnly]').checked) {
             document.querySelector('input[value=branch]').checked = false;
-            console.log('branch unchecked');
+            console.debug('branch unchecked');
         }
     });
 
@@ -58,7 +49,7 @@ function setGroupingCheckboxListeners() {
             && document.querySelector('input[value=branch]').checked) {
             document.querySelector('input[value=branch]').checked = false;
             document.querySelector('input[value=tz]').checked = false;
-            console.log('branch and tz unchecked');
+            console.debug('branch and tz unchecked');
         }
     });
 }
@@ -66,7 +57,15 @@ function setGroupingCheckboxListeners() {
 function setAddPeriodListener() {
     document.querySelector(".add-year-link").addEventListener("click", e => {
         let year = document.getElementById("year-ssfc").value;
+        console.debug(`Add period listener set`);
         createPeriod(year);
+    });
+}
+
+function setDeletePeriodListener() {
+    document.querySelector(".delete-year-link").addEventListener("click", e => {
+        let parent = e.target.parentNode.remove();
+        console.debug(`Period deleted`);
     });
 }
 
@@ -107,9 +106,15 @@ function createPeriod(year) {
     label = document.createElement("label");
     label.textContent = "Удалить";
     label.classList.add("delete-year-link");
+    label.addEventListener("click", e => {
+        let parent = e.target.parentNode.remove();
+        console.debug(`Period deleted`);
+    });
+
     period.appendChild(document.createTextNode("\u00A0"));
     period.appendChild(label);
 
+    console.debug(`Period ${year} created`);
 }
 
 main();

@@ -92,7 +92,8 @@
         </div>
         <div
                 th:if="${activeMenu.contains('report')}"
-                th:insert="~{report::ssfc(${reportYear}, ${reportSources}, ${periods})}"> Ssfc report
+                th:insert="~{report::ssfc(${reportYear}, ${sumTypes}, ${reportSources}, ${periods})}">
+            Ssfc report
         </div>
 
     </div>

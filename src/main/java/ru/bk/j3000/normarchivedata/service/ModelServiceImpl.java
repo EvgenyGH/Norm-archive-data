@@ -340,12 +340,11 @@ public class ModelServiceImpl implements ModelService {
     }
 
     @Override
-    public Map<String, Object> getReportsAttributes(String yearStr, String type, List<String> periods,
-                                                    List<String> sumTypes, boolean isDefaultData) {
+    public Map<String, Object> getReportsAttributes(String yearStr, List<String> periods) {
 
         Map<String, Object> attributes = new HashMap<>();
 
-        Integer year = yearStr.isEmpty() ? LocalDate.now().getYear() : Integer.getInteger(yearStr);
+        Integer year = yearStr.isEmpty() ? LocalDate.now().getYear() : Integer.parseInt(yearStr);
 
         attributes.put("title", "Отчеты");
         attributes.put("activeMenu", Set.of("report"));
@@ -354,12 +353,23 @@ public class ModelServiceImpl implements ModelService {
                 .stream()
                 .map(SourceAlterDTO::new)
                 .toList());
+
         attributes.put("sumTypes", new TreeMap<>(Map.of("Итоги (только)", "sumsOnly",
                 "Тарифные зоны", "tz",
                 "Филиалы", "branch",
                 "Всего", "totals")));
-        attributes.put("periods", new TreeMap<>(Map.of("2024", List.of("2024.0", "2024.1", "2024.2",
-                "2024.3", "2024.4", "2024.5", "2024.6", "2024.7", "2024.8", "2024.9", "2024.10", "2024.11", "2024.12"))));
+
+        TreeMap<String, List<String>> periodsAttr = new TreeMap<>();
+
+        if (periods.isEmpty()) {
+            periodsAttr.put("2024",
+                    List.of("2024.0", "2024.1", "2024.2", "2024.3", "2024.4", "2024.5",
+                            "2024.6", "2024.7", "2024.8", "2024.9", "2024.10", "2024.11", "2024.12"));
+        } else {
+            periodsAttr.putAll(periods.stream().collect(Collectors.groupingBy(period -> period.substring(0, 5))));
+        }
+
+        attributes.put("periods", periodsAttr);
 
         return attributes;
     }
