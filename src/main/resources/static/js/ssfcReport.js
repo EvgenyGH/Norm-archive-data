@@ -1,4 +1,44 @@
 function main() {
+    setSsfcYearChangeListener();
+    setGroupingCheckboxListeners();
+
+
+    setAddPeriodListener();
+
+}
+
+function setSsfcYearChangeListener() {
+    const yearElement = document.getElementById('year-ssfc');
+
+    yearElement.addEventListener('change', async event => {
+        event.preventDefault();
+
+        const form = document.querySelector(".ssfc-report form");
+        const data = new FormData(form);
+
+        console.log(Array.from(data));
+        console.log(data);
+
+        // try {
+        //     const res = await fetch(
+        //         '/report?' + new URLSearchParams(data.),
+        //         {
+        //             method: 'GET',
+        //             body: data,
+        //         },
+        //     );
+        //
+        //     const resData = await res.json();
+        //
+        //     console.log(resData);
+        // } catch (err) {
+        //     console.log(err.message);
+        // }
+    });
+
+}
+
+function setGroupingCheckboxListeners() {
     document.querySelector('input[value=branch]').addEventListener('change', (e) => {
         if (e.target.checked && document.querySelector('input[value=sumsOnly]').checked) {
             document.querySelector('input[value=tz]').checked = false;
@@ -23,6 +63,13 @@ function main() {
     });
 }
 
+function setAddPeriodListener() {
+    document.querySelector(".add-year-link").addEventListener("click", e => {
+        let year = document.getElementById("year-ssfc").value;
+        createPeriod(year);
+    });
+}
+
 function createPeriod(year) {
     let months = ["Год", "Январь", "Февраль", "Март",
         "Апрель", "Май", "Июнь", "Июль", "Август",
@@ -42,6 +89,7 @@ function createPeriod(year) {
         let checkbox = document.createElement("input");
         checkbox.setAttribute("type", "checkbox");
         checkbox.setAttribute("checked", "checked");
+        checkbox.setAttribute("name", "periods");
         checkbox.setAttribute("value", `${year}${i}`);
         checkbox.id = `period-month-${i}`;
 

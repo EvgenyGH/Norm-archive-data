@@ -58,8 +58,8 @@
         <fieldset>
             <legend>Свойства источников:</legend>
 
-            <label for="year">Выбор отчетного года:</label>
-            <select id="year" name="year">
+            <label for="year-source-properties">Выбор отчетного года:</label>
+            <select id="year-source-properties" name="year">
                 <option th:each="year : ${#numbers.sequence(2020, #dates.createNow().getYear() + 1905, 1)}"
                         th:value="${year}" th:text="${year}"
                         th:selected="${reportYear == year}">
@@ -76,14 +76,13 @@
     </form>
 </div>
 
-<div class="report ssfc-report" th:fragment="ssfc(reportYear, reportSources)">
+<div class="report ssfc-report" th:fragment="ssfc(reportYear, reportSources, periods)">
     <form method="get" th:action="@{/report/ssfc}">
         <fieldset>
             <legend>НУР:</legend>
 
-            <label for="year">Выбор отчетного года:</label>
-            <select id="year" name="year"
-                    onchange="window.location.replace('/report?year=' + this.options[this.selectedIndex].value)">
+            <label for="year-ssfc">Выбор отчетного года:</label>
+            <select id="year-ssfc" name="year">
                 <option th:each="year : ${#numbers.sequence(2020, #dates.createNow().getYear() + 1905, 1)}"
                         th:value="${year}" th:text="${year}"
                         th:selected="${year == reportYear}">
@@ -104,46 +103,61 @@
             <div th:class="ssfc-periods">
                 <fieldset>
                     <legend>Период:</legend>
-                    <div th:class="ssfc-period">
-                        <label th:text="|${reportYear} год:|"></label>
+                    <div th:class="ssfc-period" th:each="yearPeriods : ${periods.entrySet()}"
+                         th:with="monthPeriods = ${yearPeriods.getValue()}">
+                        <label th:text="|${yearPeriods.getKey()} год:|"></label>
                         <input id="period-month-0" type="checkbox" class="period-select"
-                               value="|${reportYear}.0|}" checked/>
+                               name="periods"
+                               th:value="${yearPeriods.getKey() + '.0'}"
+                               th:checked="${monthPeriods.contains(yearPeriods.getKey() + '.0')}"/>
                         <label for="period-month-0">Год</label>
                         <input id="period-month-1" type="checkbox" class="period-month"
-                               value="|${reportYear}.01|" checked/>
+                               name="periods" th:value="${yearPeriods.getKey() + '.1'}"
+                               th:checked="${monthPeriods.contains(yearPeriods.getKey() + '.1')}"/>
                         <label for="period-month-1">Январь</label>
                         <input id="period-month-2" type="checkbox" class="period-month"
-                               value="|${reportYear}.02|" checked/>
+                               name="periods" th:value="${yearPeriods.getKey() + '.2'}"
+                               th:checked="${monthPeriods.contains(yearPeriods.getKey() + '.2')}"/>
                         <label for="period-month-2">Февраль</label>
                         <input id="period-month-3" type="checkbox" class="period-month"
-                               value="|${reportYear}.03|" checked/>
+                               name="periods" th:value="${yearPeriods.getKey() + '.3'}"
+                               th:checked="${monthPeriods.contains(yearPeriods.getKey() + '.3')}"/>
                         <label for="period-month-3">Март</label>
                         <input id="period-month-4" type="checkbox" class="period-month"
-                               value="|${reportYear}.04|" checked/>
+                               name="periods" th:value="${yearPeriods.getKey() + '.4'}"
+                               th:checked="${monthPeriods.contains(yearPeriods.getKey() + '.4')}"/>
                         <label for="period-month-4">Апрель</label>
                         <input id="period-month-5" type="checkbox" class="period-month"
-                               value="|${reportYear}.05|" checked/>
+                               name="periods" th:value="${yearPeriods.getKey() + '.5'}"
+                               th:checked="${monthPeriods.contains(yearPeriods.getKey() + '.5')}"/>
                         <label for="period-month-5">Май</label>
                         <input id="period-month-6" type="checkbox" class="period-month"
-                               value="|${reportYear}.06|" checked/>
+                               name="periods" th:value="${yearPeriods.getKey() + '.6'}"
+                               th:checked="${monthPeriods.contains(yearPeriods.getKey() + '.6')}"/>
                         <label for="period-month-6">Июнь</label>
                         <input id="period-month-7" type="checkbox" class="period-month"
-                               value="|${reportYear}.07|" checked/>
+                               name="periods" th:value="${yearPeriods.getKey() + '.7'}"
+                               th:checked="${monthPeriods.contains(yearPeriods.getKey() + '.7')}"/>
                         <label for="period-month-7">Июль</label>
                         <input id="period-month-8" type="checkbox" class="period-month"
-                               value="|${reportYear}.08|" checked/>
+                               name="periods" th:value="${yearPeriods.getKey() + '.7'}"
+                               th:checked="${monthPeriods.contains(yearPeriods.getKey() + '.7')}"/>
                         <label for="period-month-8">Август</label>
                         <input id="period-month-9" type="checkbox" class="period-month"
-                               value="|${reportYear}.09|" checked/>
+                               name="periods" th:value="${yearPeriods.getKey() + '.8'}"
+                               th:checked="${monthPeriods.contains(yearPeriods.getKey() + '.8')}"/>
                         <label for="period-month-9">Сентябрь</label>
                         <input id="period-month-10" type="checkbox" class="period-month"
-                               value="|${reportYear}.10|" checked/>
+                               name="periods" th:value="${yearPeriods.getKey() + '.9'}"
+                               th:checked="${monthPeriods.contains(yearPeriods.getKey() + '.9')}"/>
                         <label for="period-month-10">Октябрь</label>
                         <input id="period-month-11" type="checkbox" class="period-month"
-                               value="|${reportYear}.11|" checked/>
+                               name="periods" th:value="${yearPeriods.getKey() + '.10'}"
+                               th:checked="${monthPeriods.contains(yearPeriods.getKey() + '.10')}"/>
                         <label for="period-month-11">Ноябрь</label>
                         <input id="period-month-12" type="checkbox" class="period-month"
-                               value="|${reportYear}.12|" checked/>
+                               name="periods" th:value="${yearPeriods.getKey() + '.11'}"
+                               th:checked="${monthPeriods.contains(yearPeriods.getKey() + '.11')}"/>
                         <label for="period-month-12">Декабрь</label>
                         <label th:class="delete-year-link">Удалить</label>
                     </div>

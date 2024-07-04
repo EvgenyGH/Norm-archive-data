@@ -340,9 +340,12 @@ public class ModelServiceImpl implements ModelService {
     }
 
     @Override
-    public Map<String, Object> getReportsAttributes(Integer year) {
+    public Map<String, Object> getReportsAttributes(String yearStr, String type, List<String> periods,
+                                                    List<String> sumTypes, boolean isDefaultData) {
+
         Map<String, Object> attributes = new HashMap<>();
-        year = Objects.isNull(year) ? LocalDate.now().getYear() : year;
+
+        Integer year = yearStr.isEmpty() ? LocalDate.now().getYear() : Integer.getInteger(yearStr);
 
         attributes.put("title", "Отчеты");
         attributes.put("activeMenu", Set.of("report"));
@@ -355,6 +358,8 @@ public class ModelServiceImpl implements ModelService {
                 "Тарифные зоны", "tz",
                 "Филиалы", "branch",
                 "Всего", "totals")));
+        attributes.put("periods", new TreeMap<>(Map.of("2024", List.of("2024.0", "2024.1", "2024.2",
+                "2024.3", "2024.4", "2024.5", "2024.6", "2024.7", "2024.8", "2024.9", "2024.10", "2024.11", "2024.12"))));
 
         return attributes;
     }
