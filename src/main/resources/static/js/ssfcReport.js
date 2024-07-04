@@ -8,22 +8,24 @@ function main() {
 function setSsfcYearChangeListener() {
     let yearElement = document.getElementById('year-ssfc');
 
-    yearElement.addEventListener('change', async event => {
-        event.preventDefault();
+    yearElement.addEventListener('change', renewSourceListListener);
+}
 
-        let years = getSsfcPeriodYears();
-        let params = new URLSearchParams();
-        years.forEach(year => params.append("years", year));
+function renewSourceListListener(event) {
+    event.preventDefault();
 
-        try {
-            fetch('/source/year?' + params,
-                {method: 'GET'})
-                .then(res => renewSourceList(res.json()));
-            console.debug(`Source list requested for years ${years}`);
-        } catch (err) {
-            console.log(err.message);
-        }
-    });
+    let years = getSsfcPeriodYears();
+    let params = new URLSearchParams();
+    years.forEach(year => params.append("years", year));
+
+    try {
+        fetch('/source/year?' + params,
+            {method: 'GET'})
+            .then(res => renewSourceList(res.json()));
+        console.debug(`Source list requested for years ${years}`);
+    } catch (err) {
+        console.log(err.message);
+    }
 }
 
 function renewSourceList(sources) {
@@ -76,6 +78,7 @@ function setAddPeriodListener() {
         let year = document.getElementById("year-ssfc").value;
         console.debug(`Add period listener set`);
         createPeriod(year);
+        renewSourceListListener(e);
     });
 }
 
@@ -83,6 +86,7 @@ function setDeletePeriodListener() {
     document.querySelector(".delete-year-link").addEventListener("click", e => {
         let parent = e.target.parentNode.remove();
         console.debug(`Period deleted`);
+        renewSourceListListener(e);
     });
 }
 
