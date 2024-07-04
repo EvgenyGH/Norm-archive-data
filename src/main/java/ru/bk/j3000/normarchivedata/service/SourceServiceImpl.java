@@ -207,4 +207,19 @@ public class SourceServiceImpl implements SourceService {
 
         return sourceDTOs;
     }
+
+    @Override
+    public List<SourceAlterDTO> getSourcesByYears(List<Integer> years) {
+        List<SourceAlterDTO> sources = sourceRepository.getSourcesByYears(years)
+                .stream()
+                .sorted(Comparator.comparing(Source::getName))
+                .sorted(Comparator.comparing(Source::getSourceType))
+                .map(src -> new SourceAlterDTO(src.getId(), src.getName()))
+                .toList();
+
+        log.info("Sources list formed for years {} ({} in total)",
+                Arrays.toString(years.toArray()), sources.size());
+
+        return sources;
+    }
 }

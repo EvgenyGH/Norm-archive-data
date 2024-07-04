@@ -11,6 +11,7 @@ import org.springframework.util.MimeType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.bk.j3000.normarchivedata.model.Source;
+import ru.bk.j3000.normarchivedata.model.dto.SourceAlterDTO;
 import ru.bk.j3000.normarchivedata.service.ModelService;
 import ru.bk.j3000.normarchivedata.service.SourceService;
 
@@ -68,6 +69,11 @@ public class SourceController {
         sourceService.alterSource(source);
 
         return "redirect:/source";
+    }
+
+    @GetMapping("/source/year")
+    public ResponseEntity<List<SourceAlterDTO>> getSourcesByYear(@RequestParam(name = "years") List<Integer> years) {
+        return ResponseEntity.ok(sourceService.getSourcesByYears(years));
     }
 }
 

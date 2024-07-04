@@ -1,33 +1,50 @@
 function main() {
     setSsfcYearChangeListener();
     setGroupingCheckboxListeners();
-
     setAddPeriodListener();
     setDeletePeriodListener();
 }
 
 function setSsfcYearChangeListener() {
-    const yearElement = document.getElementById('year-ssfc');
+    let yearElement = document.getElementById('year-ssfc');
 
     yearElement.addEventListener('change', async event => {
         event.preventDefault();
 
-        const form = document.querySelector(".ssfc-report form");
-        const data = new FormData(form);
+        let years = getSsfcPeriodYears();
+        let params = new URLSearchParams();
+        years.forEach(year => params.append("years", year));
 
         try {
-            await fetch(
-                '/report?' + new URLSearchParams(data),
-                {
-                    method: 'GET'
-                },
-            );
-            console.debug("Report year changed. Request sent to the server.");
+            fetch('/source/year?' + params,
+                {method: 'GET'})
+                .then(res => renewSourceList(res.json()));
+            console.debug(`Source list requested for years ${years}`);
         } catch (err) {
             console.log(err.message);
         }
     });
 }
+
+function renewSourceList(sources) {
+    sources.then(data => console.log(data));
+}
+
+function getSsfcPeriodYears() {
+    let years = [];
+
+    let periodsElement = document.querySelector(".ssfc-periods");
+    let periodElements = periodsElement.getElementsByClassName("ssfc-period");
+
+    for (const element of periodElements) {
+        years.push(element.querySelector("#period-month-0").value.substring(0, 4));
+    }
+
+    console.debug(`Period years formed ${years}`);
+
+    return years;
+}
+
 
 function setGroupingCheckboxListeners() {
     document.querySelector('input[value=branch]').addEventListener('change', (e) => {

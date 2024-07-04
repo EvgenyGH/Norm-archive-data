@@ -34,4 +34,6 @@ public interface SourceService {
     void alterSource(Source source);
 
     List<SourceAlterDTO> getSourceIdsAndNamesWithNoProp(Integer year);
+
+    List<SourceAlterDTO> getSourcesByYears(List<Integer> years);
 }

@@ -21,4 +21,10 @@ public interface SourceRepository extends JpaRepository<Source, UUID> {
             "WHERE sp.id.year = :year) " +
             "ORDER BY s.name")
     List<SourceAlterDTO> getSourceIdsAndNamesWithNoProp(@Param("year") Integer year);
+
+    @Query("SELECT distinct ssfc.properties.id.source, " +
+            "ssfc.properties.id.source.name " +
+            "FROM StandardSFC ssfc " +
+            "WHERE ssfc.properties.id.year IN :years ")
+    List<Source> getSourcesByYears(@Param("years") List<Integer> years);
 }
