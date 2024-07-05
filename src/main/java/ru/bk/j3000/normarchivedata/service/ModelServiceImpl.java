@@ -351,6 +351,8 @@ public class ModelServiceImpl implements ModelService {
         attributes.put("reportYear", year);
         attributes.put("reportSources", ssfcService.findAllDefinedSourcesByYear(year)
                 .stream()
+                .sorted(Comparator.comparing(Source::getName))
+                .sorted(Comparator.comparing(Source::getSourceType))
                 .map(SourceAlterDTO::new)
                 .toList());
 

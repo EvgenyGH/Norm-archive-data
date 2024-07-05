@@ -34,11 +34,17 @@ function renewSourceList(sources) {
 function getSsfcPeriodYears() {
     let years = [];
 
-    let periodsElement = document.querySelector(".ssfc-periods");
-    let periodElements = periodsElement.getElementsByClassName("ssfc-period");
+    if (document.querySelector(".ssfc-report form")
+        .elements["type"].value === "period") {
 
-    for (const element of periodElements) {
-        years.push(element.children.item(0).textContent.substring(0, 4));
+        let periodsElement = document.querySelector(".ssfc-periods");
+        let periodElements = periodsElement.getElementsByClassName("ssfc-period");
+
+        for (const element of periodElements) {
+            years.push(element.children.item(0).textContent.substring(0, 4));
+        }
+    } else {
+        years.push(document.querySelector(".ssfc-report form").elements["year"].value);
     }
 
     console.debug(`Period years formed ${years}`);
