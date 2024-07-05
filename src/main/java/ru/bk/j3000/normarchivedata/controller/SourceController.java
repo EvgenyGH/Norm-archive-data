@@ -72,7 +72,8 @@ public class SourceController {
     }
 
     @GetMapping("/source/year")
-    public ResponseEntity<List<SourceAlterDTO>> getSourcesByYear(@RequestParam(name = "years") List<Integer> years) {
+    public ResponseEntity<List<SourceAlterDTO>> getSourcesByYear(
+            @RequestParam(name = "years") List<Integer> years) {
         return ResponseEntity.ok(sourceService.getSourcesByYears(years));
     }
 }

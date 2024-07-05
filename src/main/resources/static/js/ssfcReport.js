@@ -12,7 +12,6 @@ function setSsfcYearChangeListener() {
 }
 
 function renewSourceListListener() {
-
     let years = getSsfcPeriodYears();
     let params = new URLSearchParams();
     years.forEach(year => params.append("years", year));
@@ -74,16 +73,33 @@ function setGroupingCheckboxListeners() {
 function setAddPeriodListener() {
     document.querySelector(".add-year-link").addEventListener("click", e => {
         let year = document.getElementById("year-ssfc").value;
-        console.debug(`Add period listener set`);
         createPeriod(year);
+        renewSourceListListener();
     });
+
+    console.debug(`Add period listener set`);
 }
 
 function setDefaultDeletePeriodListener() {
-    document.querySelector(".delete-year-link").addEventListener("click", e => {
+    document.querySelector(".delete-year-link")
+        .addEventListener("click", deletePeriod);
+}
+
+function deletePeriod(e) {
+    if (getSsfcPeriodYears().length === 1) {
+        console.debug(`Period not deleted. At least one period has to be defined`);
+        let base = document.querySelector(".select-type");
+        let warn = document.createElement("span");
+        warn.textContent = "ПРЕДУПРЕЖДЕНИЕ: Хотя бы один период должен быть выбран";
+        warn.style.color = "Maroon";
+        warn.style.background = "LightSalmon";
+        base.parentNode.insertBefore(warn, base);
+        setTimeout(() => warn.remove(), 5000);
+    } else {
         let parent = e.target.parentNode.remove();
         console.debug(`Period deleted`);
-    });
+        renewSourceListListener();
+    }
 }
 
 function createPeriod(year) {
@@ -122,11 +138,7 @@ function createPeriod(year) {
     label = document.createElement("label");
     label.textContent = "Удалить";
     label.classList.add("delete-year-link");
-    label.addEventListener("click", e => {
-        let parent = e.target.parentNode.remove();
-        console.debug(`Period deleted`);
-        renewSourceListListener();
-    });
+    label.addEventListener("click", deletePeriod);
 
     period.appendChild(document.createTextNode("\u00A0"));
     period.appendChild(label);
