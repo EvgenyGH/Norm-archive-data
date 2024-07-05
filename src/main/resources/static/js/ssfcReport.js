@@ -95,9 +95,16 @@ function getBaseElement(year) {
 function setAddPeriodListener() {
     document.querySelector(".add-year-link").addEventListener("click", e => {
         let year = document.getElementById("year-ssfc").value;
-        let base = getBaseElement(year);
-        createPeriod(year, base);
-        renewSourceListListener();
+
+        if (getSsfcPeriodYears().includes(year)) {
+            console.log("Period already exists");
+
+            showSsfcWarn("ПРЕДУПРЕЖДЕНИЕ: Период уже добавлен");
+        } else {
+            let base = getBaseElement(year);
+            createPeriod(year, base);
+            renewSourceListListener();
+        }
     });
 
     console.debug(`Add period listener set`);
@@ -112,22 +119,7 @@ function deletePeriod(e) {
     if (getSsfcPeriodYears().length === 1) {
         console.debug(`Period not deleted. At least one period has to be defined`);
 
-        let oldWarnElement = document.querySelector("#ssfc-warn-period");
-
-        if (oldWarnElement !== null) {
-            oldWarnElement.remove();
-
-            console.debug("Old ssfc warn removed");
-        }
-
-        let base = document.querySelector(".select-type");
-        let warn = document.createElement("span");
-        warn.textContent = "ПРЕДУПРЕЖДЕНИЕ: Хотя бы один период должен быть выбран";
-        warn.style.color = "Maroon";
-        warn.style.background = "LightSalmon";
-        warn.id = "ssfc-warn-period";
-        base.parentNode.insertBefore(warn, base);
-        setTimeout(() => warn.remove(), 5000);
+        showSsfcWarn("ПРЕДУПРЕЖДЕНИЕ: Хотя бы один период должен быть выбран");
     } else {
         e.target.parentNode.remove();
 
@@ -135,6 +127,25 @@ function deletePeriod(e) {
 
         renewSourceListListener();
     }
+}
+
+function showSsfcWarn(text) {
+    let oldWarnElement = document.querySelector("#ssfc-warn-period");
+
+    if (oldWarnElement !== null) {
+        oldWarnElement.remove();
+
+        console.debug("Old ssfc warn removed");
+    }
+
+    let base = document.querySelector(".select-type");
+    let warn = document.createElement("span");
+    warn.textContent = text;
+    warn.style.color = "Maroon";
+    warn.style.background = "LightSalmon";
+    warn.id = "ssfc-warn-period";
+    base.parentNode.insertBefore(warn, base);
+    setTimeout(() => warn.remove(), 5000);
 }
 
 function createPeriod(year, base) {
