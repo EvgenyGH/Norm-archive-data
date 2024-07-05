@@ -2,7 +2,7 @@ function main() {
     setSsfcYearChangeListener();
     setGroupingCheckboxListeners();
     setAddPeriodListener();
-    setDeletePeriodListener();
+    setDefaultDeletePeriodListener();
 }
 
 function setSsfcYearChangeListener() {
@@ -11,8 +11,7 @@ function setSsfcYearChangeListener() {
     yearElement.addEventListener('change', renewSourceListListener);
 }
 
-function renewSourceListListener(event) {
-    event.preventDefault();
+function renewSourceListListener() {
 
     let years = getSsfcPeriodYears();
     let params = new URLSearchParams();
@@ -39,14 +38,13 @@ function getSsfcPeriodYears() {
     let periodElements = periodsElement.getElementsByClassName("ssfc-period");
 
     for (const element of periodElements) {
-        years.push(element.querySelector("#period-month-0").value.substring(0, 4));
+        years.push(element.children.item(0).textContent.substring(0, 4));
     }
 
     console.debug(`Period years formed ${years}`);
 
     return years;
 }
-
 
 function setGroupingCheckboxListeners() {
     document.querySelector('input[value=branch]').addEventListener('change', (e) => {
@@ -78,15 +76,13 @@ function setAddPeriodListener() {
         let year = document.getElementById("year-ssfc").value;
         console.debug(`Add period listener set`);
         createPeriod(year);
-        renewSourceListListener(e);
     });
 }
 
-function setDeletePeriodListener() {
+function setDefaultDeletePeriodListener() {
     document.querySelector(".delete-year-link").addEventListener("click", e => {
         let parent = e.target.parentNode.remove();
         console.debug(`Period deleted`);
-        renewSourceListListener(e);
     });
 }
 
@@ -104,18 +100,17 @@ function createPeriod(year) {
     period.appendChild(label);
     periods.appendChild(period);
 
-
     for (let i = 0; i < 13; i++) {
         let checkbox = document.createElement("input");
         checkbox.setAttribute("type", "checkbox");
         checkbox.setAttribute("checked", "checked");
         checkbox.setAttribute("name", "periods");
         checkbox.setAttribute("value", `${year}${i}`);
-        checkbox.id = `period-month-${i}`;
+        checkbox.id = `period-month-${year}-${i}`;
 
         let label = document.createElement("label");
         label.textContent = months[i];
-        label.setAttribute("for", `period-month-${i}`);
+        label.setAttribute("for", `period-month-${year}-${i}`);
         period.appendChild(document.createTextNode("\u00A0"));
         period.appendChild(checkbox);
         period.appendChild(document.createTextNode("\u00A0"));
@@ -130,6 +125,7 @@ function createPeriod(year) {
     label.addEventListener("click", e => {
         let parent = e.target.parentNode.remove();
         console.debug(`Period deleted`);
+        renewSourceListListener();
     });
 
     period.appendChild(document.createTextNode("\u00A0"));

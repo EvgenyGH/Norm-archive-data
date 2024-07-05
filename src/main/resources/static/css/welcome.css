@@ -534,11 +534,11 @@ select:invalid {
     font-weight: bold;
 }
 
-label:has(+ #period-month-0) {
+.ssfc-period label:first-child {
     font-weight: bold;
 }
 
-label:has(+ #period-month-0):hover {
+.ssfc-period label:first-child:hover {
     color: inherit;
 }
 
