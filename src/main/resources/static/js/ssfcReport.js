@@ -20,6 +20,7 @@ function renewSourceListListener() {
         fetch('/source/year?' + params,
             {method: 'GET'})
             .then(res => renewSourceList(res.json()));
+
         console.debug(`Source list requested for years ${years}`);
     } catch (err) {
         console.log(err.message);
@@ -49,6 +50,7 @@ function setGroupingCheckboxListeners() {
     document.querySelector('input[value=branch]').addEventListener('change', (e) => {
         if (e.target.checked && document.querySelector('input[value=sumsOnly]').checked) {
             document.querySelector('input[value=tz]').checked = false;
+
             console.debug('tz unchecked');
         }
     });
@@ -56,6 +58,7 @@ function setGroupingCheckboxListeners() {
     document.querySelector('input[value=tz]').addEventListener('change', (e) => {
         if (e.target.checked && document.querySelector('input[value=sumsOnly]').checked) {
             document.querySelector('input[value=branch]').checked = false;
+
             console.debug('branch unchecked');
         }
     });
@@ -65,15 +68,35 @@ function setGroupingCheckboxListeners() {
             && document.querySelector('input[value=branch]').checked) {
             document.querySelector('input[value=branch]').checked = false;
             document.querySelector('input[value=tz]').checked = false;
+
             console.debug('branch and tz unchecked');
         }
     });
 }
 
+function getBaseElement(year) {
+    let periodsElement = document.querySelector(".ssfc-periods");
+    let periodElements = periodsElement.getElementsByClassName("ssfc-period");
+
+    for (const element of periodElements) {
+        if (Number.parseInt(element.children.item(0).textContent.substring(0, 4)) > year) {
+
+            console.debug(`Base period chosen ${element.children.item(0).textContent.substring(0, 4)}`);
+
+            return element;
+        }
+    }
+
+    console.debug(`Base period: last`);
+
+    return null;
+}
+
 function setAddPeriodListener() {
     document.querySelector(".add-year-link").addEventListener("click", e => {
         let year = document.getElementById("year-ssfc").value;
-        createPeriod(year);
+        let base = getBaseElement(year);
+        createPeriod(year, base);
         renewSourceListListener();
     });
 
@@ -88,21 +111,33 @@ function setDefaultDeletePeriodListener() {
 function deletePeriod(e) {
     if (getSsfcPeriodYears().length === 1) {
         console.debug(`Period not deleted. At least one period has to be defined`);
+
+        let oldWarnElement = document.querySelector("#ssfc-warn-period");
+
+        if (oldWarnElement !== null) {
+            oldWarnElement.remove();
+
+            console.debug("Old ssfc warn removed");
+        }
+
         let base = document.querySelector(".select-type");
         let warn = document.createElement("span");
         warn.textContent = "ПРЕДУПРЕЖДЕНИЕ: Хотя бы один период должен быть выбран";
         warn.style.color = "Maroon";
         warn.style.background = "LightSalmon";
+        warn.id = "ssfc-warn-period";
         base.parentNode.insertBefore(warn, base);
         setTimeout(() => warn.remove(), 5000);
     } else {
-        let parent = e.target.parentNode.remove();
+        e.target.parentNode.remove();
+
         console.debug(`Period deleted`);
+
         renewSourceListListener();
     }
 }
 
-function createPeriod(year) {
+function createPeriod(year, base) {
     let months = ["Год", "Январь", "Февраль", "Март",
         "Апрель", "Май", "Июнь", "Июль", "Август",
         "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"];
@@ -114,7 +149,6 @@ function createPeriod(year) {
     let label = document.createElement("label");
     label.textContent = `${year} год:`;
     period.appendChild(label);
-    periods.appendChild(period);
 
     for (let i = 0; i < 13; i++) {
         let checkbox = document.createElement("input");
@@ -131,8 +165,6 @@ function createPeriod(year) {
         period.appendChild(checkbox);
         period.appendChild(document.createTextNode("\u00A0"));
         period.appendChild(label);
-
-        periods.appendChild(period);
     }
 
     label = document.createElement("label");
@@ -142,6 +174,8 @@ function createPeriod(year) {
 
     period.appendChild(document.createTextNode("\u00A0"));
     period.appendChild(label);
+
+    periods.insertBefore(period, base);
 
     console.debug(`Period ${year} created`);
 }
