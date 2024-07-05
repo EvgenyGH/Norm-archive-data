@@ -10,12 +10,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.MimeType;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.bk.j3000.normarchivedata.service.ModelService;
 import ru.bk.j3000.normarchivedata.service.ReportService;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,11 +24,9 @@ public class ReportController {
     private final ReportService reportService;
 
     @GetMapping("/report")
-    public String reportsStartPage(Model model,
-                                   @ModelAttribute(name = "year") String year,
-                                   @ModelAttribute(name = "periods") LinkedList<String> periods) {
+    public String reportsStartPage(Model model) {
 
-        model.addAllAttributes(modelService.getReportsAttributes(year, periods));
+        model.addAllAttributes(modelService.getReportsAttributes());
 
         return "welcome";
     }

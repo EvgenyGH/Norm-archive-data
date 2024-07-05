@@ -340,11 +340,11 @@ public class ModelServiceImpl implements ModelService {
     }
 
     @Override
-    public Map<String, Object> getReportsAttributes(String yearStr, List<String> periods) {
+    public Map<String, Object> getReportsAttributes() {
 
         Map<String, Object> attributes = new HashMap<>();
 
-        Integer year = yearStr.isEmpty() ? LocalDate.now().getYear() : Integer.parseInt(yearStr);
+        Integer year = LocalDate.now().getYear();
 
         attributes.put("title", "Отчеты");
         attributes.put("activeMenu", Set.of("report"));
@@ -359,17 +359,11 @@ public class ModelServiceImpl implements ModelService {
                 "Филиалы", "branch",
                 "Всего", "totals")));
 
-        TreeMap<String, List<String>> periodsAttr = new TreeMap<>();
-
-        if (periods.isEmpty()) {
-            periodsAttr.put("2024",
-                    List.of("2024.0", "2024.1", "2024.2", "2024.3", "2024.4", "2024.5",
-                            "2024.6", "2024.7", "2024.8", "2024.9", "2024.10", "2024.11", "2024.12"));
-        } else {
-            periodsAttr.putAll(periods.stream().collect(Collectors.groupingBy(period -> period.substring(0, 5))));
-        }
-
-        attributes.put("periods", periodsAttr);
+        attributes.put("periods",
+                Map.of(year.toString(), List.of(year + ".0", year + ".1",
+                        year + ".2", year + ".3", year + ".4", year + ".5", year + ".6",
+                        year + ".7", year + ".8", year + ".9", year + ".10", year + ".11",
+                        year + ".12")));
 
         return attributes;
     }
