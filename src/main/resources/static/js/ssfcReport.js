@@ -19,7 +19,8 @@ function renewSourceListListener() {
     try {
         fetch('/source/year?' + params,
             {method: 'GET'})
-            .then(res => renewSourceList(res.json()));
+            .then(res => res.json())
+            .then(res => renewSourceList(res));
 
         console.debug(`Source list requested for years ${years}`);
     } catch (err) {
@@ -28,7 +29,28 @@ function renewSourceListListener() {
 }
 
 function renewSourceList(sources) {
-    sources.then(data => console.log(data));
+    let container = document.querySelector(".pick-sources");
+    container.replaceChildren();
+
+    console.log(`${sources}`);
+
+    for (let i = 0; i < sources.length; i++) {
+        let sourceElement = document.createElement("input");
+        sourceElement.type = "checkbox";
+        sourceElement.id = `source${i + 1}`;
+        sourceElement.name = "sources";
+        sourceElement.value = sources[i]['sourceId'];
+        container.appendChild(sourceElement);
+
+        sourceElement = document.createElement("label");
+        sourceElement.textContent = sources[i]['sourceName'];
+        sourceElement.setAttribute("for", `source${i + 1}`);
+        container.appendChild(sourceElement);
+    }
+
+    //sources.then(data => console.log(data));
+    console.log(sources);
+    console.debug(`Ssfc report source list renewed (${sources.length} in total)`);
 }
 
 function getSsfcPeriodYears() {

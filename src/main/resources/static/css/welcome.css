@@ -365,10 +365,11 @@ select:invalid {
 
 .ssfc-report .pick-sources {
     display: grid;
-    grid-template-columns: auto auto auto auto auto auto auto auto;
+    grid-template-columns: 1.4em 13.9em 1.4em 13.9em 1.4em 13.9em 1.4em 13.9em;
     max-height: 8em;
     max-width: 51em;
-    overflow: scroll;
+    overflow-y: scroll;
+    overflow-x: hidden;
     transition: max-height 0.5s;
     margin-top: 0.35em;
     border-top: dotted thin black;
