@@ -353,31 +353,23 @@ select:invalid {
 
 /* Ssfc report */
 .ssfc-report {
-    max-width: 67.5em;
     overflow: scroll;
+    max-width: 70em;
+    width: fit-content;
     transition: max-width 1s, max-height 1s;
     transition-timing-function: ease-in-out;
-}
-
-.ssfc-report:has(.ssfc-selection #select-all:checked) {
-    max-width: 67.5em;
 }
 
 .ssfc-report .pick-sources {
     display: grid;
     grid-template-columns: 1.4em 13.9em 1.4em 13.9em 1.4em 13.9em 1.4em 13.9em;
     max-height: 8em;
-    max-width: 51em;
+    max-width: 62em;
     overflow-y: scroll;
     overflow-x: hidden;
-    transition: max-height 0.5s;
     margin-top: 0.35em;
     border-top: dotted thin black;
-}
-
-.ssfc-report .pick-sources {
-    max-width: 61em;
-    transition: max-width 0.5s, max-height 0.5s, opacity 0.5s;
+    transition: max-width 1s, max-height 1s, opacity 1s;
     transition-timing-function: ease-in-out;
 }
 
@@ -385,26 +377,11 @@ select:invalid {
     margin-top: 0.09em;
 }
 
-.ssfc-report .ssfc-selection:has(#select-all:checked) ~ .pick-sources {
-    max-height: 0;
-    opacity: 0;
-}
-
-.ssfc-report .select-sources {
-    max-width: 61em;
-    transition: max-width 1s, max-height 1s;
-    transition-timing-function: ease-in-out;
-}
-
-.ssfc-report:has(.ssfc-selection #select-all:checked) .select-sources {
-    max-width: 30em;
-}
-
 .ssfc-report .select-summaries {
+    overflow: hidden;
     max-height: 4em;
     margin-bottom: 0.4em;
-    overflow: hidden;
-    transition: max-height 0.5s;
+    transition: max-height 0.2s;
     transition-timing-function: ease-in-out;
 }
 
@@ -417,17 +394,43 @@ select:invalid {
     margin-left: 0;
 }
 
-.ssfc-report .select-type:has(#ssfc-template:checked) ~ fieldset .select-summaries {
-    max-height: 0;
-}
-
-.ssfc-report .ssfc-selection input {
-    margin-left: 0;
-}
-
 .ssfc-report .select-type {
     margin-bottom: 0.1em;
     margin-top: 0.6em;
+    margin-left: -0.3em;
+    max-width: 65.5em;
+}
+
+.ssfc-report .ssfc-periods {
+    max-height: 0;
+    max-width: 0;
+    opacity: 0;
+    transition: max-width 1s, max-height 1s, opacity 1s;
+    transition-timing-function: ease-in-out;
+}
+
+
+.ssfc-report .ssfc-selection:has(#select-all:checked) ~ .pick-sources {
+    max-height: 0;
+    max-width: 0;
+    opacity: 0;
+}
+
+.ssfc-report:has(.select-type #ssfc-period:checked) .ssfc-periods {
+    max-width: 71em;
+    max-height: 4em;
+    opacity: 1
+}
+
+.ssfc-report:has(.select-type #ssfc-template:checked) .select-summaries {
+    max-height: 0;
+    max-width: 0;
+}
+
+
+
+.ssfc-report .ssfc-selection input {
+    margin-left: 0;
 }
 
 .ssfc-report p {

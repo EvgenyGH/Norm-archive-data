@@ -183,9 +183,8 @@
                         <input type="radio" id="select-particular" name="selection" value="particular">
                         <label for="select-particular">Выборочно</label>
 
-                        <p th:if="${reportSources.isEmpty()}"
-                           class="no-data"
-                           th:text="'НУР на указанный период не заведены в систему'">
+                        <p class="no-data"
+                           th:text="${reportSources.isEmpty() ? 'НУР на указанный период не заведены в систему' : ''}">
                         </p>
                     </div>
 
