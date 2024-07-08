@@ -418,7 +418,7 @@ select:invalid {
 
 .ssfc-report:has(.select-type #ssfc-period:checked) .ssfc-periods {
     max-width: 71em;
-    max-height: 4em;
+    max-height: 40em;
     opacity: 1
 }
 

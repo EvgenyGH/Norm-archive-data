@@ -3,6 +3,17 @@ function main() {
     setGroupingCheckboxListeners();
     setAddPeriodListener();
     setDefaultDeletePeriodListener();
+    setChangeReportTypeListener();
+}
+
+function setChangeReportTypeListener() {
+    let allTypes = document.querySelectorAll('.select-type input[name=type]');
+    allTypes.forEach(typeEl => typeEl
+        .addEventListener('change', () => {
+            renewSourceListListener();
+            console.debug('Change report type listeners set');
+        })
+    );
 }
 
 function setSsfcYearChangeListener() {
@@ -124,7 +135,7 @@ function getBaseElement(year) {
 }
 
 function setAddPeriodListener() {
-    document.querySelector(".add-year-link").addEventListener("click", e => {
+    document.querySelector(".add-year-link").addEventListener("click", () => {
         let year = document.getElementById("year-ssfc").value;
 
         if (getSsfcPeriodYears().includes(year)) {
