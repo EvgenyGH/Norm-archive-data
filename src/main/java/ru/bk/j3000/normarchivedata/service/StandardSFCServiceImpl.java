@@ -392,12 +392,12 @@ public class StandardSFCServiceImpl implements StandardSFCService {
     }
 
     @Override
-    public List<StandardSFC> findAllSsfcByPeriods(List<String> periods) {
+    public List<StandardSFC> findAllSsfcByPeriods(Map<Integer, List<Integer>> periods) {
         return ssfcRepository.findAllSsfcByPeriods(periods, List.of());
     }
 
     @Override
-    public List<StandardSFC> findAllSsfcByPeriodsAndSrcIds(List<String> periods, List<UUID> srcIds) {
+    public List<StandardSFC> findAllSsfcByPeriodsAndSrcIds(Map<Integer, List<Integer>> periods, List<UUID> srcIds) {
         List<StandardSFC> ssfcs = ssfcRepository.findAllSsfcByPeriods(periods, srcIds);
 
         log.info("Found {} ssfcs for {} period(s) and {} source(s).", ssfcs.size(),

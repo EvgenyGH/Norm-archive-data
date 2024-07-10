@@ -26,7 +26,7 @@ import java.security.InvalidParameterException;
 import java.util.*;
 import java.util.stream.IntStream;
 
-import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.*;
 import static org.apache.poi.ss.util.CellUtil.createCell;
 
 @Service
@@ -55,6 +55,7 @@ public class ReportServiceImpl implements ReportService {
             "Март", "Апрель", "Май", "Июнь", "Июль",
             "Август", "Сентябрь", "Октябрь", "Ноябрь",
             "Декабрь", "Год", "Комментарии"};
+
     private final String[] allSsfcsColumns = {"№ п/п",
             "Наименование источника тепловой энергии",
             "Вид топлива", "Наименование показателя",
@@ -153,8 +154,15 @@ public class ReportServiceImpl implements ReportService {
     }
 
     private Resource getSsfcPeriodReport(String selection, List<UUID> srcIds,
-                                         List<String> sumTypes, List<String> periods) {
+                                         List<String> sumTypes, List<String> periodsStr) {
         //todo
+        Map<Integer, List<Integer>> periods = periodsStr.stream()
+                .collect(groupingBy(str -> Integer.parseInt(str.substring(0, 4)),
+                        mapping(str -> Integer.parseInt(str.split("\\.")[1]),
+                                toList())));
+
+        String[] columnNames = getColumnNames(periods);
+
         Resource resource;
 
         List<StandardSFC> ssfcs = switch (selection) {
@@ -236,6 +244,36 @@ public class ReportServiceImpl implements ReportService {
         }
 
         return resource;
+    }
+
+    private String[] getColumnNames(Map<Integer, List<Integer>> periods) {
+        ArrayList<String> columns = new ArrayList<String>(
+                List.of("№ п/п",
+                        "Наименование источника тепловой энергии",
+                        "Вид топлива", "Наименование показателя",
+                        "Единицы измерения", "Итого")
+        );
+
+        String[] monthNames = {"Январь", "Февраль", "Март", "Апрель",
+                "Май", "Июнь", "Июль", "Август", "Сентябрь",
+                "Октябрь", "Ноябрь", "Декабрь"};
+
+        for (var yearPeriod : periods.entrySet().stream().sorted().toList()) {
+            int year = yearPeriod.getKey();
+            List<Integer> months = yearPeriod.getValue();
+            months.forEach(month -> {
+                if (month.equals(0)) {
+                    columns.add(String.format("%s год", year));
+                } else {
+                    columns.add(String.format("%s %s", monthNames[month - 1], year));
+                }
+            });
+        }
+
+        log.info("Column names for ssfc report (periods) formed: {}", columns); //todo remove
+        log.info("Column names for ssfc report (periods) formed. {} in total", columns.size());
+
+        return columns.toArray(new String[0]);
     }
 
     @Override

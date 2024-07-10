@@ -14,24 +14,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static java.util.stream.Collectors.*;
-
 @RequiredArgsConstructor
 @Slf4j
 public class StandardSFCRepositoryExtraImpl implements StandardSFCRepositoryExtra {
     private final EntityManager entityManager;
 
     @Override
-    public List<StandardSFC> findAllSsfcByPeriods(List<String> periodsStr, List<UUID> ids) {
+    public List<StandardSFC> findAllSsfcByPeriods(Map<Integer, List<Integer>> periods, List<UUID> ids) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<StandardSFC> query = criteriaBuilder.createQuery(StandardSFC.class);
         Root<StandardSFC> itemRoot = query.from(StandardSFC.class);
         List<Predicate> predicates = new LinkedList<>();
-
-        Map<Integer, List<Integer>> periods = periodsStr.stream()
-                .collect(groupingBy(str -> Integer.parseInt(str.substring(0, 4)),
-                        mapping(str -> Integer.parseInt(str.split("\\.")[1]),
-                                toList())));
 
         for (var period : periods.entrySet()) {
             Predicate yearInRange = criteriaBuilder.equal(itemRoot.get("properties")
