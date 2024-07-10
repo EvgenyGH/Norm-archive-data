@@ -38,4 +38,8 @@ public interface StandardSFCService {
     List<StandardSFC> findAllSsfcByYearAndSrcIdAndFuelType(Integer year, UUID srcId, FUEL_TYPE fuelType);
 
     List<StandardSFC> findAllSsfcByYearAndSrcIds(Integer year, List<UUID> srcIds);
+
+    List<StandardSFC> findAllSsfcByPeriods(List<String> periods);
+
+    List<StandardSFC> findAllSsfcByPeriodsAndSrcIds(List<String> periods, List<UUID> srcIds);
 }

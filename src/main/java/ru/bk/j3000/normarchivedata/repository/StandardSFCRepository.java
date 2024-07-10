@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
-public interface StandardSFCRepository extends JpaRepository<StandardSFC, UUID> {
+public interface StandardSFCRepository extends JpaRepository<StandardSFC, UUID>, StandardSFCRepositoryExtra {
 
     @Query("SELECT ssfc FROM StandardSFC ssfc " +
             "WHERE ssfc.properties.id.year = :year")

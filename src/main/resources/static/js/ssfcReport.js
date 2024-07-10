@@ -208,7 +208,7 @@ function createPeriod(year, base) {
         checkbox.setAttribute("type", "checkbox");
         checkbox.setAttribute("checked", "checked");
         checkbox.setAttribute("name", "periods");
-        checkbox.setAttribute("value", `${year}${i}`);
+        checkbox.setAttribute("value", `${year}.${i}`);
         checkbox.id = `period-month-${year}-${i}`;
 
         let label = document.createElement("label");

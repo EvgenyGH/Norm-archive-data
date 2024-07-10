@@ -24,9 +24,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static java.util.stream.Collectors.groupingBy;
 import static org.apache.poi.ss.util.CellUtil.createCell;
 
 @Service
@@ -135,17 +135,105 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public Resource getSsfcsReport(String type, String selection, Integer year,
-                                   List<UUID> srcIds, List<String> sumTypes) {
+    public Resource getSsfcsReport(String type, String selection, Integer year, List<UUID> srcIds,
+                                   List<String> sumTypes, List<String> periods) {
         Resource resource = switch (type) {
             case "template" -> getSsfcTemplateReport(year, selection, srcIds);
             case "standard" -> getAllSsfcReport(year, selection, srcIds,
                     Objects.isNull(sumTypes) ? List.of() : sumTypes);
+            case "period" -> getSsfcPeriodReport(selection, srcIds,
+                    Objects.isNull(sumTypes) ? List.of() : sumTypes, periods);
             default -> throw new InvalidParameterException(String.format("Invalid ssfc report type <%s>",
                     type));
         };
 
         log.info("Ssfc report formed. Type {}", type);
+
+        return resource;
+    }
+
+    private Resource getSsfcPeriodReport(String selection, List<UUID> srcIds,
+                                         List<String> sumTypes, List<String> periods) {
+        //todo
+        Resource resource;
+
+        List<StandardSFC> ssfcs = switch (selection) {
+            case "all" -> ssfcService.findAllSsfcByPeriods(periods);
+            case "particular" -> ssfcService.findAllSsfcByPeriodsAndSrcIds(periods, srcIds);
+            default -> throw new InvalidParameterException(String
+                    .format("Invalid ssfc report type <%s>", selection));
+        };
+
+        SsfcSummary summary;
+
+        if (sumTypes.contains("branch") && !sumTypes.contains("tz")) {
+            summary = new SsfcSumBranch(ssfcs);
+        } else {
+            summary = new SsfcSumTZBranch(ssfcs);
+        }
+
+        try (Workbook wb = new XSSFWorkbook()) {
+            Sheet sheet = wb.createSheet("Ssfcs");
+
+            Map<String, Map<String, CellStyle>> styles = getStyles(wb);
+
+            // set headers
+            Row headerRow = sheet.createRow(1);
+            IntStream.rangeClosed(0, allSsfcsColumns.length - 1)
+                    .forEach(i -> createCell(headerRow, i, allSsfcsColumns[i],
+                            styles.get("base").get("header primary")));
+
+            log.debug("Standard report headers set.");
+
+            // set data and merge cells
+            Counter counter = new Counter(2);
+            Counter number = new Counter(1);
+
+            summary.getSubSsfcs().forEach(sum -> this.formStandardSsfcBlock(sheet, sum, counter,
+                    number, styles, sumTypes)
+            );
+
+            log.debug("Standard report data set.");
+
+            // set totals
+            if (sumTypes.contains("totals")) {
+                formGroupBlock("Всего по компании", sheet, summary.avgData(), counter, null,
+                        styles.get("totals").get("integer"),
+                        styles.get("totals").get("string"),
+                        styles.get("totals").get("threeDigits"),
+                        styles.get("totals").get("twoDigits"));
+            }
+
+            log.debug("Standard report totals set.");
+
+            // autosize columns
+            IntStream.rangeClosed(0, allSsfcsColumns.length - 1).forEach(sheet::autoSizeColumn);
+
+            log.debug("Standard report columns autosized.");
+
+            // set title (first cell is too wide if before)
+            Row titleRow = sheet.createRow(0);
+            createCell(titleRow, 0, "Нормативные удельные расходы топлива на единицу " +
+                            "отпущенной тепловой энергии источниками ПАО \"МОЭК\"", //todo тут изменил
+                    styles.get("base").get("title"));
+
+            log.debug("Standard report title set.");
+
+
+            // freeze rows and columns
+            sheet.createFreezePane(0, 2);
+
+            log.debug("Standard report columns and rows frozen.");
+
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            wb.write(out);
+            resource = new ByteArrayResource(out.toByteArray());
+
+        } catch (
+                IOException e) {
+            throw new ReportIOException("Ошибка формирования отчета",
+                    "НУР в стандартном формате");
+        }
 
         return resource;
     }
@@ -621,7 +709,7 @@ public class ReportServiceImpl implements ReportService {
         };
 
         List<SsfcsDTO> ssfcDTOs = ssfcs.stream()
-                .collect(Collectors.groupingBy(ssfc ->
+                .collect(groupingBy(ssfc ->
                         new SrcIdAndFuelType(ssfc.getProperties().getId().getSource().getId(),
                                 ssfc.getFuelType())))
                 .values()
@@ -815,7 +903,7 @@ public class ReportServiceImpl implements ReportService {
             // set title (first cell is too wide if before)
             Row titleRow = sheet.createRow(0);
             createCell(titleRow, 0, String.format("Нормативные удельные расходы топлива на единицу " +
-                            "отпущенной тепловой энергии источников ПАО \"МОЭК\" на %s год", year),
+                            "отпущенной тепловой энергии источниками ПАО \"МОЭК\" на %s год", year),
                     styles.get("base").get("title"));
 
             log.debug("Standard report title set.");
@@ -878,7 +966,7 @@ public class ReportServiceImpl implements ReportService {
         } else if (srcsIncluded) {
             summary.getAllSsfcs()
                     .stream()
-                    .collect(Collectors.groupingBy(ssfc -> ssfc.getProperties().getId()
+                    .collect(groupingBy(ssfc -> ssfc.getProperties().getId()
                             .getSource().getId()))
                     .values().stream()
                     .sorted(Comparator.comparing(ssfcs -> ssfcs.getFirst().getProperties().getId().getYear()))
