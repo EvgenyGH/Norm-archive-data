@@ -38,17 +38,23 @@ public class StandardSFCRepositoryExtraImpl implements StandardSFCRepositoryExtr
                     .get("id").get("year"), period.getKey());
 
             if (period.getValue().contains(0)) {
-                predicates.add(yearInRange);
+                if (ids.isEmpty()) {
+                    predicates.add(yearInRange);
+                } else {
+                    Predicate srcInRange = itemRoot.get("properties").get("id")
+                            .get("source").get("id").in(ids);
+                    predicates.add(criteriaBuilder.and(yearInRange, srcInRange));
+                }
             } else {
                 Predicate monthInRange = itemRoot.get("month")
                         .in(period.getValue().toArray(new Integer[0]));
 
                 if (ids.isEmpty()) {
+                    predicates.add(criteriaBuilder.and(yearInRange, monthInRange));
+                } else {
                     Predicate srcInRange = itemRoot.get("properties").get("id")
                             .get("source").get("id").in(ids);
                     predicates.add(criteriaBuilder.and(yearInRange, monthInRange, srcInRange));
-                } else {
-                    predicates.add(criteriaBuilder.and(yearInRange, monthInRange));
                 }
             }
         }
