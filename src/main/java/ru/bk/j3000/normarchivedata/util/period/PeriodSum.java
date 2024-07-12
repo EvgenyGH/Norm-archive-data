@@ -6,7 +6,7 @@ public interface PeriodSum {
 
     String getName();
 
-    Double[][] getAvgData();
+    double[][] getAvgData();
 
     void setPeriods(List<PeriodSum> periods);
 

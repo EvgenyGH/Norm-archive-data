@@ -43,7 +43,7 @@ public abstract class PeriodSumBase implements PeriodSum {
     private List<PeriodSum> periods;
 
     @Getter
-    protected Double[][] avgData;
+    protected double[][] avgData;
 
     @Getter
     private final String name;
@@ -52,8 +52,8 @@ public abstract class PeriodSumBase implements PeriodSum {
         this.name = name;
     }
 
-    private Double[][] calcAvgData() {
-        var avgData = new Double[21][this.periods.size() + 1];
+    private double[][] calcAvgData() {
+        var avgData = new double[21][this.periods.size() + 1];
 
         periods.forEach(period -> {
             var periodData = period.getAvgData();

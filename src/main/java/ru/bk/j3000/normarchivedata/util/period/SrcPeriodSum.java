@@ -74,10 +74,11 @@ public class SrcPeriodSum extends PeriodSumBase {
         setPeriods(Collections.emptyList());
     }
 
-    private Double[][] formAvgData(List<StandardSFC> ssfcs, List<YearMonth> yearMonths) {
-        var avgData = new Double[21][yearMonths.size() + 1];
+    private double[][] formAvgData(List<StandardSFC> ssfcs, List<YearMonth> yearMonths) {
+        var avgData = new double[21][yearMonths.size() + 1];
 
-        IntStream.rangeClosed(0, yearMonths.size())
+
+        IntStream.rangeClosed(0, yearMonths.size() - 1)
                 .forEach(i -> {
                             List<StandardSFC> periodSsfcs = ssfcs.stream()
                                     .filter(ssfc -> ssfc.getProperties().getId()
