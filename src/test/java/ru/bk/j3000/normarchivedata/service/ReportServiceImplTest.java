@@ -7,9 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
-import ru.bk.j3000.normarchivedata.util.period.SrcPeriod;
 
-import java.util.Arrays;
 import java.util.UUID;
 
 
@@ -25,10 +23,5 @@ public class ReportServiceImplTest {
     public void test() {
         var ssfcs = service.findAllSsfcByYearAndSrcId(2024,
                 UUID.fromString("46fafaef-cc8d-4cf1-b490-bd475c71a0e3"));
-
-        SrcPeriod p = new SrcPeriod(ssfcs);
-
-        System.out.println(Arrays.toString(p.getAvgData()));
-        System.out.println(p);
     }
 }
