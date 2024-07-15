@@ -7,8 +7,8 @@ import java.util.stream.Collectors;
 public class BranchPeriodSum extends PeriodSumBase {
     public BranchPeriodSum(List<SrcPeriodSum> periods) {
         super("sources");
-        setPeriods(formPeriods(periods));
-
+        this.periods = formPeriods(periods);
+        calcAvgData();
     }
 
     private List<PeriodSum> formPeriods(List<SrcPeriodSum> periods) {

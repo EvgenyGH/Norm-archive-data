@@ -27,9 +27,16 @@ public class ReportServiceImplTest {
     public void test() {
         var ssfcs = service.findAllSsfcByYearAndSrcId(2024,
                 UUID.fromString("46fafaef-cc8d-4cf1-b490-bd475c71a0e3"));
-        var sum = new SrcPeriodSum(ssfcs, IntStream.rangeClosed(1, 13)
+        var sum = new SrcPeriodSum(ssfcs, IntStream.rangeClosed(0, 1)
                 .mapToObj(i -> new YearMonth(2024, i)).toList());
 
-        System.out.println(Arrays.deepToString(sum.getAvgData()));
+        IntStream.range(0, sum.getAvgData().length).forEach(i -> {
+            System.out.println(Arrays.toString(sum.getAvgData()[i]));
+        });
+    }
+
+    @Test
+    public void test2() {
+        System.out.println(new YearMonth(12, 25));
     }
 }

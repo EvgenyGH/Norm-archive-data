@@ -8,7 +8,8 @@ public class TzBranchPeriodSum extends PeriodSumBase {
 
     public TzBranchPeriodSum(List<SrcPeriodSum> periods) {
         super("branches");
-        setPeriods(formPeriods(periods));
+        this.periods = formPeriods(periods);
+        calcAvgData();
     }
 
     private List<PeriodSum> formPeriods(List<SrcPeriodSum> periods) {

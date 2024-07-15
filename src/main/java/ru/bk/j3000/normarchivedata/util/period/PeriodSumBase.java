@@ -40,7 +40,7 @@ import java.util.stream.IntStream;
  *  -----------------------------------------------------------
  * */
 public abstract class PeriodSumBase implements PeriodSum {
-    private List<PeriodSum> periods;
+    protected List<PeriodSum> periods;
 
     @Getter
     protected double[][] avgData;
@@ -52,7 +52,7 @@ public abstract class PeriodSumBase implements PeriodSum {
         this.name = name;
     }
 
-    private double[][] calcAvgData() {
+    protected double[][] calcAvgData() {
         var avgData = new double[21][this.periods.size() + 1];
 
         periods.forEach(period -> {
@@ -81,12 +81,6 @@ public abstract class PeriodSumBase implements PeriodSum {
         });
 
         return avgData;
-    }
-
-    @Override
-    public void setPeriods(List<PeriodSum> periods) {
-        this.periods = periods;
-        this.avgData = calcAvgData();
     }
 
     @Override
