@@ -18,6 +18,7 @@ import ru.bk.j3000.normarchivedata.model.*;
 import ru.bk.j3000.normarchivedata.model.dto.SsfcShortDTO;
 import ru.bk.j3000.normarchivedata.model.dto.SsfcsDTO;
 import ru.bk.j3000.normarchivedata.util.Counter;
+import ru.bk.j3000.normarchivedata.util.period.*;
 import ru.bk.j3000.normarchivedata.util.ssfcsum.*;
 
 import java.io.ByteArrayOutputStream;
@@ -26,7 +27,7 @@ import java.security.InvalidParameterException;
 import java.util.*;
 import java.util.stream.IntStream;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.groupingBy;
 import static org.apache.poi.ss.util.CellUtil.createCell;
 
 @Service
@@ -151,129 +152,6 @@ public class ReportServiceImpl implements ReportService {
         log.info("Ssfc report formed. Type {}", type);
 
         return resource;
-    }
-
-    private Resource getSsfcPeriodReport(String selection, List<UUID> srcIds,
-                                         List<String> sumTypes, List<String> periodsStr) {
-        //todo
-        Map<Integer, List<Integer>> periods = periodsStr.stream()
-                .collect(groupingBy(str -> Integer.parseInt(str.substring(0, 4)),
-                        mapping(str -> Integer.parseInt(str.split("\\.")[1]),
-                                toList())));
-
-        String[] columnNames = getColumnNames(periods);
-
-        Resource resource;
-
-        List<StandardSFC> ssfcs = switch (selection) {
-            case "all" -> ssfcService.findAllSsfcByPeriods(periods);
-            case "particular" -> ssfcService.findAllSsfcByPeriodsAndSrcIds(periods, srcIds);
-            default -> throw new InvalidParameterException(String
-                    .format("Invalid ssfc report type <%s>", selection));
-        };
-
-        SsfcSummary summary;
-
-        if (sumTypes.contains("branch") && !sumTypes.contains("tz")) {
-            summary = new SsfcSumBranch(ssfcs);
-        } else {
-            summary = new SsfcSumTZBranch(ssfcs);
-        }
-
-        try (Workbook wb = new XSSFWorkbook()) {
-            Sheet sheet = wb.createSheet("Ssfcs");
-
-            Map<String, Map<String, CellStyle>> styles = getStyles(wb);
-
-            // set headers
-            Row headerRow = sheet.createRow(1);
-            IntStream.rangeClosed(0, allSsfcsColumns.length - 1)
-                    .forEach(i -> createCell(headerRow, i, allSsfcsColumns[i],
-                            styles.get("base").get("header primary")));
-
-            log.debug("Standard report headers set.");
-
-            // set data and merge cells
-            Counter counter = new Counter(2);
-            Counter number = new Counter(1);
-
-            summary.getSubSsfcs().forEach(sum -> this.formStandardSsfcBlock(sheet, sum, counter,
-                    number, styles, sumTypes)
-            );
-
-            log.debug("Standard report data set.");
-
-            // set totals
-            if (sumTypes.contains("totals")) {
-                formGroupBlock("Всего по компании", sheet, summary.avgData(), counter, null,
-                        styles.get("totals").get("integer"),
-                        styles.get("totals").get("string"),
-                        styles.get("totals").get("threeDigits"),
-                        styles.get("totals").get("twoDigits"));
-            }
-
-            log.debug("Standard report totals set.");
-
-            // autosize columns
-            IntStream.rangeClosed(0, allSsfcsColumns.length - 1).forEach(sheet::autoSizeColumn);
-
-            log.debug("Standard report columns autosized.");
-
-            // set title (first cell is too wide if before)
-            Row titleRow = sheet.createRow(0);
-            createCell(titleRow, 0, "Нормативные удельные расходы топлива на единицу " +
-                            "отпущенной тепловой энергии источниками ПАО \"МОЭК\"", //todo тут изменил
-                    styles.get("base").get("title"));
-
-            log.debug("Standard report title set.");
-
-
-            // freeze rows and columns
-            sheet.createFreezePane(0, 2);
-
-            log.debug("Standard report columns and rows frozen.");
-
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            wb.write(out);
-            resource = new ByteArrayResource(out.toByteArray());
-
-        } catch (
-                IOException e) {
-            throw new ReportIOException("Ошибка формирования отчета",
-                    "НУР в стандартном формате");
-        }
-
-        return resource;
-    }
-
-    private String[] getColumnNames(Map<Integer, List<Integer>> periods) {
-        ArrayList<String> columns = new ArrayList<String>(
-                List.of("№ п/п",
-                        "Наименование источника тепловой энергии",
-                        "Вид топлива", "Наименование показателя",
-                        "Единицы измерения", "Итого")
-        );
-
-        String[] monthNames = {"Январь", "Февраль", "Март", "Апрель",
-                "Май", "Июнь", "Июль", "Август", "Сентябрь",
-                "Октябрь", "Ноябрь", "Декабрь"};
-
-        for (var yearPeriod : periods.entrySet().stream().sorted().toList()) {
-            int year = yearPeriod.getKey();
-            List<Integer> months = yearPeriod.getValue();
-            months.forEach(month -> {
-                if (month.equals(0)) {
-                    columns.add(String.format("%s год", year));
-                } else {
-                    columns.add(String.format("%s %s", monthNames[month - 1], year));
-                }
-            });
-        }
-
-        log.info("Column names for ssfc report (periods) formed: {}", columns); //todo remove
-        log.info("Column names for ssfc report (periods) formed. {} in total", columns.size());
-
-        return columns.toArray(new String[0]);
     }
 
     @Override
@@ -1492,5 +1370,294 @@ public class ReportServiceImpl implements ReportService {
         font.setColor(IndexedColors.BLACK.getIndex());
 
         return font;
+    }
+
+    private Resource getSsfcPeriodReport(String selection, List<UUID> srcIds,
+                                         List<String> sumTypes, List<String> periodsStr) {
+
+        List<YearMonth> yearMonths = periodsStr.stream().map(str -> {
+                    String[] period = str.split("\\.");
+                    return new YearMonth(Integer.parseInt(period[0]), Integer.parseInt(period[1]));
+                })
+                .toList();
+
+        String[] columnNames = getColumnNames(yearMonths);
+
+        Resource resource;
+
+        List<StandardSFC> ssfcs = switch (selection) {
+            case "all" -> ssfcService.findAllSsfcByPeriods(yearMonths);
+            case "particular" -> ssfcService.findAllSsfcByPeriodsAndSrcIds(yearMonths, srcIds);
+            default -> throw new InvalidParameterException(String
+                    .format("Invalid ssfc report (period) type <%s>", selection));
+        };
+
+        // summary;
+        PeriodSum periodSum;
+
+        if (sumTypes.contains("branch") && !sumTypes.contains("tz")) {
+            periodSum = new BranchPeriodSum(ssfcs, yearMonths);
+        } else {
+            periodSum = new TzBranchPeriodSum(ssfcs, yearMonths);
+        }
+
+        try (Workbook wb = new XSSFWorkbook()) {
+            Sheet sheet = wb.createSheet("Ssfcs");
+
+            Map<String, Map<String, CellStyle>> styles = getStyles(wb);
+
+            // set headers
+            Row headerRow = sheet.createRow(1);
+            IntStream.range(0, columnNames.length)
+                    .forEach(i -> createCell(headerRow, i, columnNames[i],
+                            styles.get("base").get("header primary")));
+
+            log.debug("Standard report (period) headers set.");
+
+            // set data and merge cells
+            Counter counter = new Counter(2);
+            Counter number = new Counter(1);
+
+            periodSum.getPeriods().forEach(sum -> this.formStandardSsfcBlockPeriod(sheet, sum, counter,
+                    number, styles, sumTypes, columnNames)
+            );
+
+            log.debug("Standard report (period) data set.");
+
+            // set totals
+            if (sumTypes.contains("totals")) {
+                formGroupBlockPeriod("Всего по компании", sheet, periodSum.getAvgData(),
+                        counter, null,
+                        styles.get("totals").get("integer"),
+                        styles.get("totals").get("string"),
+                        styles.get("totals").get("threeDigits"),
+                        styles.get("totals").get("twoDigits"));
+            }
+
+            log.debug("Standard report (period) totals set.");
+
+            // autosize columns
+            IntStream.rangeClosed(0, columnNames.length - 1).forEach(sheet::autoSizeColumn);
+
+            log.debug("Standard report (period) columns autosized.");
+
+            // set title (first cell is too wide if before)
+            Row titleRow = sheet.createRow(0);
+            createCell(titleRow, 0, "Нормативные удельные расходы топлива на единицу " +
+                            "отпущенной тепловой энергии источниками ПАО \"МОЭК\"",
+                    styles.get("base").get("title"));
+
+            log.debug("Standard report (period) title set.");
+
+            // freeze rows and columns
+            sheet.createFreezePane(0, 2);
+
+            log.debug("Standard report (period) columns and rows frozen.");
+
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            wb.write(out);
+            resource = new ByteArrayResource(out.toByteArray());
+
+        } catch (
+                IOException e) {
+            throw new ReportIOException("Ошибка формирования отчета",
+                    "НУР в стандартном формате (за период)");
+        }
+
+        return resource;
+    }
+
+    private void formStandardSsfcBlockPeriod(Sheet sheet, PeriodSum periodSum, Counter counter, Counter number,
+                                             Map<String, Map<String, CellStyle>> styles,
+                                             List<String> sumTypes, String[] columnNames) {
+        boolean srcsIncluded = !sumTypes.contains("sumsOnly");
+
+        log.debug("Standard report ssfcBlock started for {}. Row {}",
+                periodSum.getName(), counter.getCounter());
+
+        // select group
+        String group = selectGroupPeriod(periodSum.getClass().getSimpleName());
+
+        // set group header
+        if (sumTypes.contains(group) && srcsIncluded) {
+            Row row = sheet.createRow(counter.incrementAndGet());
+            IntStream.range(0, columnNames.length).forEach(i -> row.createCell(i)
+                    .setCellStyle(styles.get(group + " no borders").get("string")));
+            styleTopBottomDoubleBorder(sheet, row.getRowNum(), row.getRowNum(),
+                    0, columnNames.length - 1);
+            row.getCell(1).setCellValue(periodSum.getName());
+        }
+
+        // set data
+        if (periodSum.hasSubs()) {
+            periodSum.getPeriods().forEach(period -> this.formStandardSsfcBlockPeriod(sheet, period, counter,
+                    number, styles, sumTypes, columnNames));
+        } else if (srcsIncluded) {
+            formGroupBlockPeriod(((SrcPeriodSum) periodSum).getSrcName(), sheet, periodSum.getAvgData(),
+                    counter, number,
+                    styles.get("base").get("integer"),
+                    styles.get("base").get("string"),
+                    styles.get("base").get("threeDigits"),
+                    styles.get("base").get("twoDigits"));
+        }
+
+        log.debug("Standard report sum footer started for {}. Row {}",
+                periodSum.getName(), counter.getCounter());
+
+        // set footer sums
+        if (sumTypes.contains(group)) {
+            formGroupBlockPeriod(periodSum.getName(), sheet, periodSum.getAvgData(), counter, null,
+                    styles.get(group).get("integer"),
+                    styles.get(group).get("string"),
+                    styles.get(group).get("threeDigits"),
+                    styles.get(group).get("twoDigits"));
+        }
+    }
+
+    private String selectGroupPeriod(String className) {
+        String group;
+
+        if (className.equals(BranchPeriodSum.class.getSimpleName())) {
+            group = "tz";
+        } else if (className.equals(SrcPeriodSum.class.getSimpleName())) {
+            group = "base";
+        } else {
+            group = "branch";
+        }
+
+        return group;
+    }
+
+
+    private String[] getColumnNames(List<YearMonth> yearMonths) {
+        ArrayList<String> columns = new ArrayList<String>(
+                List.of("№ п/п",
+                        "Наименование источника тепловой энергии",
+                        "Вид топлива", "Наименование показателя",
+                        "Единицы измерения", "Итого")
+        );
+
+        String[] monthNames = {"Год", "Январь", "Февраль", "Март", "Апрель",
+                "Май", "Июнь", "Июль", "Август", "Сентябрь",
+                "Октябрь", "Ноябрь", "Декабрь"};
+
+        yearMonths.forEach(ym -> {
+            columns.add(String.format("%s %s", monthNames[ym.month()], ym.year()));
+        });
+
+        log.info("Column names for ssfc report (periods) formed. {} in total", columns.size());
+
+        return columns.toArray(new String[0]);
+    }
+
+    private void formGroupBlockPeriod(String name, Sheet sheet, double[][] avgData,
+                                      Counter counter, Counter number,
+                                      CellStyle integerStyle, CellStyle stringStyle,
+                                      CellStyle threeDigitsStyle, CellStyle twoDigitsStyle) {
+
+        if (avgData[1][avgData[0].length - 1] == 0) {
+            formGroupDataPeriod(name, sheet, avgData, FUEL_TYPE.DIESEL.getName(),
+                    counter, number, integerStyle, stringStyle, threeDigitsStyle,
+                    twoDigitsStyle, 2);
+        } else if (avgData[2][avgData[0].length - 1] == 0) {
+            formGroupDataPeriod(name, sheet, avgData, FUEL_TYPE.GAS.getName(),
+                    counter, number, integerStyle, stringStyle, threeDigitsStyle,
+                    twoDigitsStyle, 1);
+        } else {
+            formGroupDataPeriod(String.format("%s (газ + дизель)", name), sheet, avgData,
+                    "газ + дизель", counter, number, integerStyle, stringStyle,
+                    threeDigitsStyle, twoDigitsStyle, 0);
+            formGroupDataPeriod(String.format("%s (газ)", name), sheet, avgData,
+                    FUEL_TYPE.GAS.getName(), counter, number, integerStyle, stringStyle,
+                    threeDigitsStyle, twoDigitsStyle, 1);
+            formGroupDataPeriod(String.format("%s (дизель)", name), sheet, avgData,
+                    FUEL_TYPE.DIESEL.getName(), counter, number, integerStyle, stringStyle,
+                    threeDigitsStyle, twoDigitsStyle, 2);
+        }
+    }
+
+    private void formGroupDataPeriod(String name, Sheet sheet, double[][] avgData, String fuelType,
+                                     Counter counter, Counter number,
+                                     CellStyle integerStyle, CellStyle stringStyle,
+                                     CellStyle threeDigitsStyle, CellStyle twoDigitsStyle,
+                                     Integer indexAddition) {
+
+        log.debug("Standard report (period) sum group data started for {}. Row {}",
+                name, counter.getCounter());
+
+        // create rows
+        IntStream.rangeClosed(counter.getCounter(),
+                        counter.getCounter() + ssfcRows.length)
+                .forEach(sheet::createRow);
+
+        // merge cells
+        IntStream.of(0, 1, 2).forEach(col -> {
+            var range = new CellRangeAddress(counter.getCounter(),
+                    counter.getCounter() + ssfcRows.length - 1,
+                    col, col);
+            sheet.addMergedRegion(range);
+            RegionUtil.setBorderLeft(BorderStyle.THIN, range, sheet);
+            RegionUtil.setBorderRight(BorderStyle.THIN, range, sheet);
+        });
+
+        // set data to merged cells
+        Row currentRow = sheet.getRow(counter.getCounter());
+        Cell cell = currentRow.createCell(0);
+        if (Objects.isNull(number)) {
+            createCell(currentRow, 0, "Итого", stringStyle);
+        } else {
+            cell.setCellValue(number.incrementAndGet());
+            cell.setCellStyle(integerStyle);
+        }
+
+        createCell(currentRow, 1, name, stringStyle);
+        createCell(currentRow, 2, fuelType, stringStyle);
+
+        // set ssfc data row names and units
+        IntStream.range(0, ssfcRows.length).forEach(i -> {
+            createCell(sheet.getRow(counter.getCounter() + i), 3,
+                    ssfcRows[i], stringStyle);
+            createCell(sheet.getRow(counter.getCounter() + i), 4,
+                    ssfcUnits[i], stringStyle);
+        });
+
+        // set ssfc data
+        IntStream.range(0, avgData[0].length - 1).forEach(i ->
+                setSsfcMonthDataCellsStd(sheet,
+                        counter.getCounter(),
+                        6 + i, // data set in 6 - 17 cells
+                        avgData[0 + indexAddition][i],
+                        avgData[3 + indexAddition][i],
+                        avgData[6 + indexAddition][i],
+                        avgData[9 + indexAddition][i],
+                        avgData[12 + indexAddition][i],
+                        avgData[15 + indexAddition][i],
+                        threeDigitsStyle,
+                        twoDigitsStyle));
+
+        // set source summary data
+        setSsfcMonthDataCellsStd(sheet,
+                counter.getCounter(),
+                5,
+                avgData[0 + indexAddition][avgData[0].length - 1],
+                avgData[3 + indexAddition][avgData[0].length - 1],
+                avgData[6 + indexAddition][avgData[0].length - 1],
+                avgData[9 + indexAddition][avgData[0].length - 1],
+                avgData[12 + indexAddition][avgData[0].length - 1],
+                avgData[15 + indexAddition][avgData[0].length - 1],
+                threeDigitsStyle,
+                twoDigitsStyle);
+
+        // set top and bottom double borders
+        styleTopBottomDoubleBorder(sheet, counter.getCounter(),
+                counter.getCounter() + ssfcRows.length - 1,
+                0, avgData[0].length + 4); // базовые колонки 6,
+        // периоды(без суммарных данных) avgData[0].length - 1, (-1) для индекса
+        // todo indexes
+
+        counter.increment(ssfcRows.length);
+
+        log.debug("Standard report (period) sum group data set for {}. Row {}",
+                name, counter.getCounter());
     }
 }

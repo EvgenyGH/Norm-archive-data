@@ -6,9 +6,9 @@ import ru.bk.j3000.normarchivedata.model.FUEL_TYPE;
 import ru.bk.j3000.normarchivedata.model.Source;
 import ru.bk.j3000.normarchivedata.model.StandardSFC;
 import ru.bk.j3000.normarchivedata.model.dto.SsfcsDTO;
+import ru.bk.j3000.normarchivedata.util.period.YearMonth;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 public interface StandardSFCService {
@@ -40,7 +40,7 @@ public interface StandardSFCService {
 
     List<StandardSFC> findAllSsfcByYearAndSrcIds(Integer year, List<UUID> srcIds);
 
-    List<StandardSFC> findAllSsfcByPeriods(Map<Integer, List<Integer>> periods);
+    List<StandardSFC> findAllSsfcByPeriods(List<YearMonth> yearMonths);
 
-    List<StandardSFC> findAllSsfcByPeriodsAndSrcIds(Map<Integer, List<Integer>> periods, List<UUID> srcIds);
+    List<StandardSFC> findAllSsfcByPeriodsAndSrcIds(List<YearMonth> yearMonths, List<UUID> srcIds);
 }

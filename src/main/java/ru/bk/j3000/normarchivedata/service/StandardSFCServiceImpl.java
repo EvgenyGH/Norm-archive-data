@@ -24,6 +24,7 @@ import ru.bk.j3000.normarchivedata.exception.SsfcDataNotValidException;
 import ru.bk.j3000.normarchivedata.model.*;
 import ru.bk.j3000.normarchivedata.model.dto.SsfcsDTO;
 import ru.bk.j3000.normarchivedata.repository.StandardSFCRepository;
+import ru.bk.j3000.normarchivedata.util.period.YearMonth;
 
 import java.io.IOException;
 import java.util.*;
@@ -392,16 +393,16 @@ public class StandardSFCServiceImpl implements StandardSFCService {
     }
 
     @Override
-    public List<StandardSFC> findAllSsfcByPeriods(Map<Integer, List<Integer>> periods) {
-        return ssfcRepository.findAllSsfcByPeriods(periods, List.of());
+    public List<StandardSFC> findAllSsfcByPeriods(List<YearMonth> yearMonths) {
+        return ssfcRepository.findAllSsfcByPeriods(yearMonths, List.of());
     }
 
     @Override
-    public List<StandardSFC> findAllSsfcByPeriodsAndSrcIds(Map<Integer, List<Integer>> periods, List<UUID> srcIds) {
-        List<StandardSFC> ssfcs = ssfcRepository.findAllSsfcByPeriods(periods, srcIds);
+    public List<StandardSFC> findAllSsfcByPeriodsAndSrcIds(List<YearMonth> yearMonths, List<UUID> srcIds) {
+        List<StandardSFC> ssfcs = ssfcRepository.findAllSsfcByPeriods(yearMonths, srcIds);
 
         log.info("Found {} ssfcs for {} period(s) and {} source(s).", ssfcs.size(),
-                periods.size(), srcIds.size());
+                yearMonths.size(), srcIds.size());
 
         return ssfcs;
     }

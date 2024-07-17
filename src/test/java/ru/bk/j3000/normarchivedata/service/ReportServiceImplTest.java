@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
-import ru.bk.j3000.normarchivedata.util.period.SrcPeriodSum;
+import ru.bk.j3000.normarchivedata.util.period.TzBranchPeriodSum;
 import ru.bk.j3000.normarchivedata.util.period.YearMonth;
 
 import java.util.Arrays;
@@ -27,7 +27,7 @@ public class ReportServiceImplTest {
     public void test() {
         var ssfcs = service.findAllSsfcByYearAndSrcId(2024,
                 UUID.fromString("46fafaef-cc8d-4cf1-b490-bd475c71a0e3"));
-        var sum = new SrcPeriodSum(ssfcs, IntStream.rangeClosed(0, 1)
+        var sum = new TzBranchPeriodSum(ssfcs, IntStream.rangeClosed(0, 1)
                 .mapToObj(i -> new YearMonth(2024, i)).toList());
 
         IntStream.range(0, sum.getAvgData().length).forEach(i -> {

@@ -8,11 +8,15 @@ import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.bk.j3000.normarchivedata.model.StandardSFC;
+import ru.bk.j3000.normarchivedata.util.period.YearMonth;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -20,11 +24,15 @@ public class StandardSFCRepositoryExtraImpl implements StandardSFCRepositoryExtr
     private final EntityManager entityManager;
 
     @Override
-    public List<StandardSFC> findAllSsfcByPeriods(Map<Integer, List<Integer>> periods, List<UUID> ids) {
+    public List<StandardSFC> findAllSsfcByPeriods(List<YearMonth> yearMonths, List<UUID> ids) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<StandardSFC> query = criteriaBuilder.createQuery(StandardSFC.class);
         Root<StandardSFC> itemRoot = query.from(StandardSFC.class);
         List<Predicate> predicates = new LinkedList<>();
+
+        Map<Integer, List<Integer>> periods = yearMonths.stream()
+                .collect(Collectors.groupingBy(YearMonth::year,
+                        Collectors.mapping(YearMonth::month, toList())));
 
         for (var period : periods.entrySet()) {
             Predicate yearInRange = criteriaBuilder.equal(itemRoot.get("properties")
