@@ -65,6 +65,10 @@ public class ReportServiceImpl implements ReportService {
             "Май", "Июнь", "Июль", "Август", "Сентябрь",
             "Октябрь", "Ноябрь", "Декабрь"};
 
+    private final List<String> allSsfcsPeriodBaseColumns = new ArrayList<>(List.of("№ п/п",
+            "Наименование источника тепловой энергии", "Вид топлива", "Наименование показателя",
+            "Единицы измерения", "Итого"));
+
     private final String[] ssfcRows = {"Выработка тепловой энергии",
             "Тепловая энергия на собственные нужды",
             "Тепловая энергия на собственные нужды",
@@ -72,7 +76,9 @@ public class ReportServiceImpl implements ReportService {
             "УРУТ на выработку тепловой энергии",
             "УРУТ на отпуск тепловой энергии"};
 
-    private final String[] ssfcUnits = {"тыс. Гкал", "тыс. Гкал", "%", "тыс. Гкал", "кг у.т./Гкал", "кг у.т./Гкал"};
+    private final String[] ssfcUnits = {"тыс. Гкал", "тыс. Гкал", "%", "тыс. Гкал",
+            "кг у.т./Гкал", "кг у.т./Гкал"};
+
 
     // services
     private final SourceService sourceService;
@@ -1472,7 +1478,7 @@ public class ReportServiceImpl implements ReportService {
                                              List<String> sumTypes, String[] columnNames) {
         boolean srcsIncluded = !sumTypes.contains("sumsOnly");
 
-        log.debug("Standard report ssfcBlock started for {}. Row {}",
+        log.debug("Standard report (period) ssfcBlock started for {}. Row {}",
                 periodSum.getName(), counter.getCounter());
 
         // select group
@@ -1501,7 +1507,7 @@ public class ReportServiceImpl implements ReportService {
                     styles.get("base").get("twoDigits"));
         }
 
-        log.debug("Standard report sum footer started for {}. Row {}",
+        log.debug("Standard report (period) sum footer started for {}. Row {}",
                 periodSum.getName(), counter.getCounter());
 
         // set footer sums
@@ -1530,12 +1536,7 @@ public class ReportServiceImpl implements ReportService {
 
 
     private String[] getColumnNames(List<YearMonth> yearMonths) {
-        ArrayList<String> columns = new ArrayList<String>(
-                List.of("№ п/п",
-                        "Наименование источника тепловой энергии",
-                        "Вид топлива", "Наименование показателя",
-                        "Единицы измерения", "Итого")
-        );
+        ArrayList<String> columns = new ArrayList<String>(allSsfcsPeriodBaseColumns);
 
         String[] monthNames = {"Год", "Январь", "Февраль", "Март", "Апрель",
                 "Май", "Июнь", "Июль", "Август", "Сентябрь",
@@ -1649,11 +1650,11 @@ public class ReportServiceImpl implements ReportService {
                 twoDigitsStyle);
 
         // set top and bottom double borders
+        // Базовые колонки allSsfcsPeriodBaseColumns + периоды (без суммарных данных) avgData[0].length - 1 и
+        // (-1) для индекса
         styleTopBottomDoubleBorder(sheet, counter.getCounter(),
                 counter.getCounter() + ssfcRows.length - 1,
-                0, avgData[0].length + 4); // базовые колонки 6,
-        // периоды(без суммарных данных) avgData[0].length - 1, (-1) для индекса
-        // todo indexes
+                0, avgData[0].length + allSsfcsPeriodBaseColumns.size() - 2);
 
         counter.increment(ssfcRows.length);
 
