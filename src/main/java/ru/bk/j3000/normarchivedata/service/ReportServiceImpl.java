@@ -1396,7 +1396,7 @@ public class ReportServiceImpl implements ReportService {
         PeriodSum periodSum;
 
         if (sumTypes.contains("branch") && !sumTypes.contains("tz")) {
-            periodSum = new BranchPeriodSum(ssfcs, yearMonths);
+            periodSum = new TzPeriodSum(ssfcs, yearMonths);
         } else {
             periodSum = new TzBranchPeriodSum(ssfcs, yearMonths);
         }
@@ -1517,7 +1517,7 @@ public class ReportServiceImpl implements ReportService {
     private String selectGroupPeriod(String className) {
         String group;
 
-        if (className.equals(BranchPeriodSum.class.getSimpleName())) {
+        if (className.equals(TzPeriodSum.class.getSimpleName())) {
             group = "tz";
         } else if (className.equals(SrcPeriodSum.class.getSimpleName())) {
             group = "base";
