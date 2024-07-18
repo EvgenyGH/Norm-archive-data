@@ -1402,7 +1402,11 @@ public class ReportServiceImpl implements ReportService {
         PeriodSum periodSum;
 
         if (sumTypes.contains("branch") && !sumTypes.contains("tz")) {
-            periodSum = new TzPeriodSum(ssfcs, yearMonths);
+            periodSum = new BranchOnlyPeriodSum(ssfcs, yearMonths); //todo
+        } else if (!sumTypes.contains("branch") && sumTypes.contains("tz")) {
+            periodSum = new TzOnlyPeriodSumBase(ssfcs, yearMonths); //todo
+        } else if (!sumTypes.contains("branch") && !sumTypes.contains("tz")) {
+            periodSum = new SrcOnlyPeriodSum(ssfcs, yearMonths); //todo
         } else {
             periodSum = new TzBranchPeriodSum(ssfcs, yearMonths);
         }
@@ -1523,7 +1527,8 @@ public class ReportServiceImpl implements ReportService {
     private String selectGroupPeriod(String className) {
         String group;
 
-        if (className.equals(TzPeriodSum.class.getSimpleName())) {
+        if (className.equals(TzPeriodSum.class.getSimpleName())
+                || className.equals(TzOnlyPeriodSum.class.getSimpleName())) {
             group = "tz";
         } else if (className.equals(SrcPeriodSum.class.getSimpleName())) {
             group = "base";
