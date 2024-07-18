@@ -1387,7 +1387,8 @@ public class ReportServiceImpl implements ReportService {
                 })
                 .toList();
 
-        String[] columnNames = getColumnNames(yearMonths);
+        boolean isSumsLine = sumTypes.contains("sumsLine");
+        String[] columnNames = getColumnNames(yearMonths, isSumsLine);
 
         Resource resource;
 
@@ -1402,11 +1403,11 @@ public class ReportServiceImpl implements ReportService {
         PeriodSum periodSum;
 
         if (sumTypes.contains("branch") && !sumTypes.contains("tz")) {
-            periodSum = new BranchOnlyPeriodSum(ssfcs, yearMonths); //todo
+            periodSum = new BranchOnlyPeriodSum(ssfcs, yearMonths);
         } else if (!sumTypes.contains("branch") && sumTypes.contains("tz")) {
-            periodSum = new TzOnlyPeriodSumBase(ssfcs, yearMonths); //todo
+            periodSum = new TzOnlyPeriodSumBase(ssfcs, yearMonths);
         } else if (!sumTypes.contains("branch") && !sumTypes.contains("tz")) {
-            periodSum = new SrcOnlyPeriodSum(ssfcs, yearMonths); //todo
+            periodSum = new SrcOnlyPeriodSum(ssfcs, yearMonths);
         } else {
             periodSum = new TzBranchPeriodSum(ssfcs, yearMonths);
         }
@@ -1429,7 +1430,7 @@ public class ReportServiceImpl implements ReportService {
             Counter number = new Counter(1);
 
             periodSum.getPeriods().forEach(sum -> this.formStandardSsfcBlockPeriod(sheet, sum, counter,
-                    number, styles, sumTypes, columnNames)
+                    number, styles, sumTypes, columnNames, isSumsLine)
             );
 
             log.debug("Standard report (period) data set.");
@@ -1441,7 +1442,8 @@ public class ReportServiceImpl implements ReportService {
                         styles.get("totals").get("integer"),
                         styles.get("totals").get("string"),
                         styles.get("totals").get("threeDigits"),
-                        styles.get("totals").get("twoDigits"));
+                        styles.get("totals").get("twoDigits"),
+                        isSumsLine);
             }
 
             log.debug("Standard report (period) totals set.");
@@ -1479,7 +1481,7 @@ public class ReportServiceImpl implements ReportService {
 
     private void formStandardSsfcBlockPeriod(Sheet sheet, PeriodSum periodSum, Counter counter, Counter number,
                                              Map<String, Map<String, CellStyle>> styles,
-                                             List<String> sumTypes, String[] columnNames) {
+                                             List<String> sumTypes, String[] columnNames, boolean isSumsLine) {
         boolean srcsIncluded = !sumTypes.contains("sumsOnly");
 
         log.debug("Standard report (period) ssfcBlock started for {}. Row {}",
@@ -1501,14 +1503,15 @@ public class ReportServiceImpl implements ReportService {
         // set data
         if (periodSum.hasSubs()) {
             periodSum.getPeriods().forEach(period -> this.formStandardSsfcBlockPeriod(sheet, period, counter,
-                    number, styles, sumTypes, columnNames));
+                    number, styles, sumTypes, columnNames, isSumsLine));
         } else if (srcsIncluded) {
             formGroupBlockPeriod(((SrcPeriodSum) periodSum).getSrcName(), sheet, periodSum.getAvgData(),
                     counter, number,
                     styles.get("base").get("integer"),
                     styles.get("base").get("string"),
                     styles.get("base").get("threeDigits"),
-                    styles.get("base").get("twoDigits"));
+                    styles.get("base").get("twoDigits"),
+                    isSumsLine);
         }
 
         log.debug("Standard report (period) sum footer started for {}. Row {}",
@@ -1520,7 +1523,8 @@ public class ReportServiceImpl implements ReportService {
                     styles.get(group).get("integer"),
                     styles.get(group).get("string"),
                     styles.get(group).get("threeDigits"),
-                    styles.get(group).get("twoDigits"));
+                    styles.get(group).get("twoDigits"),
+                    isSumsLine);
         }
     }
 
@@ -1540,8 +1544,12 @@ public class ReportServiceImpl implements ReportService {
     }
 
 
-    private String[] getColumnNames(List<YearMonth> yearMonths) {
-        ArrayList<String> columns = new ArrayList<String>(allSsfcsPeriodBaseColumns);
+    private String[] getColumnNames(List<YearMonth> yearMonths, boolean sumsLine) {
+        ArrayList<String> columns = new ArrayList<>(allSsfcsPeriodBaseColumns);
+
+        if (!sumsLine) {
+            columns.removeLast();
+        }
 
         String[] monthNames = {"Год", "Январь", "Февраль", "Март", "Апрель",
                 "Май", "Июнь", "Июль", "Август", "Сентябрь",
@@ -1559,26 +1567,27 @@ public class ReportServiceImpl implements ReportService {
     private void formGroupBlockPeriod(String name, Sheet sheet, double[][] avgData,
                                       Counter counter, Counter number,
                                       CellStyle integerStyle, CellStyle stringStyle,
-                                      CellStyle threeDigitsStyle, CellStyle twoDigitsStyle) {
+                                      CellStyle threeDigitsStyle, CellStyle twoDigitsStyle,
+                                      boolean isSumsLine) {
 
         if (avgData[1][avgData[0].length - 1] == 0) {
             formGroupDataPeriod(name, sheet, avgData, FUEL_TYPE.DIESEL.getName(),
                     counter, number, integerStyle, stringStyle, threeDigitsStyle,
-                    twoDigitsStyle, 2);
+                    twoDigitsStyle, 2, isSumsLine);
         } else if (avgData[2][avgData[0].length - 1] == 0) {
             formGroupDataPeriod(name, sheet, avgData, FUEL_TYPE.GAS.getName(),
                     counter, number, integerStyle, stringStyle, threeDigitsStyle,
-                    twoDigitsStyle, 1);
+                    twoDigitsStyle, 1, isSumsLine);
         } else {
             formGroupDataPeriod(String.format("%s (газ + дизель)", name), sheet, avgData,
                     "газ + дизель", counter, number, integerStyle, stringStyle,
-                    threeDigitsStyle, twoDigitsStyle, 0);
+                    threeDigitsStyle, twoDigitsStyle, 0, isSumsLine);
             formGroupDataPeriod(String.format("%s (газ)", name), sheet, avgData,
                     FUEL_TYPE.GAS.getName(), counter, number, integerStyle, stringStyle,
-                    threeDigitsStyle, twoDigitsStyle, 1);
+                    threeDigitsStyle, twoDigitsStyle, 1, isSumsLine);
             formGroupDataPeriod(String.format("%s (дизель)", name), sheet, avgData,
                     FUEL_TYPE.DIESEL.getName(), counter, number, integerStyle, stringStyle,
-                    threeDigitsStyle, twoDigitsStyle, 2);
+                    threeDigitsStyle, twoDigitsStyle, 2, isSumsLine);
         }
     }
 
@@ -1586,7 +1595,7 @@ public class ReportServiceImpl implements ReportService {
                                      Counter counter, Counter number,
                                      CellStyle integerStyle, CellStyle stringStyle,
                                      CellStyle threeDigitsStyle, CellStyle twoDigitsStyle,
-                                     Integer indexAddition) {
+                                     Integer indexAddition, boolean isSumsLine) {
 
         log.debug("Standard report (period) sum group data started for {}. Row {}",
                 name, counter.getCounter());
@@ -1631,7 +1640,7 @@ public class ReportServiceImpl implements ReportService {
         IntStream.range(0, avgData[0].length - 1).forEach(i ->
                 setSsfcMonthDataCellsStd(sheet,
                         counter.getCounter(),
-                        6 + i, // data set in 6 - 17 cells
+                        (isSumsLine ? 6 : 5) + i, // data set in 6 - 17 (5 - 16) cells
                         avgData[0 + indexAddition][i],
                         avgData[3 + indexAddition][i],
                         avgData[6 + indexAddition][i],
@@ -1642,24 +1651,28 @@ public class ReportServiceImpl implements ReportService {
                         twoDigitsStyle));
 
         // set source summary data
-        setSsfcMonthDataCellsStd(sheet,
-                counter.getCounter(),
-                5,
-                avgData[0 + indexAddition][avgData[0].length - 1],
-                avgData[3 + indexAddition][avgData[0].length - 1],
-                avgData[6 + indexAddition][avgData[0].length - 1],
-                avgData[9 + indexAddition][avgData[0].length - 1],
-                avgData[12 + indexAddition][avgData[0].length - 1],
-                avgData[15 + indexAddition][avgData[0].length - 1],
-                threeDigitsStyle,
-                twoDigitsStyle);
+        if (isSumsLine) {
+            setSsfcMonthDataCellsStd(sheet,
+                    counter.getCounter(),
+                    5,
+                    avgData[0 + indexAddition][avgData[0].length - 1],
+                    avgData[3 + indexAddition][avgData[0].length - 1],
+                    avgData[6 + indexAddition][avgData[0].length - 1],
+                    avgData[9 + indexAddition][avgData[0].length - 1],
+                    avgData[12 + indexAddition][avgData[0].length - 1],
+                    avgData[15 + indexAddition][avgData[0].length - 1],
+                    threeDigitsStyle,
+                    twoDigitsStyle);
+        }
 
         // set top and bottom double borders
         // Базовые колонки allSsfcsPeriodBaseColumns + периоды (без суммарных данных) avgData[0].length - 1 и
         // (-1) для индекса
+        // (-1) при отсутсвии сумм по строкам
         styleTopBottomDoubleBorder(sheet, counter.getCounter(),
                 counter.getCounter() + ssfcRows.length - 1,
-                0, avgData[0].length + allSsfcsPeriodBaseColumns.size() - 2);
+                0, avgData[0].length + allSsfcsPeriodBaseColumns.size() - 2
+                        - (isSumsLine ? 0 : 1));
 
         counter.increment(ssfcRows.length);
 
