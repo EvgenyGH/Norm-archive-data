@@ -4,6 +4,26 @@ function main() {
     setAddPeriodListener();
     setDefaultDeletePeriodListener();
     setChangeReportTypeListener();
+    setDefaultSelectAllPeriodsListener();
+}
+
+function setDefaultSelectAllPeriodsListener() {
+    let label = document.querySelector('.ssfc-period label:first-child');
+    label.addEventListener("click", selectAllPeriodsListener);
+
+    console.debug('Select/unselect all periods listener set');
+}
+
+function selectAllPeriodsListener(e) {
+    let inputs = e
+        .target.parentElement.getElementsByTagName('input');
+    let status = !inputs[0].checked;
+
+    for (let i = 0; i < inputs.length; i++) {
+        inputs[i].checked = status;
+    }
+
+    console.debug('Select/unselect all periods clicked');
 }
 
 function setChangeReportTypeListener() {
@@ -227,6 +247,8 @@ function createPeriod(year, base) {
 
     period.appendChild(document.createTextNode("\u00A0"));
     period.appendChild(label);
+
+    period.firstElementChild.addEventListener('click', selectAllPeriodsListener);
 
     periods.insertBefore(period, base);
 
