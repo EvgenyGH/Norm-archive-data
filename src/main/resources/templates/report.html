@@ -183,7 +183,8 @@
                         <th:block th:each="sumType : ${sumTypes}">
                             <input type="checkbox" th:id="${#ids.seq('sumType')}" name="sumType"
                                    th:value="${sumType.getValue()}"
-                                   th:checked="${sumType.getValue().equals('tz') || sumType.getValue().equals('totals')}">
+                                   th:checked="${sumType.getValue().equals('tz') || sumType.getValue().equals('totals')}"
+                                   th:disabled="${sumType.getValue().equals('sumsLine')}">
                             <label th:for="${#ids.prev('sumType')}" th:text="${sumType.getKey()}"></label>
                         </th:block>
                     </div>

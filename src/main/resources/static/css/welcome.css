@@ -477,6 +477,14 @@ select:invalid {
     padding-bottom: 0.2em;
 }
 
+.select-summaries label[for='sumType1'] {
+    color: grey;
+}
+
+.ssfc-report:has(.select-type #ssfc-period:checked) .select-summaries label[for='sumType1'] {
+    color: inherit;
+}
+
 
 /* Year */
 #year {

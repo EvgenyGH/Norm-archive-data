@@ -356,10 +356,11 @@ public class ModelServiceImpl implements ModelService {
                 .map(SourceAlterDTO::new)
                 .toList());
 
-        attributes.put("sumTypes", new TreeMap<>(Map.of("Итоги (только)", "sumsOnly",
+        attributes.put("sumTypes", new TreeMap<>(Map.of("Итоги (построчно)", "sumsLine",
+                "Итоги (только)", "sumsOnly",
                 "Тарифные зоны", "tz",
                 "Филиалы", "branch",
-                "Всего", "totals")));
+                "Общие итоги", "totals")));
 
         attributes.put("periods",
                 Map.of(year.toString(), List.of(year + ".0", year + ".1",

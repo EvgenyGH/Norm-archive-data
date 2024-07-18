@@ -5,7 +5,37 @@ function main() {
     setDefaultDeletePeriodListener();
     setChangeReportTypeListener();
     setDefaultSelectAllPeriodsListener();
+    setDefaultSummaryLineStateListener();
 }
+
+function setDefaultSummaryLineStateListener() {
+    let period = document.getElementById('ssfc-period');
+
+    period.addEventListener("change", () => {
+        document.getElementById('sumType1').disabled = false;
+
+        console.log('SumType1 disabled');
+    })
+
+    period = document.getElementById('ssfc-all');
+
+    period.addEventListener("change", () => {
+        document.getElementById('sumType1').disabled = true;
+
+        console.log('SumType1 enabled');
+    })
+
+    period = document.getElementById('ssfc-template');
+
+    period.addEventListener("change", () => {
+        document.getElementById('sumType1').disabled = true;
+
+        console.log('SumType1 enabled');
+    })
+
+    console.debug('Default summary line listener set');
+}
+
 
 function setDefaultSelectAllPeriodsListener() {
     let label = document.querySelector('.ssfc-period label:first-child');
