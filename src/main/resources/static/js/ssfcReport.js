@@ -226,7 +226,11 @@ function createPeriod(year, base) {
     for (let i = 0; i < 13; i++) {
         let checkbox = document.createElement("input");
         checkbox.setAttribute("type", "checkbox");
-        checkbox.setAttribute("checked", "checked");
+
+        if (i !== 0) {
+            checkbox.setAttribute("checked", "checked");
+        }
+
         checkbox.setAttribute("name", "periods");
         checkbox.setAttribute("value", `${year}.${i}`);
         checkbox.id = `period-month-${year}-${i}`;

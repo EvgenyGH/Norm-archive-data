@@ -108,8 +108,7 @@
                         <label th:text="|${yearPeriods.getKey()} год:|"></label>
                         <input th:id="${'period-month-' + yearPeriods.getKey() + '-0'}"
                                type="checkbox" class="period-select" name="periods"
-                               th:value="${yearPeriods.getKey() + '.0'}"
-                               th:checked="${monthPeriods.contains(yearPeriods.getKey() + '.0')}"/>
+                               th:value="${yearPeriods.getKey() + '.0'}"/>
                         <label th:for="${'period-month-' + yearPeriods.getKey() + '-0'}">Год</label>
                         <input th:id="${'period-month-' + yearPeriods.getKey() + '-1'}"
                                type="checkbox" class="period-month"
