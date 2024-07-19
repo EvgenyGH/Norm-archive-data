@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
+import ru.bk.j3000.normarchivedata.exception.EmptyPeriodException;
 import ru.bk.j3000.normarchivedata.exception.ReportIOException;
 import ru.bk.j3000.normarchivedata.model.*;
 import ru.bk.j3000.normarchivedata.model.dto.SsfcShortDTO;
@@ -1380,6 +1381,10 @@ public class ReportServiceImpl implements ReportService {
 
     private Resource getSsfcPeriodReport(String selection, List<UUID> srcIds,
                                          List<String> sumTypes, List<String> periodsStr) {
+
+        if (Objects.isNull(periodsStr) || periodsStr.isEmpty()) {
+            throw new EmptyPeriodException("Период отчёта не задан");
+        }
 
         List<YearMonth> yearMonths = periodsStr.stream().map(str -> {
                     String[] period = str.split("\\.");

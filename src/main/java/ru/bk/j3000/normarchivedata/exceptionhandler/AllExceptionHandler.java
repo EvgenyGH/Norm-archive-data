@@ -11,6 +11,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import ru.bk.j3000.normarchivedata.exception.EmptyPeriodException;
 import ru.bk.j3000.normarchivedata.exception.ReportIOException;
 import ru.bk.j3000.normarchivedata.exception.SsfcDataNotValidException;
 import ru.bk.j3000.normarchivedata.exception.StandardException;
@@ -142,6 +143,18 @@ public class AllExceptionHandler {
         model.addAllAttributes(modelService.getErrorAttributes(e,
                 request.getRequestURI(),
                 "Загружен пустой файл."));
+
+        log.warn(e.getMessage());
+
+        return "errorview";
+    }
+
+    @ExceptionHandler({EmptyPeriodException.class})
+    public String EmptyPeriodExceptionHandler(Exception e, Model model,
+                                              HttpServletRequest request) {
+        model.addAllAttributes(modelService.getErrorAttributes(e,
+                request.getRequestURI(),
+                "Период отчёта не задан. Установите период отчёта и повторите запрос."));
 
         log.warn(e.getMessage());
 
