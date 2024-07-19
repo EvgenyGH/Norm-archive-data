@@ -10,7 +10,7 @@
     </parent>
     <groupId>ru.bk.j3000</groupId>
     <artifactId>NormArchiveData</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <name>NormArchiveData</name>
     <description>NormArchiveData</description>
     <properties>
