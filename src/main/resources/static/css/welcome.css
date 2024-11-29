@@ -1,3 +1,35 @@
+/* Scrollbar */
+body {
+    scrollbar-width: thin;
+}
+
+::-webkit-scrollbar {
+    width: 0.25rem;
+    height: 0.25rem;
+}
+
+::-webkit-scrollbar-track {
+    background: cornsilk;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-track:hover {
+    background: lightgray;
+}
+
+::-webkit-scrollbar-thumb {
+    background: silver;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: burlywood;
+}
+
+::-webkit-scrollbar-corner {
+    display: none;
+}
+
 /* General */
 body,
 .alter-data,
@@ -36,8 +68,6 @@ body,
     font-size: 3em;
     font-weight: bold;
     font-style: italic;
-    scrollbar-color: grey lightgrey;
-    scrollbar-width: thin;
     overflow: scroll;
 }
 
@@ -220,7 +250,6 @@ tr:has(td:not([rowspan]):hover) td:not([rowspan]) {
 }
 
 .list-data {
-    overflow: scroll;
     max-height: calc(95vh - 7em);
     text-align: center;
 }
